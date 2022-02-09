@@ -1,0 +1,27 @@
+Emerald mine:
+    complete the objective (collect gems or something else), 
+    don't die from the physics or enemies, 
+    clear as many levels as possible
+
+Fixed number of stages,
+    the whole game can be finished in about 2 hours
+    spanning multiple worlds that are grouped by a theme (with increasing difficulty and/or different mechanics)
+    order of maps is shuffled
+    locations of gems in maps is shuffled between a set of possible locations
+
+After each world, you get a checkpoint
+    Dieing in a world resets you to the start of that world
+    Quiting the game saves your progress (inactivity limit)
+        You can only resume with the same partner
+        If you play with a different partner, you have to start from scratch
+
+Duo co-op, shared life pool (i.e if a duo runs out of lives - game over)
+
+Co-op puzzles
+
+Ranking runs based on points at the end of every world or when duo dies
+    (clearance time + enemies killed + lives remaining + secrets discovered + TBD)
+
+After completing a map, duos get to choose perks (lives, extra speed, TBD)
+
+Chosen perks affect ability to access hidden areas. Hidden areas / collectibles contribute to score

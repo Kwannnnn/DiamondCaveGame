@@ -1,8 +1,0 @@
-Emerald mine - collect gems, don't die from the physics or enemies, clear as many levels as possible
-Fixed number of stages, 10 in total (3 for prototype)
-Duo co-op, shared life pool (i.e if a duo runs out of lives - game over)
-Co-op puzzles
-Ranking duos based on points at the end of all levels (clearance time + enemies killed + lives remaining + secrets discovered + TBD)
-//Randomization to be defined in the future
-At certain points throughout the playthrough, duos get to choose perks (lives, extra speed, TBD)
-Chosen perks affect ability to access hidden areas. Hidden areas / collectibles contribute to score
