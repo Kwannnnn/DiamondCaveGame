@@ -1,0 +1,102 @@
+# Game Design - Diamond Cave
+
+This game design document describes the details for a massive multiplayer online, massive spectators, chatting, monitored, moderated, ranking (MMOMSCMMR) game. Diamond Cave is a 2D web browser co-op game, based on the old Emerald Mine game, but taken to a whole new experience with extra features and multiplayer functionality. 
+
+## 1. Story
+Attracted by the fame and glory, two amateur archeologists Bob and Eve set foot into the infamous "Diamond Cave" in hopes of collecting precious and valuable gems. Unbeknownst to them, blood-thirsty enemies, booby traps and mind-boggling puzzles are lurking behind every corner. Will they make it out alive, or will they succumb to the weakness of their hearts and become yet another victim of this perilous cave?
+
+## 2. Gameplay
+The game is playable exclusively in duo co-op mode of two people. A run can only begin once both players have connected and formed a team.
+### 2.1. Worlds
+The game has 3 worlds, each with a different theme and difficulty. A world contains a set of levels that have to be completed in order to continue to the next world. The difficulty of the world increases incrementially, where world 1 is the easiest and world 3 is the most difficult.
+
+### 2.2. Maps
+Maps are categorized based on the world they are in, and therefore adopt the same theme and difficulty level. They are further divided into different objectives that the players have to achieve in order to progress onto the next map. The objectives include collecting all the gems present on the map, solving puzzles or trying to stay alive while avoiding traps.
+
+### 2.3. Level Progression
+The 2 players progress through the game by completing the objective of the current map. Everytime a new world is reached, the team gets a checkpoint that allows them to restart from the current world in the unfortunate case of death.
+While the worlds are fixed and predetermined, a set number of maps are randomly selected from a larger pool for each run to make the game more interesting and replayable.
+
+### 2.4. Buffs
+After each finished map, the team is offered to choice between two bonuses that would give them an advantage for the levels to come. Some of the buffs include:
+* Gain an extra life
+* Gain movement speed
+* Reduce time with 5 seconds
+* Gain an extra diamond
+
+***Note:** The buffs are subject to change. More buffs may be added or existing buffs removed in order to keep the game balanced.*
+
+### 2.5. Goals
+The ultimate objective of the game is to escape a series of caves (maps) by completing the objective of each map while having fun on the way.
+
+### 2.6. Losing
+Each team has a shared life pool. Once the team loses its last life, the game ends and the score of the team is recorded. 
+
+### 2.7. Ranking System
+Teams are ranked based on the time of the run, the diamonds collected and the remaining lifes. Each world has its own rank list, and there is a global ranking for teams that have completed the whole run. The formula for determining the final score is:
+> TBD
+
+## 3. Objects
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Image</th>
+        <th>Behavior</th>
+    </tr>
+    <tr>
+        <td>Player 1</td>
+        <td>TBD</td>
+        <td rowspan="2">
+            <li>Can be controlled by the first player in 4 directions</li>
+            <li>Can be controlled by the first player in 4 directions</li>
+            <li>Can dig Dirt and collect Diamonds</li>
+            <li>Can go into Map Exit to complete a level</li>
+        </td>
+    </tr>
+    <tr>
+        <td>Player 2</td>
+        <td>TBD</td>
+    </tr>
+    <tr>
+        <td>Map Wall</td>
+        <td>TBD</td>
+        <td>
+            <li>Defines the boundries of the map</li>
+            <li>Can not be destroyed</li>
+        </td>
+    </tr>
+    <tr>
+        <td>Dirt</td>
+        <td>TBD</td>
+        <td>
+            <li>Can be cleared by a <i>Player</i> by moving into it</li>
+        </td>
+    </tr>
+    <tr>
+        <td>Diamond</td>
+        <td>TBD</td>
+        <td>
+            <li>Can be collected by a <i>Player</i> by moving into it</li>
+            <li>Can be spawned by a <i>Game Master</i></li>
+        </td>
+    </tr>
+    <tr>
+        <td>Locked Map Exit</td>
+        <td>TBD</td>
+        <td>
+            <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
+            <li>Cannot be destroyed</li>
+        </td>
+    </tr>
+    <tr>
+        <td>Unlocked Map Exit</td>
+        <td>TBD</td>
+        <td>
+            <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+            <li>Cannot be destroyed</li>
+        </td>
+    </tr>
+</table>
+
+
