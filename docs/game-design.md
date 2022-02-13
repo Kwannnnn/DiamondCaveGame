@@ -70,7 +70,14 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
         <td>Dirt</td>
         <td>TBD</td>
         <td>
-            <li>Can be cleared by a <i>Player</i> by moving into it</li>
+            <li>Can be cleared by a <i>Player</i> by mining it</li>
+        </td>
+    </tr>
+    <tr>
+        <td>Rock</td>
+        <td>TBD</td>
+        <td>
+            <li>Cannot be cleared by mining</li>
         </td>
     </tr>
     <tr>
@@ -99,4 +106,51 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
     </tr>
 </table>
 
+#4. Wireframes
+To provide a better idea of what our game will encapsulate, several mockup wireframes are included below detailing some main functionalities and how certain components will look/behave.
 
+## 4.1. Menus
+
+### 4.1.1. Main menu
+![image](wireframes/main-menu.png)
+
+This wireframe shows the main menu. In here you have the option to go to Play Game, Leaderboard and exit. Play game will lead to further instructions. The leaderboard button will lead you to a window that shows the score of different teams. Exit will close the game.
+
+
+
+### 4.1.2. Leaderboard
+![image](wireframes/leaderboard.png)
+
+This wireframe shows the leaderboard. You will be able to see your (and others) name and what score they achieved.
+
+### 4.1.3. Play Game menu
+![image](wireframes/play-game-menu.png)
+
+This wireframe Shows the menu after you pressed Play Game. You have the choice to either create a Team or join a Team. Both options lead to further instructions. You also have the choice to go back to the main menu.
+
+### 4.1.4. Create Team menu
+![image](wireframes/create-team-menu.png)
+
+This wireframe shows what you see if you pressed “Create Team”. On the top you see the randomly generated Teamcode which is needed for others to join. Under that you can see how much players are in your team currently. And you have the option to press start game which will lead to the actual game. And there is an option to go back to the previous window.
+
+### 4.1.5. Join Team menu
+![image](wireframes/join-team-menu.png)
+
+This wireframe shows the menu after you pressed “Join a Team”. On the top you can enter the teamcode from the team you want to join. Then if you press Join team you will get led to the window of Create Team.
+
+## 4.2. Gameplay
+
+### 4.2.1. Map
+![image](wireframes/map-1.png)
+
+After creating your team you will go to the first level of the first world. This is a simple wireframe that shows a few assets of the game to give you an idea. A level has the brown dirt blocks which the player is able to mine. The grey stones are one of the Objects that the player is not able to mine. The diamonds need to be collected by the player but the rocks can fall down if you mine under them. On the top you can see which level and world you’re in. And on the top right you see the quit button which will bring you back to the main menu.
+
+### 4.2.2. In-game Quit menu
+![image](wireframes/quit-menu.png)
+
+If you press the “Quit” button you get to see your score and it gives you 2 options. You can either play again or go back to the main menu.
+
+### 4.2.3. 
+![image](wireframes/death-screen.png)
+
+If you die you get to see a quite similar screen to the quit menu screen but this time there is a text saying that you died.
