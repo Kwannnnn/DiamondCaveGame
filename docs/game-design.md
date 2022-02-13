@@ -7,6 +7,7 @@ Attracted by the fame and glory, two amateur archeologists Bob and Eve set foot 
 
 ## 2. Gameplay
 The game is playable exclusively in duo co-op mode of two people. A run can only begin once both players have connected and formed a team.
+
 ### 2.1. Worlds
 The game has 3 worlds, each with a different theme and difficulty. A world contains a set of levels that have to be completed in order to continue to the next world. The difficulty of the world increases incrementially, where world 1 is the easiest and world 3 is the most difficult.
 
@@ -18,13 +19,42 @@ The 2 players progress through the game by completing the objective of the curre
 While the worlds are fixed and predetermined, a set number of maps are randomly selected from a larger pool for each run to make the game more interesting and replayable.
 
 ### 2.4. Buffs
-After each finished map, the team is offered to choice between two bonuses that would give them an advantage for the levels to come. Some of the buffs include:
-* Gain an extra life
-* Gain movement speed
-* Reduce time with 5 seconds
-* Gain an extra diamond
+After each finished map, the team is offered to choice between two bonuses that would give them an advantage for the levels to come. Buff effects are applied immediately. Some of the buffs include:
 
-***Note:** The buffs are subject to change. More buffs may be added or existing buffs removed in order to keep the game balanced.*
+<table>
+    <tr>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Effect</th>
+        <th>Rarity</th>
+    </tr>
+    <tr>
+        <td>TBD</td>
+        <td><b>Life Rune</b></td>
+        <td>Team gains an extra life</td>
+        <td>Common</td>
+    </tr>
+    <tr>
+        <td>TBD</td>
+        <td><b>Boots of Speed</b></td>
+        <td>Grants 4% extra movement speed</td>
+        <td>Common</td>
+    </tr>
+    <tr>
+        <td>TBD</td>
+        <td><b>Bloodstone</b></td>
+        <td>Transforms itself in 3 Daimonds</td>
+        <td>Common</td>
+    </tr>
+    <tr>
+        <td>TBD</td>
+        <td><b>Continuum Orb<b></td>
+        <td>Reduces total run time with 25 seconds</td>
+        <td>Rare</td>
+    </tr>
+</table>
+
+***Note:** The buffs are subject to change. More buffs may be added or existing buffs may be removed to maintain the balance of the game.*
 
 ### 2.5. Goals
 The ultimate objective of the game is to escape a series of caves (maps) by completing the objective of each map while having fun on the way.
@@ -48,10 +78,12 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
         <td>Player 1</td>
         <td>TBD</td>
         <td rowspan="2">
-            <li>Can be controlled by the first player in 4 directions</li>
-            <li>Can be controlled by the first player in 4 directions</li>
-            <li>Can dig Dirt and collect Diamonds</li>
-            <li>Can go into Map Exit to complete a level</li>
+            <ul>
+                <li>Can be controlled by the first player in 4 directions</li>
+                <li>Can be controlled by the first player in 4 directions</li>
+                <li>Can dig Dirt and collect Diamonds</li>
+                <li>Can go into Map Exit to complete a level</li>
+            </ul>
         </td>
     </tr>
     <tr>
@@ -62,8 +94,10 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
         <td>Map Wall</td>
         <td>TBD</td>
         <td>
-            <li>Defines the boundries of the map</li>
-            <li>Can not be destroyed</li>
+            <ul>
+                <li>Defines the boundries of the map</li>
+                <li>Can not be destroyed</li>
+            </ul>
         </td>
     </tr>
     <tr>
@@ -84,24 +118,30 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
         <td>Diamond</td>
         <td>TBD</td>
         <td>
-            <li>Can be collected by a <i>Player</i> by moving into it</li>
-            <li>Can be spawned by a <i>Game Master</i></li>
+            <ul>
+                <li>Can be collected by a <i>Player</i> by moving into it</li>
+                <li>Can be spawned by a <i>Game Master</i></li>
+            </ul>
         </td>
     </tr>
     <tr>
         <td>Locked Map Exit</td>
         <td>TBD</td>
         <td>
-            <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
-            <li>Cannot be destroyed</li>
+            <ul>
+                <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
+                <li>Cannot be destroyed</li>
+            </ul>
         </td>
     </tr>
     <tr>
         <td>Unlocked Map Exit</td>
         <td>TBD</td>
         <td>
-            <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
-            <li>Cannot be destroyed</li>
+            <ul>
+                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Cannot be destroyed</li>
+            </ul>
         </td>
     </tr>
 </table>
