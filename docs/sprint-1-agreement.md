@@ -20,3 +20,6 @@ Glossary of terms:
 * Sprite – A visual design or mock-up for the different objects in the game like the obstacles or grid parts of a map.
 * Diamond – An object in the game used for the purpose of collection. The gameplay will mostly revolve around collecting these diamonds to progress to further maps and thus advancing through the game.
 * Perks - Bonuses that you get after completing one map. A player has a choice to pick one of perks, which improves certain characteristics or adds some extra skill to the hero.
+
+## Payment
+This topic is still under discussion with the client. When pricing is set, this section will be updated.
