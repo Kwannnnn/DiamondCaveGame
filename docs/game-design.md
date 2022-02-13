@@ -1,5 +1,4 @@
 # Game Design - Diamond Cave
-
 This game design document describes the details for a massive multiplayer online, massive spectators, chatting, monitored, moderated, ranking (MMOMSCMMR) game. Diamond Cave is a 2D web browser co-op game, based on the old Emerald Mine game, but taken to a whole new experience with extra features and multiplayer functionality. 
 
 ## 1. Story
@@ -146,7 +145,7 @@ Teams are ranked based on the time of the run, the diamonds collected and the re
     </tr>
 </table>
 
-#4. Wireframes
+# 4. Wireframes
 To provide a better idea of what our game will encapsulate, several mockup wireframes are included below detailing some main functionalities and how certain components will look/behave.
 
 ## 4.1. Menus
