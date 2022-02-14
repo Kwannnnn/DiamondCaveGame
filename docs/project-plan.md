@@ -2,7 +2,7 @@
 
 ## User Stories
 
-### 1. As a player I want to be able to indentify the different objects in the game world
+### 1. As a player I want to be able to visually indentify the different objects in the game world
 
 ### 2. As the publisher I want to know what themes the world will have
 
