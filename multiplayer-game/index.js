@@ -2,10 +2,10 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const {Server} = require("socket.io");
+const {Server} = require('socket.io');
 const io = new Server(server);
 
-const Player = require("./model/player.js");
+const Player = require('./model/player.js');
 
 // more info: https://github.com/ai/nanoid
 const { nanoid } = require('nanoid');
@@ -55,13 +55,13 @@ io.on('connection', (socket) => {
         socket.join('team lobby');
         socket.emit('new lobby event', lobbyId);
 
-    })
+    });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
-})
+});
 
 server.listen(3000, function () {
-    console.log("Started application on port %d", 3000);
+    console.log('Started application on port %d', 3000);
 });
