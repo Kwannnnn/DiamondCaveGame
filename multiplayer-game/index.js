@@ -5,6 +5,13 @@ const server = http.createServer(app);
 const {Server} = require("socket.io");
 const io = new Server(server);
 
+const Player = require("./model/player.js");
+
+// more info: https://github.com/ai/nanoid
+const { nanoid } = require('nanoid');
+
+let playersDict = {};
+
 // Send socket initialization scripts to the client
 app.get('/', function (req, res) {
     res.send(`
@@ -18,17 +25,11 @@ app.get('/', function (req, res) {
     
     button.addEventListener('click' , () => {
         socket.emit("create team");
-    }, false);
-    
-    socket.on('new team created', () => {
-        const p = document.createElement('p');
-        p.innerText = 'New team created';
-        document.body.append(p);
     });
     
-    socket.on('lobby message event', () => {
+    socket.on('new lobby event', (lobbyId) => {
         const p = document.createElement('p');
-        p.innerText = 'lobby message';
+        p.innerText = 'new lobby created with id: ' + lobbyId;
         document.body.append(p);
     });
 </script>`);
@@ -36,16 +37,23 @@ app.get('/', function (req, res) {
 
 io.on('connection', (socket) => {
     console.log('a new user connected');
+    // generate new unique id for the player
+    // default length is 21
+    const pid = nanoid();
+    const player = new Player(pid, socket);
+
+    //add new player to players dictionary
+    playersDict[pid] = player;
 
     socket.on('create team', () => {
-        socket.emit('new team created');
-
-        //generate unique one time code
+        //generate unique one time code for the lobby
+        const lobbyId = nanoid(6);
 
         //create new lobby
-        //send message back to players with code (no code yet)
+
+        //send message back to player with lobby id
         socket.join('team lobby');
-        io.to("team lobby").emit('lobby message event');
+        socket.emit('new lobby event', lobbyId);
 
     })
 
