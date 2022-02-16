@@ -5,7 +5,11 @@ const app = express();
 const httpServer = app.listen(PORT, function () {
     console.log(`Started application on port ${PORT}`);
 });
-const io = require('socket.io')(httpServer);
+const io = require('socket.io')(httpServer, {
+    cors: {
+      origin: '*',
+    }
+});
 
 let connections = [];
 
