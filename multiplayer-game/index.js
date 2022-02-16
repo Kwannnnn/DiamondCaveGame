@@ -1,15 +1,26 @@
-const express = require("express")
-const io=require('socket.io')(3000) //might occur cors problem
+const PORT = 3000;
 
-var app = express()
+const express = require('express');
+const app = express();
+const httpServer = app.listen(PORT, function () {
+    console.log(`Started application on port ${PORT}`);
+});
+const io = require('socket.io')(httpServer);
 
-app.get("/",function(request,response){
-    response.send("Hello World!")
-})
-app.listen(3000, function () {
-console.log("Started application on port %d", 3000)
+let connections = [];
+
+io.on('connection', function (socket) {
+    handleConnect(socket);
+
+    socket.on('disconnect', () => handleDisconnect(socket));
 });
 
-io.on('connection',socket=>{
-    console.log(socket.id);
-}) //whenever there is a new client who tries to connect to server, creates a new socket for him with unique id
+function handleConnect(socket) {
+    connections.push(socket.id);
+    console.log(`Established connection with client ${socket.id}`);
+}
+
+function handleDisconnect(socket) {
+    connections = connections.filter(client => client !== socket.id);
+    console.log(`Client ${socket.id} has disconnected!`);
+}
