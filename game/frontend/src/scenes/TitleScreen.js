@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { io } from 'socket.io-client';
 
-const SERVER_URL = "http://localhost:3000";
+let SERVER_URL = "localhost:3000";
+const addressForm = '<input type="text" name="address" value="'+SERVER_URL+'" />';
 
 export default class TitleScreen extends Phaser.Scene {
     preload() {
@@ -9,21 +10,50 @@ export default class TitleScreen extends Phaser.Scene {
     }
 
     create() {
-        const text = this.add.text(400,250, 'Hello world');
-        text.setOrigin(0.5, 0.5);
-        
-        // TODO: the SERVER_URL constant will be removed at a later stage
-        // whenever we actually serve the index.html to the client
-        // then the server URL will be deduced from the window.location object.
-        // this.socket = io();
-        this.socket = io(SERVER_URL);
 
-        this.socket.on('connect', function () {
-            console.log('Connected to the server!');
-        });
+        //TODO: This visual code is just here as a reference. Remove it
+        this.addressInput = this.add.dom(640, 360).createFromHTML(addressForm);
 
-        this.socket.on('disconnect', function () {
-            console.log('Handle disconnected from the server!');
-        });
+        this.message = this.add.text(640, 250, "Disconnected", {
+            color: "#FFFFFF",
+            fontSize: 60
+        }).setOrigin(0.5);
+
+        this.connectButton = this.add.text(620,460,"Connect", {fill: '#0f0'})
+            .setInteractive()
+            .on('pointerdown', () => {this.connect()})
+            .on('pointerover', () => {this.connectButton.setStyle({ fill: '#ff0'})} )
+            .on('pointerout', () => {this.connectButton.setStyle({ fill: '#0f0' })} );
+    }
+
+    connect(){
+        let ip = "http://"+this.addressInput.getChildByName("address").value;
+        this.message.setText("Connecting to:"+ip);
+        SERVER_URL = ip;
+        this.socket = io(SERVER_URL, {reconnection: false});
+
+        this.socket.on('connect', ()=>{this.createLobby()});
+
+        this.socket.on('new lobby event', (args)=>{this.displayCode(args)});
+
+        this.socket.on('connect_error', ()=>{this.displayError()});
+    }
+
+    createLobby(){
+        this.socket.emit('create team');
+    }
+
+    displayCode(args){
+        this.message.setText("Lobby code: "+args);
+        //FIXME: Underscores render as a space. Might be a Phaser issue, maybe don't use underscores as a code
+        console.log(args);
+    }
+
+    displayError(){
+        this.message.setText("Could not connect!");
+    }
+
+    sendDisconnect(){
+
     }
 }
