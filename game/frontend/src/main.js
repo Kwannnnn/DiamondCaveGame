@@ -22,5 +22,5 @@ const game = new Phaser.Game(config);
 game.scene.add('titlescreen', TitleScreen);
 game.scene.add('game', GameScreen);
 
-game.scene.start('game');
+game.scene.start('titlescreen');
 
