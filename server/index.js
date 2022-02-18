@@ -1,9 +1,15 @@
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const {Server} = require('socket.io');
-const io = new Server(server);
+const PORT = 3000;
+
+const httpServer = app.listen(PORT, function () {
+    console.log(`Started application on port ${PORT}`);
+});
+const io = require('socket.io')(httpServer, {
+    cors: {
+        origin: '*',
+    }
+});
 
 const Player = require('./model/player.js');
 
@@ -125,10 +131,6 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         handleDisconnect(player);
     });
-});
-
-server.listen(3000, function () {
-    console.log('Started application on port %d', 3000);
 });
 
 function joinRoom(room, player) {
