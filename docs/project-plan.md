@@ -59,6 +59,14 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-02 | Implement lobby join logic on the client | M | 3 | - | US09-BI01 |
 | BI-03 | Create lobby menu join feature | M | 2 | - | US09-BI01 |
 
+### US 07
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | - | M | 4 | - | US05-BI01 |
+| BI-02 | - | M | 3 | - | US09-BI01 |
+| BI-03 | - | M | 2 | - | US09-BI01 |
+
 ### US 09
 
 Backlog item | Definition | Priority | Weight | Time spent | Depends on |
@@ -71,3 +79,11 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-06 | The camera follows the player | M | 7 | - | US09-BI01 |
 | BI-07 | Add collision for objects on the map | M | 5 | - | US09-BI01 |
 | BI-08 | Determine spawn and exit locations | M | 6 | - | - |
+
+### US 10
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | - | M | 4 | - | US05-BI01 |
+| BI-02 | - | M | 3 | - | US09-BI01 |
+| BI-03 | - | M | 2 | - | US09-BI01 |
