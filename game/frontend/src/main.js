@@ -7,6 +7,12 @@ const config = {
     height: 720,
     parent: "game",
     type: Phaser.AUTO,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: {y: 0}
+        }
+    },
     dom: {
         createContainer: true
     }
