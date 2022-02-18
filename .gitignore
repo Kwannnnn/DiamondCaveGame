@@ -6,5 +6,5 @@ node_modules
 
 # Ignores from group 2
 */*/package-lock.json
-*.cache
+*.parcel-cache
 *dist
