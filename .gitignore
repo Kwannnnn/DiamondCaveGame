@@ -1,3 +1,10 @@
-*node_modules
+.DS_Store
+node_modules
+/build
+/package
+*/package-lock.json
+
+# Ignores from group 2
+*/*/package-lock.json
 *.cache
 *dist
