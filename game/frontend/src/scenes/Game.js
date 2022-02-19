@@ -29,6 +29,11 @@ export default class Game extends Phaser.Scene {
         let player = this.physics.add.image(32+16, 32+16, 'player');
 
         // let sprite = this.physics.add.sprite(32+16, 32+16, 'player');
+
+        // Stick camera to the player
+        this.cameras.main.startFollow(player);
+
+        this.cameras.main.setBounds(-400, -400, 1880, 1320);
         
 
         this.input.keyboard.on('keydown-A', function(event){

@@ -3,6 +3,8 @@ import TitleScreen from './scenes/TitleScreen';
 import GameScreen from './scenes/Game';
 
 const config = {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
     parent: "game",
@@ -22,5 +24,5 @@ const game = new Phaser.Game(config);
 game.scene.add('titlescreen', TitleScreen);
 game.scene.add('game', GameScreen);
 
-game.scene.start('titlescreen');
+game.scene.start('game');
 
