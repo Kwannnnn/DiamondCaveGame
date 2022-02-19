@@ -10,18 +10,8 @@ export default class Game extends Phaser.Scene {
         super("game");
     }
 
-
-
-    /*
-        problem 1: Sprites rotates with movements
-        problem 2: orientation
-    */
-
-
-
     preload() {
         this.load.image('gem', 'assets/gem.png');
-        // this.load.image('player', 'assets/s.png');
 
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
 
@@ -41,15 +31,12 @@ export default class Game extends Phaser.Scene {
         tile.index = 0; // Update what image a tile should render as
 
         // Having the player added to the game
-
-        // player = this.physics.add.image(32+16, 32+16, 'player');
-
         player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.15);
 
+        // Add used keys to the scene
         keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
 
-
-
+        // Create the animation for movement
         this.anims.create({
             key: 'up',
             frames: [ { key: 'player', frame: 0 } ],
@@ -68,7 +55,6 @@ export default class Game extends Phaser.Scene {
             frameRate: 10
         });
 
-
         this.anims.create({
             key: 'left',
             frames: [ { key: 'player', frame: 3 } ],
@@ -79,15 +65,6 @@ export default class Game extends Phaser.Scene {
         this.cameras.main.startFollow(player);
 
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
-
-        
-
-        
-
-        
-
-        
-
 
     }
 
