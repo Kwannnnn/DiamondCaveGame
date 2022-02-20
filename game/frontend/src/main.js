@@ -26,3 +26,8 @@ game.scene.add('game', GameScreen);
 
 game.scene.start('game');
 
+let button = document.getElementById('createTeamButton');
+
+button.addEventListener('click' , () => {
+    socket.emit("createRoom");
+});
