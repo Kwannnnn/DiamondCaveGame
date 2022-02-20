@@ -15,6 +15,10 @@ const config = {
 const game = new Phaser.Game(config);
 game.scene.add('titlescreen', TitleScreen);
 game.scene.add('game', GameScreen);
-
 game.scene.start('titlescreen');
 
+let button = document.getElementById('createTeamButton');
+
+button.addEventListener('click' , () => {
+    socket.emit("createRoom");
+});
