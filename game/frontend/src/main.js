@@ -27,7 +27,12 @@ game.scene.add('game', GameScreen);
 game.scene.start('game');
 
 let button = document.getElementById('createTeamButton');
+let button2 = document.getElementById('joinTeamButton');
 
 button.addEventListener('click' , () => {
     socket.emit("createRoom");
 });
+
+button2.addEventListener('click',()=>{
+    socket.emit('joinRoom')
+})
