@@ -17,6 +17,23 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
+
+
+
+        //preloading assets for lifepool
+        this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
+        this.load.image('middle', 'assets/barHorizontal_green_mid.png')
+        this.load.image('right-cap', 'assets/barHorizontal_green_right.png')
+
+        this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
+        this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
+        this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
+    }
+
+
+    init()
+    {
+        this.fullWidth = 300
     }
 
     create() {
@@ -66,7 +83,78 @@ export default class Game extends Phaser.Scene {
 
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
 
+
+
+
+
+        //life pool
+        const y = -50
+        const x = -50
+
+        // background shadow
+        const leftShadowCap = this.add.image(x, y, 'left-cap-shadow')
+            .setOrigin(0, 0.5)
+
+        const middleShaddowCap = this.add.image(leftShadowCap.x + leftShadowCap.width, y, 'middle-shadow')
+            .setOrigin(0, 0.5)
+        middleShaddowCap.displayWidth = this.fullWidth
+
+        this.add.image(middleShaddowCap.x + middleShaddowCap.displayWidth, y, 'right-cap-shadow')
+            .setOrigin(0, 0.5)
+
+
+
+
+        this.leftCap = this.add.image(x, y, 'left-cap')
+            .setOrigin(0, 0.5)
+
+        this.middle = this.add.image(this.leftCap.x + this.leftCap.width, y, 'middle')
+            .setOrigin(0, 0.5)
+
+        this.rightCap = this.add.image(this.middle.x + this.middle.displayWidth, y, 'right-cap')
+            .setOrigin(0, 0.5)
+
+        this.setMeterPercentage(1)
+
+
+
+
     }
+
+
+
+
+
+
+    setMeterPercentage(percent = 1)
+    {
+        const width = this.fullWidth * percent
+
+        this.middle.displayWidth = width
+        this.rightCap.x = this.middle.x + this.middle.displayWidth
+    }
+
+
+
+    setMeterPercentageAnimated(percent = 1, duration = 1000)
+    {
+        const width = this.fullWidth * percent
+
+        this.tweens.add({
+            targets: this.middle,
+            displayWidth: width,
+            duration,
+            ease: Phaser.Math.Easing.Sine.Out,
+            onUpdate: () => {
+                this.rightCap.x = this.middle.x + this.middle.displayWidth
+
+                this.leftCap.visible = this.middle.displayWidth > 0
+                this.middle.visible = this.middle.displayWidth > 0
+                this.rightCap.visible = this.middle.displayWidth > 0
+            }
+        })
+    }
+
 
     update() {
 
