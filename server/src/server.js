@@ -1,21 +1,21 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
-const {customAlphabet} = require('nanoid');
-
-const httpServer = app.listen(PORT, function () {
-    console.log(`Started application on port ${PORT}`);
-});
-const io = require('socket.io')(httpServer, {
-    cors: {
-        origin: '*',
-    }
-});
-
+const { customAlphabet } = require('nanoid');
+const socket = require("socket.io");
 const Player = require('./model/player.js');
 
 // more info: https://github.com/ai/nanoid
 const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6)
+
+const httpServer = app.listen(PORT, function() {
+    console.log(`Started application on port ${process.env.PORT}`);
+});
+
+const io = socket(httpServer, {
+    cors: {
+        origin: '*',
+    }
+});
 
 // key      | value
 // playerId | Player
@@ -26,7 +26,7 @@ let players = {};
 let rooms = {};
 
 // Send socket initialization scripts to the client
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     res.send(`
     <button>Create team</button>
     
@@ -83,55 +83,16 @@ app.get('/', function (req, res) {
 
 io.on('connection', (socket) => {
     // generate new unique id for the player
-    // default length is 21
     const pid = nanoid();
     const player = new Player(pid, socket);
 
     handleConnect(player);
 
-    socket.on('createRoom', () => {
-        //generate unique one time code for the lobby
-        const roomId = nanoid(6);
+    socket.on('createRoom', () => handleCreateRoom(player));
 
-        // create new room
-        let room = {
-            id: roomId,
-            players: []
-        };
+    socket.on('joinRoom', (roomId) => handleJoinRoom(roomId, player));
 
-        // add it to rooms dictionary
-        rooms[roomId] = room;
-
-        joinRoom(room, player);
-        //send message back to player with lobby id
-        socket.emit('roomCreated', roomId);
-
-    });
-
-    socket.on('joinRoom', (roomId) => {
-        const room = rooms[roomId];
-
-        if (room) {
-            // if player is already in the room
-            if (room.players.includes(player)) {
-                // TODO: new event to notify player
-                return;
-            }
-
-            joinRoom(room, player);
-            socket.emit('roomJoined', roomId);
-
-            // broadcast to every other team member
-            socket.to(room.id).emit('newPlayerJoined', player.id)
-
-        } else {
-            socket.emit('roomNotFound', roomId)
-        }
-    })
-
-    socket.on('disconnect', () => {
-        handleDisconnect(player);
-    });
+    socket.on('disconnect', () => handleDisconnect(player));
 });
 
 function joinRoom(room, player) {
@@ -142,6 +103,57 @@ function joinRoom(room, player) {
     // Might not be needed lol
     player.socket.roomId = room.id;
     console.log(player.id, "Joined", room.id)
+}
+
+function handleCreateRoom(player) {
+    //generate unique one time code for the lobby
+    const roomId = nanoid(6);
+
+    // create new room
+    let room = {
+        id: roomId,
+        players: []
+    };
+
+    // add it to rooms dictionary
+    rooms[roomId] = room;
+
+    joinRoom(room, player);
+    //send message back to player with room id
+    player.socket.emit('roomCreated', roomId);
+}
+
+function handleJoinRoom(roomId, player) {
+    const room = rooms[roomId];
+
+    // TODO: maybe the following code could be better written
+    if (room) {
+        // if player is already in the room
+        if (room.players.includes(player)) {
+            player.socket.emit('alreadyInRoom')
+            return;
+        }
+
+        // if room already has 2 players
+        if (room.players.length == process.env.MAX_ROOM_SIZE) {
+            player.socket.emit('roomFull')
+            return;
+        }
+
+        joinRoom(room, player);
+        player.socket.emit('roomJoined', roomId);
+
+        // broadcast to every other team member
+        player.socket.to(room.id).emit('newPlayerJoined', player.id)
+
+        // send game-ready-to-start game event if room is full
+        if (room.players.length == process.env.MAX_ROOM_SIZE) {
+            player.socket.to(roomId).emit('gameReadyToStart')
+        }
+
+    } else {
+        socket.emit('roomNotFound', roomId)
+    }
 }
 
 function handleConnect(player) {

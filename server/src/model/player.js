@@ -3,8 +3,6 @@ class Player {
         this.id = id;
         this.socket = socket;
     }
-
-
 }
 
 module.exports = Player;
