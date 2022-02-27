@@ -40,7 +40,12 @@ export default class Game extends Phaser.Scene {
         let map = this.make.tilemap({key: 'map', tileWidth: 32, tileHeight: 32}); // Create the tilemap with the specified tile dimensions
         let tileSet = map.addTilesetImage('tiles'); // Map the correct part of the tiles image to the tilemap
 
-        layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
+        groundLayer = map.createLayer(0, tileSet); // Draw the tiles on the screen
+
+        diamondLayer = map.createLayer(0, tileSet); // Creates layer of the diamonds
+        
+        // sprite still needs to  be shown at the tileIndex
+        coinLayer.setTileIndexCallback(110, hitDiamond, this); //Sets tile that calls function hitDiamond 
 
         let tile = layer.getTileAtWorldXY(64, 32); // Retrieve a specific tile based on a world position
         this.add.image(240, 240, 'gem').setScale(0.25); // Add an image over top (The scale is just because this specific image dimensions are large)
@@ -49,6 +54,9 @@ export default class Game extends Phaser.Scene {
 
         // Having the player added to the game
         player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.15);
+
+        // Collecting diamonds doesnt kill movement
+        this.physics.add.overlap(player, diamondLayer); 
 
         // Add used keys to the scene
         keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
@@ -119,6 +127,16 @@ export default class Game extends Phaser.Scene {
 
 
 
+    }
+
+    // function that removes tile at the given tileindex and adds 1 to the diamondCounter
+    // returns false so it doesnt collide with the player
+    // diamondCOunter is not shown at the moment
+    hitDiamond (sprite, tile){
+        diamondLayer.removeTileAt(tile.x, tile.y);
+        diamondCounter += 1;
+        
+        return false;
     }
 
 
