@@ -5,6 +5,12 @@ let layer;
 let coinLayer;
 let diamonds;
 
+
+let gamestageOffsets = {
+    x: 350,
+    y: -350,
+}
+
 export default class Game extends Phaser.Scene {
     constructor() {
         super("game");
@@ -29,9 +35,12 @@ export default class Game extends Phaser.Scene {
     }
 
 
-    init()
+    init(data)
     {
         this.fullWidth = 300
+
+        this.world = data.world;
+        this.stage = data.stage;
     }
 
     create() {
@@ -97,11 +106,6 @@ export default class Game extends Phaser.Scene {
 
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
 
-
-
-        
-
-
         //life pool
         const y = -50
         const x = -50
@@ -117,9 +121,6 @@ export default class Game extends Phaser.Scene {
         this.add.image(middleShaddowCap.x + middleShaddowCap.displayWidth, y, 'right-cap-shadow')
             .setOrigin(0, 0.5)
 
-
-
-
         this.leftCap = this.add.image(x, y, 'left-cap')
             .setOrigin(0, 0.5)
 
@@ -131,6 +132,13 @@ export default class Game extends Phaser.Scene {
 
         this.setMeterPercentage(1)
 
+        // Create the world and stage text
+        this.gamestage = this.add.text(this.cameras.main.x + gamestageOffsets.x, this.cameras.main.y + gamestageOffsets.y, `World: ${this.world}: ${this.stage}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
+
+        this.gamestage.fixedToCamera = true;
     }
 
     // function that removes tile at the given tileindex and adds 1 to the diamondCounter
@@ -153,8 +161,6 @@ export default class Game extends Phaser.Scene {
         this.rightCap.x = this.middle.x + this.middle.displayWidth
     }
 
-
-
     setMeterPercentageAnimated(percent = 1, duration = 1000)
     {
         const width = this.fullWidth * percent
@@ -174,11 +180,8 @@ export default class Game extends Phaser.Scene {
         })
     }
 
-
     update() {
-
-        if (this.input.keyboard.checkDown(keys.A, 200)) {
-            
+        if (this.input.keyboard.checkDown(keys.A, 200)) {            
                 this.player.anims.play('left', true);
                 let tile = layer.getTileAtWorldXY(this.player.x - 32, this.player.y,true);
     
@@ -191,6 +194,7 @@ export default class Game extends Phaser.Scene {
                 }
             
         } else if (this.input.keyboard.checkDown(keys.D, 200)) {
+            this.player.anims.play('right', true);
 
                 this.player.anims.play('right', true);
 
@@ -203,6 +207,7 @@ export default class Game extends Phaser.Scene {
             
 
         } else if (this.input.keyboard.checkDown(keys.S, 200)) {
+            this.player.anims.play('down', true);
 
             this.player.anims.play('down', true);
 
@@ -216,6 +221,7 @@ export default class Game extends Phaser.Scene {
 
 
         } else if (this.input.keyboard.checkDown(keys.W, 200)) {
+            this.player.anims.play('up', true);
 
                 this.player.anims.play('up', true);
 
@@ -227,6 +233,9 @@ export default class Game extends Phaser.Scene {
     
                 }
         }
+
+        // Update the game stage text position
+        this.gamestage.x = this.cameras.main.midPoint.x + gamestageOffsets.x;
+        this.gamestage.y = this.cameras.main.midPoint.y + gamestageOffsets.y;
     }
-    
 }

@@ -25,6 +25,7 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+game.scene.start('game', {world: 1, stage: 1});
 
 let button = document.getElementById('createTeamButton');
 let button2 = document.getElementById('joinTeamButton');
