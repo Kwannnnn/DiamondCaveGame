@@ -47,16 +47,19 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
 
+        // Creating a group of diamonds
         diamonds = this.physics.add.group({
             key: 'gem',
             repeat: 7,
             setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
         });
 
+        // Scope each diamond
         diamonds.children.iterate(function (child) {
             child.setScale(0.2);
         });
 
+        // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
 
         // this.add.image(240, 240, 'gem').setScale(0.25); // Add an image over top (The scale is just because this specific image dimensions are large)
