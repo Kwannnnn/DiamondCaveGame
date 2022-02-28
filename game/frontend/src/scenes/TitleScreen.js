@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { io } from 'socket.io-client';
 
 let SERVER_URL = "localhost:3000";
 const addressForm = '<input type="text" name="address" value="'+SERVER_URL+'" />';
@@ -34,16 +33,17 @@ export default class TitleScreen extends Phaser.Scene {
 
         this.socket.on('connect', ()=>{this.createLobby()});
 
-        this.socket.on('new lobby event', (args)=>{this.displayCode(args)});
+        this.socket.on('roomCreated', (args)=>{this.displayCode(args)});
 
         this.socket.on('connect_error', ()=>{this.displayError()});
     }
 
     createLobby(){
-        this.socket.emit('create team');
+        this.socket.emit('createRoom');
     }
 
     displayCode(args){
+        
         this.message.setText("Lobby code: "+args);
         //FIXME: Underscores render as a space. Might be a Phaser issue, maybe don't use underscores as a code
         console.log(args);
