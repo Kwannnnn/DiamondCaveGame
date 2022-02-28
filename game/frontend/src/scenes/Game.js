@@ -18,8 +18,6 @@ export default class Game extends Phaser.Scene {
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
 
-
-
         //preloading assets for lifepool
         this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
         this.load.image('middle', 'assets/barHorizontal_green_mid.png')
@@ -63,8 +61,6 @@ export default class Game extends Phaser.Scene {
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
-
-        // this.add.image(240, 240, 'gem').setScale(0.25); // Add an image over top (The scale is just because this specific image dimensions are large)
 
         tile.index = 0; // Update what image a tile should render as
 
