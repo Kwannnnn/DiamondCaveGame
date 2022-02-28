@@ -3,12 +3,13 @@ const app = express();
 const { customAlphabet } = require('nanoid');
 const socket = require("socket.io");
 const Player = require('./model/player.js');
+const PORT = 3000;
 
 // more info: https://github.com/ai/nanoid
 const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6)
 
 const httpServer = app.listen(PORT, function() {
-    console.log(`Started application on port ${process.env.PORT}`);
+    console.log(`Started application on port ${PORT}`);
 });
 
 const io = socket(httpServer, {
