@@ -6,6 +6,7 @@ let layer;
 let keyCombo;
 
 export default class Game extends Phaser.Scene {
+    onClockEvent;
     constructor() {
         super("game");
     }
@@ -116,7 +117,12 @@ export default class Game extends Phaser.Scene {
 
         this.setMeterPercentage(1)
 
+        let timedEvent = this.time.addEvent({ delay: 6000000, callback: this.onClockEvent, callbackScope: this, repeat: 1 });
+        text.setText('Game Clock: ' + timedEvent.getElapsedSeconds().toString().substr(0, 4));
 
+        let elapsedTime = timedEvent.getElapsedSeconds();
+        let elapsedMinutes = Math.floor(elapsedTime / 60);
+        let elapsedSeconds = Math.floor(elapsedTime - elapsedMinutes);
 
 
     }
