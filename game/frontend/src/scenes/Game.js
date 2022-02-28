@@ -59,6 +59,8 @@ export default class Game extends Phaser.Scene {
             child.setScale(0.2);
         });
 
+        this.diamondCounter = 0;
+
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
 
@@ -141,6 +143,9 @@ export default class Game extends Phaser.Scene {
     hitDiamond (player, star){
 
         star.disableBody(true, true);
+        this.diamondCounter += 1;
+
+        console.log("Collected! Diamonds collected: " + this.diamondCounter);
             
     }
 
