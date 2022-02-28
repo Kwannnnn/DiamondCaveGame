@@ -1,6 +1,6 @@
 import { CST } from "../CST";
 
-export class LoadScene extends Phaser.Scene {
+export default class LoadScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.LOAD
@@ -10,11 +10,11 @@ export class LoadScene extends Phaser.Scene {
 
     }
     preload() {
-        this.load.image("title_bg", "assets/image/title_bg.jpg");
-        this.load.image("options_button", "assets/image/option.png");
-        this.load.image("play_button", "assets/image/create_room.png");
-        this.load.image("join_button", "assets/image/join_room.png")
-        this.load.image("logo", "assets/image/logo.png");
+        this.load.image("title_bg", "assets/menu_images/title_bg.jpg");
+        this.load.image("options_button", "assets/menu_images/option.png");
+        this.load.image("play_button", "assets/menu_images/create_room.png");
+        this.load.image("join_button", "assets/menu_images/join_room.png")
+        this.load.image("logo", "assets/menu_images/logo.png");
 
         let loadingBar = this.add.graphics({
             fillStyle: {
@@ -34,6 +34,7 @@ export class LoadScene extends Phaser.Scene {
             console.log("done")
         })
     }
+    
     create() {
         this.scene.start(CST.SCENES.MENU)
     }
