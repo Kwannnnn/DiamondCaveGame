@@ -14,7 +14,7 @@ export class LoadScene extends Phaser.Scene {
         this.load.image("options_button", "assets/image/option.png");
         this.load.image("play_button", "assets/image/create_room.png");
         this.load.image("join_button", "assets/image/join_room.png")
-        this.load.image("logo", "assets/image/logo_fix.png");
+        this.load.image("logo", "assets/image/logo.png");
 
         let loadingBar = this.add.graphics({
             fillStyle: {
