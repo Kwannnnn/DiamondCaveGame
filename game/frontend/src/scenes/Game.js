@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 
-let player;
 let keys;
 let layer;
-let keyCombo;
+let coinLayer;
+let diamonds;
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -17,8 +17,6 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
-
-
 
         //preloading assets for lifepool
         this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
@@ -43,12 +41,28 @@ export default class Game extends Phaser.Scene {
         layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
 
         let tile = layer.getTileAtWorldXY(64, 32); // Retrieve a specific tile based on a world position
-        this.add.image(240, 240, 'gem').setScale(0.25); // Add an image over top (The scale is just because this specific image dimensions are large)
-
-        tile.index = 0; // Update what image a tile should render as
 
         // Having the player added to the game
-        player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.15);
+        this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
+
+        // Creating a group of diamonds
+        diamonds = this.physics.add.group({
+            key: 'gem',
+            repeat: 7,
+            setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
+        });
+
+        // Scope each diamond
+        diamonds.children.iterate(function (child) {
+            child.setScale(0.2);
+        });
+
+        this.diamondCounter = 0;
+
+        // Adding overalap between player and diamonds (collecting diamonds)
+        this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
+
+        tile.index = 0; // Update what image a tile should render as
 
         // Add used keys to the scene
         keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
@@ -79,12 +93,13 @@ export default class Game extends Phaser.Scene {
         });
         
         // Stick camera to the player
-        this.cameras.main.startFollow(player);
+        this.cameras.main.startFollow(this.player);
 
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
 
 
 
+        
 
 
         //life pool
@@ -116,15 +131,19 @@ export default class Game extends Phaser.Scene {
 
         this.setMeterPercentage(1)
 
-
-
-
     }
 
+    // function that removes tile at the given tileindex and adds 1 to the diamondCounter
+    // returns false so it doesnt collide with the player
+    // diamondCOunter is not shown at the moment
+    hitDiamond (player, star){
 
+        star.disableBody(true, true);
+        this.diamondCounter += 1;
 
-
-
+        console.log("Collected! Diamonds collected: " + this.diamondCounter);
+            
+    }
 
     setMeterPercentage(percent = 1)
     {
@@ -160,58 +179,54 @@ export default class Game extends Phaser.Scene {
 
         if (this.input.keyboard.checkDown(keys.A, 200)) {
             
-                player.anims.play('left', true);
-                let tile = layer.getTileAtWorldXY(player.x - 32, player.y,true);
+                this.player.anims.play('left', true);
+                let tile = layer.getTileAtWorldXY(this.player.x - 32, this.player.y,true);
     
                 if (tile.index !== 2){
     
-                    player.x -= 32;
+                    tile = layer.getTileAtWorldXY(this.player.x - 32, this.player.y,true);
+                    this.player.x -= 32;
                     
     
                 }
             
         } else if (this.input.keyboard.checkDown(keys.D, 200)) {
 
-                player.anims.play('right', true);
+                this.player.anims.play('right', true);
 
-                let tile = layer.getTileAtWorldXY(player.x + 32, player.y,true);
+                let tile = layer.getTileAtWorldXY(this.player.x + 32, this.player.y,true);
     
                 if (tile.index !== 2){
-                    
-                    player.x += 32;
+                    tile = layer.getTileAtWorldXY(this.player.x + 32, this.player.y,true);
+                    this.player.x += 32;
                 }
             
 
         } else if (this.input.keyboard.checkDown(keys.S, 200)) {
 
-                player.anims.play('down', true);
+            this.player.anims.play('down', true);
 
-                let tile = layer.getTileAtWorldXY(player.x, player.y + 32,true);
+                let tile = layer.getTileAtWorldXY(this.player.x, this.player.y + 32,true);
     
                 if (tile.index !== 2){
-                    
-                    player.y += 32;
+                    tile = layer.getTileAtWorldXY(this.player.x, this.player.y + 32,true);
+                    this.player.y += 32;
     
                 }
 
 
         } else if (this.input.keyboard.checkDown(keys.W, 200)) {
 
-                player.anims.play('up', true);
+                this.player.anims.play('up', true);
 
-                let tile = layer.getTileAtWorldXY(player.x, player.y - 32,true);
+                let tile = layer.getTileAtWorldXY(this.player.x, this.player.y - 32,true);
     
                 if (tile.index !== 2){
-                    
-                    player.y -= 32;
+                    tile = layer.getTileAtWorldXY(this.player.x, this.player.y - 32,true);
+                    this.player.y -= 32;
     
                 }
-            
-
         }
-        
-    
-        
     }
     
 }
