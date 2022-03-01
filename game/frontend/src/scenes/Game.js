@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { CST } from "../CST";
 
+import HUD from './HUD';
+
 let keys;
 let layer;
 
@@ -40,6 +42,9 @@ export default class Game extends Phaser.Scene {
         layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
 
         let tile = layer.getTileAtWorldXY(64, 32); // Retrieve a specific tile based on a world position
+
+        // Add the HUD scene
+        this.scene.add('hud', HUD, true, {world: 1, stage: 1});
 
         // Having the player added to the game
         this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);

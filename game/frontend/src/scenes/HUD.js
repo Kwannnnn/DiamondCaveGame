@@ -6,14 +6,14 @@ export default class HUD extends Phaser.Scene {
             key: "hud"
         });
 
-        this.world = 1;
-        this.stage = 1;
-    }
-
-    init() {
         this.fullWidth = 200;
         this.x = 100;
         this.y = 40;
+    }
+
+    init(data) {
+        this.world = data.world;
+        this.stage = data.stage;
     }
 
     preload() {
@@ -50,7 +50,7 @@ export default class HUD extends Phaser.Scene {
         this.setMeterPercentage(0.5)
 
         // Create the world and stage text
-        this.gamestage = this.add.text(1000, 25, `World: ${this.world}: ${this.stage}`, {
+        this.gamestage = this.add.text(1000, 25, `World: ${this.world}-${this.stage}`, {
             color: "#FFFFFF",
             fontSize: 40,
         });
