@@ -70,4 +70,15 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-05 | The player can move using keyboard inputs | M | 5 | - | US09-BI01 |
 | BI-06 | The camera follows the player | M | 7 | - | US09-BI01 |
 | BI-07 | Add collision for objects on the map | M | 5 | - | US09-BI01 |
-| BI-08 | Determine spawn and exit locations | M | 6 | - | - |
+| BI-08 | Determine spawn and exit locations | M | 6 | - | US09-BI03 |
+
+### US 10
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | Display the team's life total in the HUD | M | 7 | - | - |
+| BI-02 | Display a gem counter to the team | M | 9 | - |  |
+| BI-03 | Display the team's level progression | M | 4 | - |  |
+| BI-04 | Display the team's run time | M | 4 | - |  |
+| BI-05 | Display player's names in the HUD | M | 6 | - |  |
+| BI-06 | Display when the players can move to next map | M | 4 | - |  |
