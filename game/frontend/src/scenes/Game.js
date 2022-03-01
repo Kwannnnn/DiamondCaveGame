@@ -5,6 +5,8 @@ let layer;
 let coinLayer;
 let diamonds;
 
+let timedEvent;
+let clock;
 
 let gamestageOffsets = {
     x: 350,
@@ -139,6 +141,30 @@ export default class Game extends Phaser.Scene {
         });
 
         this.gamestage.fixedToCamera = true;
+
+        this.seconds = 0;
+        this.minutes = 0;
+
+        // Draw HUD clock
+        clock = this.add.text(-50, -100, `Time: ${this.seconds}:${this.minutes}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
+
+        // Actual clock
+        timedEvent = this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
+    }
+
+    // Update time and clock
+    updateClock () {
+        // Change time
+        this.seconds++;
+        if (this.seconds === 60) {
+            this.minutes++;
+            this.seconds = 0;
+        }
+        // Update clock text
+        clock.setText(`Time: ${this.minutes}:${this.seconds}`);
     }
 
     // function that removes tile at the given tileindex and adds 1 to the diamondCounter
