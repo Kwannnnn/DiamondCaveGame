@@ -1,4 +1,4 @@
-
+import CollectDiamond from "../events/CollectDiamondEvent";
 
 export default class HUD extends Phaser.Scene {
     constructor() {
@@ -9,11 +9,18 @@ export default class HUD extends Phaser.Scene {
         this.fullWidth = 200;
         this.x = 100;
         this.y = 40;
+
+        // Initial clock counts
+        this.minutes = 0;
+        this.seconds = 0;
     }
 
     init(data) {
         this.world = data.world;
         this.stage = data.stage;
+
+        this.collectedDiamonds = 0;
+        this.totalDiamonds = data.totalDiamonds;
     }
 
     preload() {
@@ -54,10 +61,27 @@ export default class HUD extends Phaser.Scene {
             color: "#FFFFFF",
             fontSize: 40,
         });
-    }
 
-    update() {
 
+        // Create the Diamond counter
+        this.diamondCounter = this.add.text(600, 25, `Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
+
+        CollectDiamond.on('update-count', this.updateDiamondCount, this);
+
+        // Create the clock
+        this.clock = this.add.text(300, 25, `Time: ${this.seconds}:${this.minutes}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
+
+        this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
+
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+            CollectDiamond.off('update-count', this.updateDiamondCount, this);
+        })
     }
 
     setMeterPercentage(percent = 1)
@@ -85,5 +109,26 @@ export default class HUD extends Phaser.Scene {
                 this.rightCap.visible = this.middle.displayWidth > 0
             }
         })
+    }
+
+    // Update time and clock
+    updateClock () {
+        this.seconds++;
+        if (this.seconds === 60) {
+            this.minutes++;
+            this.seconds = 0;
+        }
+
+        this.clock.setText(`Time: ${this.minutes}:${this.seconds}`);
+    }
+
+    updateDiamondCount(count) {
+        this.collectedDiamonds = count;
+
+        if (this.collectedDiamonds === this.totalDiamonds) {
+            this.diamondCounter.setText(`Go to next map!`);
+        } else {
+            this.diamondCounter.setText(`Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`);
+        }        
     }
 }
