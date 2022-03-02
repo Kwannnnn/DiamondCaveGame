@@ -33,6 +33,20 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-03 | Find/Create sprites for diamonds | M | 2 | - | - |
 | BI-04 | Find/Create sprites for the rocks | M | 2 | - | - |
 
+### US 02
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | Find/create world/map themes | M | 6 | - | - |
+
+### US 03
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | Implement healing perk | M | 5 | - | - |
+| BI-02 | Implement movement speed perk | M | 5 | - | - |
+| BI-03 | Create perk scene | M | 6 | - | - |
+
 ### US 04
 
 Backlog item | Definition | Priority | Weight | Time spent | Depends on |
@@ -70,6 +84,8 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-05 | Decode the game state on the client side and render the game | M | 6 | - | US07-BI03 |
 | BI-06 | Send player position between from client to server | M | 5 | - | - |
 | BI-07 | Send collectable state (i.e gems) between from client to server | M | 5 | - | - |
+
+### US 08
 
 ### US 09
 
