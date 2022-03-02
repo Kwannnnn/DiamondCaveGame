@@ -59,6 +59,18 @@ Backlog item | Definition | Priority | Weight | Time spent | Depends on |
 | BI-02 | Implement lobby join logic on the client | M | 3 | - | US09-BI01 |
 | BI-03 | Create lobby menu join feature | M | 2 | - | US09-BI01 |
 
+### US 07
+
+Backlog item | Definition | Priority | Weight | Time spent | Depends on |
+| -| -| -| -| -| -|
+| BI-01 | Server should sent a ready to start game event to the client | M | 3 | - | - |
+| BI-02 | Client should  display the players in the lobby and a button to start the game | M | 4 | - | - |
+| BI-03 | Server should generate the game state once the client start button has been pressed | M | 5 | - | US07-BI04 |
+| BI-04 | Define a communication format for the game state | M | 5 | - | - |
+| BI-05 | Decode the game state on the client side and render the game | M | 6 | - | US07-BI03 |
+| BI-06 | Send player position between from client to server | M | 5 | - | - |
+| BI-07 | Send collectable state (i.e gems) between from client to server | M | 5 | - | - |
+
 ### US 09
 
 Backlog item | Definition | Priority | Weight | Time spent | Depends on |
