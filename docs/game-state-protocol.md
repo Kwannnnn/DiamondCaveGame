@@ -77,6 +77,46 @@ the game state in the correct manner.
             With this event the server indicates the  end of a new game.
         </td>
     </tr>
+    <tr>
+        <td>playerMoved</td>
+<td>
+<p>
+
+```javascript
+{
+    "playerId": ..., // the id of the player (sockedid, perhaps)
+    "x": ..., // the new x position of the player
+    "y": ..., // the new y position of the player
+    
+    // The new direction the player is facing
+    // 0 - right, 90 - up, 180 - left, 270 - down
+    "orientation": ...
+}
+```
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room that
+            a player position has been changed.
+        </td>
+    </tr>
+    <tr>
+        <td>gemCollected</td>
+<td>
+<p>
+
+```javascript
+{
+    "gemId": ... // the id of the collected gem
+}
+```
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room that
+            a gem has been collected.
+        </td>
+    </tr>
 </table>
 
 ### Possible errors

@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
+import { CST } from "../CST";
 
 let keys;
 let layer;
-let coinLayer;
+
 let diamonds;
+let diamondCounter;
+let totalDiamondsInMap;
 
 let timedEvent;
 let clock;
@@ -15,7 +18,9 @@ let gamestageOffsets = {
 
 export default class Game extends Phaser.Scene {
     constructor() {
-        super("game");
+        super({
+            key: CST.SCENES.GAME
+        })
     }
 
     preload() {
@@ -41,6 +46,8 @@ export default class Game extends Phaser.Scene {
     {
         this.fullWidth = 300
 
+        this.totalDiamondsInMap = 10;
+
         this.world = data.world;
         this.stage = data.stage;
     }
@@ -59,7 +66,7 @@ export default class Game extends Phaser.Scene {
         // Creating a group of diamonds
         diamonds = this.physics.add.group({
             key: 'gem',
-            repeat: 7,
+            repeat: this.totalDiamondsInMap - 1,
             setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
         });
 
@@ -68,7 +75,14 @@ export default class Game extends Phaser.Scene {
             child.setScale(0.2);
         });
 
-        this.diamondCounter = 0;
+        // How many diamonds have been collected
+        this.diamondCount = 0;
+
+        // Displayed diamond counter
+        diamondCounter = this.add.text(-50, -140, `Gems: ${this.diamondCount}/${this.totalDiamondsInMap}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
@@ -167,28 +181,30 @@ export default class Game extends Phaser.Scene {
         clock.setText(`Time: ${this.minutes}:${this.seconds}`);
     }
 
-    // function that removes tile at the given tileindex and adds 1 to the diamondCounter
-    // returns false so it doesnt collide with the player
-    // diamondCOunter is not shown at the moment
-    hitDiamond (player, star){
+    // function that removes tile at the given tile index and adds 1 to the diamondCount
+    // returns false, so it doesn't collide with the player
+    hitDiamond (player, star) {
 
         star.disableBody(true, true);
-        this.diamondCounter += 1;
+        this.diamondCount += 1;
 
-        console.log("Collected! Diamonds collected: " + this.diamondCounter);
-            
+        console.log("Collected! Diamonds collected: " + this.diamondCount);
+
+        diamondCounter.setText(`Gems: ${this.diamondCount}/${this.totalDiamondsInMap}`);
+
+        if (this.diamondCount === this.totalDiamondsInMap) {
+            diamondCounter.setText(`Go to next map!`);
+        }
     }
 
-    setMeterPercentage(percent = 1)
-    {
+    setMeterPercentage(percent = 1) {
         const width = this.fullWidth * percent
 
         this.middle.displayWidth = width
         this.rightCap.x = this.middle.x + this.middle.displayWidth
     }
 
-    setMeterPercentageAnimated(percent = 1, duration = 1000)
-    {
+    setMeterPercentageAnimated(percent = 1, duration = 1000) {
         const width = this.fullWidth * percent
 
         this.tweens.add({

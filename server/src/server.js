@@ -27,6 +27,62 @@ let players = {};
 // roomId | Room
 let rooms = {};
 
+// Send socket initialization scripts to the client
+app.get('/', function(req, res) {
+    res.send(`
+    <button>Create team</button>
+    
+    <form>
+        <input placeholder="enter your room id">
+        <button>Join</button>     
+    </form>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let socket = io();
+    
+    let button = document.getElementsByTagName('button')[0];
+    
+    button.addEventListener('click' , () => {
+        socket.emit("createRoom");
+    });
+    
+    socket.on('roomCreated', (lobbyId) => {
+        const p = document.createElement('p');
+        p.innerText = 'new lobby created with id: ' + lobbyId;
+        document.body.append(p);
+    });
+    
+    
+    let form = document.getElementsByTagName('form')[0];
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        let input = document.getElementsByTagName('input')[0].value;
+        
+        socket.emit("joinRoom", input);
+    });
+    
+    socket.on('roomJoined', (roomId) => {
+        const p = document.createElement('p');
+        p.innerText = 'joined room with id: ' + roomId;
+        document.body.append(p);
+    })
+    
+    socket.on('roomNotFound', (roomId) => {
+        const p = document.createElement('p');
+        p.innerText = 'Room ' + roomId + ' does not exist';
+        document.body.append(p);
+    })
+    
+    socket.on('newPlayerJoined', (playerId) => {
+        const p = document.createElement('p');
+        p.innerText = 'Player ' + playerId + ' joined the room';
+        document.body.append(p);
+    })
+</script>`);
+});
+
 io.on('connection', (socket) => {
     // generate new unique id for the player
     const pid = nanoid();

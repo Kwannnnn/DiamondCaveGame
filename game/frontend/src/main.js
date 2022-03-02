@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import TitleScreen from './scenes/TitleScreen';
+import JoinScene from './scenes/MenuJoinScene';
 import GameScreen from './scenes/Game';
 import LoadScene from './scenes/LoadScene';
 import MenuScene from './scenes/MenuScene';
@@ -9,7 +9,7 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [TitleScreen, GameScreen],
+    scene: [LoadScene, MenuScene, GameScreen, JoinScene],
     parent: "game",
     type: Phaser.AUTO,
     physics: {
@@ -23,19 +23,6 @@ const config = {
     }
 }
 
-export default new Phaser.Game(config)
+const game = new Phaser.Game(config);
 
-// const game = new Phaser.Game(config);
-
-// game.scene.start('game', {world: 1, stage: 1});
-
-// let button = document.getElementById('createTeamButton');
-// let button2 = document.getElementById('joinTeamButton');
-
-// button.addEventListener('click' , () => {
-//     socket.emit("createRoom");
-// });
-
-// button2.addEventListener('click',()=>{
-//     socket.emit('joinRoom')
-// })
+game.scene.start();
