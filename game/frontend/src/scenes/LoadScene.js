@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import { CST } from "../CST";
 
 export default class LoadScene extends Phaser.Scene {
@@ -30,9 +31,6 @@ export default class LoadScene extends Phaser.Scene {
             console.log(percent)
         })
 
-        this.load.on("complete", () => {
-            console.log("done")
-        })
     }
     
     create() {

@@ -118,12 +118,11 @@ function handleCreateRoom(player) {
         id: roomId,
         players: []
     };
-
     // add it to rooms dictionary
     rooms[roomId] = room;
 
     joinRoom(room, player);
-    //send message back to player with room id
+    //send message back to player with room obj
     player.socket.emit('roomCreated', roomId);
 }
 

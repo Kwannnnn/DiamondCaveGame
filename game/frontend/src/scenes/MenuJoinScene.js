@@ -12,7 +12,7 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     preload() {
-
+            
     }
 
     create() {
@@ -52,7 +52,6 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     displayCode(args){
-        
         this.message.setText("Lobby code: "+args);
         console.log(args);
     }
