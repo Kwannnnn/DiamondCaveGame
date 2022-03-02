@@ -9,7 +9,7 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [LoadScene, MenuScene, GameScreen, TitleScreen],
+    scene: [TitleScreen, GameScreen],
     parent: "game",
     type: Phaser.AUTO,
     physics: {
@@ -23,17 +23,19 @@ const config = {
     }
 }
 
-const game = new Phaser.Game(config);
+export default new Phaser.Game(config)
 
-game.scene.start('game', {world: 1, stage: 1});
+// const game = new Phaser.Game(config);
 
-let button = document.getElementById('createTeamButton');
-let button2 = document.getElementById('joinTeamButton');
+// game.scene.start('game', {world: 1, stage: 1});
 
-button.addEventListener('click' , () => {
-    socket.emit("createRoom");
-});
+// let button = document.getElementById('createTeamButton');
+// let button2 = document.getElementById('joinTeamButton');
 
-button2.addEventListener('click',()=>{
-    socket.emit('joinRoom')
-})
+// button.addEventListener('click' , () => {
+//     socket.emit("createRoom");
+// });
+
+// button2.addEventListener('click',()=>{
+//     socket.emit('joinRoom')
+// })
