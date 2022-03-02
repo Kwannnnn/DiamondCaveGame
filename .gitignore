@@ -4,6 +4,7 @@ node_modules
 /package
 **/package-lock.json
 *.parcel-cache
+*.cache
 *dist
 *.cache
 
