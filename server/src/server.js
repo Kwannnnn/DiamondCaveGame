@@ -102,7 +102,6 @@ io.on('connection', (socket) => {
 function joinRoom(room, player) {
     room.players.push(player);
     player.socket.join(room.id);
-
     // Store roomId for future use
     // Might not be needed lol
     player.socket.roomId = room.id;
@@ -122,8 +121,9 @@ function handleCreateRoom(player) {
     rooms[roomId] = room;
 
     joinRoom(room, player);
-    //send message back to player with room obj
-    player.socket.emit('roomCreated', roomId);
+    console.log("Room info", rooms[roomId]);
+    //send message back to player with room id
+    player.socket.emit('roomCreated', roomId, player.id);
 }
 
 function handleJoinRoom(roomId, player) {
@@ -144,7 +144,8 @@ function handleJoinRoom(roomId, player) {
         }
 
         joinRoom(room, player);
-        player.socket.emit('roomJoined', roomId);
+        console.log(rooms[roomId]);
+        player.socket.emit('roomJoined', roomId, player.id);
 
         // broadcast to every other team member
         player.socket.to(room.id).emit('newPlayerJoined', player.id)
@@ -155,7 +156,7 @@ function handleJoinRoom(roomId, player) {
         }
 
     } else {
-        socket.emit('roomNotFound', roomId)
+        player.socket.emit('roomNotFound', roomId)
     }
 }
 

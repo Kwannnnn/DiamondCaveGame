@@ -24,11 +24,11 @@ export default class MenuScene extends Phaser.Scene {
         this.join = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 250, "join_button").setDepth(1).setInteractive();
         this.options = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 150, "options_button").setDepth(1).setInteractive();
 
-        this.join.on('pointerdown', () => {this.scene.start(CST.SCENES.JOIN)});
+        this.join.on('pointerdown', () => {this.scene.launch(CST.SCENES.JOIN)});
         this.join.on('pointerover', () => {this.join.setTint(0x30839f)});
         this.join.on('pointerout', () => {this.join.clearTint()});
 
-        this.lobby.on('pointerdown', () => {this.scene.start(CST.SCENES.LOBBY)});
+        this.lobby.on('pointerdown', () => {this.scene.launch(CST.SCENES.LOBBY)});
         this.lobby.on('pointerover', () => {this.lobby.setTint(0x30839f)});
         this.lobby.on('pointerout', () => {this.lobby.clearTint()});
     }
