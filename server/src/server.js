@@ -110,7 +110,26 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => handleDisconnect(player));
 
     socket.on('gameStart', (roomId) => handleGameStart(roomId));
+
+    socket.on('playerMove', (newPosition) => handlePlayerMove(newPosition, player));
 });
+
+function handlePlayerMove(newPosition, player) {
+    const roomId = newPosition.roomId;
+    const room = rooms[roomId];
+
+    if (room) {
+        // Notify all teammates about the movement
+        player.socket.to(roomId).emit('teammateMoved', {
+            playerId: player.socket.id,
+            x: newPosition.x,
+            y: newPosition.y
+        });
+    } else {
+        socket.emit('roomNotFound', roomId);
+    } 
+    console.log(newPosition);
+}
 
 function joinRoom(room, player) {
     room.players.push(player);
