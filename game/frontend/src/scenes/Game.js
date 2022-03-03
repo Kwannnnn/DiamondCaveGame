@@ -5,6 +5,7 @@ import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
 
 let layer;
+let delay;
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -25,6 +26,8 @@ export default class Game extends Phaser.Scene {
     init() {
         this.totalDiamonds = 10;
         this.collectedDiamonds = 0;
+        //the ideal delay for the normal speed to begin with is 200
+        this.delay=200;
     }
 
     create() {
@@ -55,16 +58,16 @@ export default class Game extends Phaser.Scene {
         let movementX = 0;
         let movementY = 0;
 
-        if (this.input.keyboard.checkDown(this.keys.A, 200)) {     
+        if (this.input.keyboard.checkDown(this.keys.A, this.delay)) {     
             this.player.anims.play('left', true);
             movementX = -32;
-        } else if (this.input.keyboard.checkDown(this.keys.D, 200)) {
+        } else if (this.input.keyboard.checkDown(this.keys.D, this.delay)) {
             this.player.anims.play('right', true);
             movementX = 32;
-        } else if (this.input.keyboard.checkDown(this.keys.S, 200)) {
+        } else if (this.input.keyboard.checkDown(this.keys.S, this.delay)) {
             this.player.anims.play('down', true);
             movementY = 32;
-        } else if (this.input.keyboard.checkDown(this.keys.W, 200)) {
+        } else if (this.input.keyboard.checkDown(this.keys.W, this.delay)) {
             this.player.anims.play('up', true);
             movementY = -32;
         }
@@ -83,6 +86,11 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds++;
         
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+
+
+        //this is a small test for the speed increase 
+        /* this.increaseSpeed();
+        console.log('current delay:'+this.delay); */
     }
 
     setupPlayerMovement() {
@@ -113,5 +121,10 @@ export default class Game extends Phaser.Scene {
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
+    }
+
+
+    increaseSpeed(){
+        this.delay=this.delay*7/10;
     }
 }
