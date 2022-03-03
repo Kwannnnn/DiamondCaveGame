@@ -74,7 +74,7 @@ export default class JoinScene extends Phaser.Scene {
         this.message.setText('Lobby code: '+args);
         this.actionButton.setText('Start game');
         this.actionButton.off('pointerdown');
-        this.actionButton.on('pointerdown', () => {this.scene.start(CST.SCENES.GAME, {world: 1, stage: 1});});
+        this.actionButton.on('pointerdown', () => {this.scene.start(CST.SCENES.GAME, {world: 1, stage: 1, socket: this.socket, lobbyID: lobbyID});});
         this.usernameFormObject.destroy();
     }
 
