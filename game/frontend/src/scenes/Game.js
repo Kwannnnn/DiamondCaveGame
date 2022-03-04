@@ -89,6 +89,7 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds++;
         
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+        this.handleDiamondCollected(diamond);
     }
 
     setupPlayerMovement() {
@@ -112,9 +113,12 @@ export default class Game extends Phaser.Scene {
             setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
         });
 
+        let id = 1;
         // Scope each diamond
         this.diamonds.children.iterate(function (child) {
             child.setScale(0.2);
+            child.id = id;
+            id++;
         });        
 
         // Adding overalap between player and diamonds (collecting diamonds)
@@ -132,5 +136,9 @@ export default class Game extends Phaser.Scene {
             y: this.player.y,
             orientation: this.player.orientation
         });
+    }
+
+    handleDiamondCollected(diamond){
+        this.socket.emit('gemCollected', diamond.id);
     }
 }
