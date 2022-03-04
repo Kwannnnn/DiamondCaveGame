@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
 import { CST } from '../CST';
 
+let lobbyID;
+let playerIDs = [];
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
-let lobbyID;
 
-export default class JoinScene extends Phaser.Scene {
+export default class LobbyScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.LOBBY
@@ -13,13 +14,16 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     init(data){
+        /* FIXME: The way the 2nd player display the scene is based on client variables. Should be another way to do that but I haven't figured out. */
         console.log(data);
-        if (data === undefined || data.lobbyID === undefined) return;
-        lobbyID = data.lobbyID;
+        if (data === undefined) return;
+        lobbyID = data.roomId;
+        playerIDs = data.playerIDs;
+        console.log(lobbyID);
+        console.log(playerIDs);
     }
 
     create() {
-
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0,0, 'title_bg').setOrigin(0).setDepth(0);
 
@@ -30,7 +34,7 @@ export default class JoinScene extends Phaser.Scene {
 
         this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
 
-        this.actionButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 150, lobbyID === undefined ? 'Connect' : 'Start game', {
+        this.actionButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, lobbyID === undefined ? 'Connect' : 'Start game', {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5).setInteractive();
@@ -39,12 +43,10 @@ export default class JoinScene extends Phaser.Scene {
         else {
             //TODO: Disable button until both players are connected
             this.actionButton.on('pointerdown', () => {this.scene.start(CST.SCENES.GAME, {world: 1, stage: 1});});
-            this.displayCode(lobbyID);
+            this.displayRoom(playerIDs);
         }
         this.actionButton.on('pointerover', () => {this.actionButton.setTint(0x30839f);});
         this.actionButton.on('pointerout', () => {this.actionButton.clearTint();});
-
-        //TODO: Write lobby player display and refresh code
     }
 
     connect(){
@@ -58,9 +60,11 @@ export default class JoinScene extends Phaser.Scene {
         this.message.setText('Connecting to:'+ip);
         this.socket = io(SERVER_URL, {query: 'username='+username ,reconnection: false});
 
-        this.socket.on('connect', ()=>{this.createLobby();});
+        this.socket.on('connect', ()=>{this.createLobby();}); // emit createRoom event to the server
 
-        this.socket.on('roomCreated', (args)=>{this.displayCode(args);});
+        this.socket.on('roomCreated', (args)=>{this.createRoom(args);});
+
+        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);} // re-render the scene if new player joins);
 
         this.socket.on('connect_error', ()=>{this.displayError();});
     }
@@ -69,16 +73,41 @@ export default class JoinScene extends Phaser.Scene {
         this.socket.emit('createRoom');
     }
 
-    displayCode(args){
-        lobbyID = args;
-        this.message.setText('Lobby code: '+args);
-        this.actionButton.setText('Start game');
-        this.actionButton.off('pointerdown');
-        this.actionButton.on('pointerdown', () => {this.scene.start(CST.SCENES.GAME, {world: 1, stage: 1, socket: this.socket, lobbyID: lobbyID});});
+    // Room creation (new room)
+    createRoom(args){
+        const { roomId, playerIDs } = args
+        lobbyID = roomId;
+        console.log(playerIDs);
+        this.displayRoom(playerIDs);
+    }
+
+    displayRoom(playerIDs){
+        this.displayCode();
+        this.displayPlayer(playerIDs);
+        this.displayStartButton();
         this.usernameFormObject.destroy();
     }
 
     displayError(){
         this.message.setText('Could not connect!');
+    }
+
+    displayCode() {
+        this.message.setText("Lobby Code: " + lobbyID);
+    }
+
+    displayPlayer(playerIDs) {
+        for (let i = 1; i <= playerIDs.length; i++) {
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ": " + playerIDs[i-1], {
+                color: '#FFFFFF',
+                fontSize: 40
+            }).setOrigin(0.5);
+        }
+    }
+
+    displayStartButton() {
+        this.actionButton.setText('Start game');
+        this.actionButton.off('pointerdown');
+        this.actionButton.on('pointerdown', () => {this.scene.start(CST.SCENES.GAME, {world: 1, stage: 1, socket: this.socket, lobbyID: lobbyID});});
     }
 }
