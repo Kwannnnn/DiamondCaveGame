@@ -28,7 +28,7 @@ export default class MenuScene extends Phaser.Scene {
         this.join.on('pointerover', () => {this.join.setTint(0x30839f)});
         this.join.on('pointerout', () => {this.join.clearTint()});
 
-        this.lobby.on('pointerdown', () => {this.scene.launch(CST.SCENES.LOBBY)});
+        this.lobby.on('pointerdown', () => {this.scene.start(CST.SCENES.LOBBY)});
         this.lobby.on('pointerover', () => {this.lobby.setTint(0x30839f)});
         this.lobby.on('pointerout', () => {this.lobby.clearTint()});
     }

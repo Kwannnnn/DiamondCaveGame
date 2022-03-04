@@ -22,9 +22,11 @@ export default class Game extends Phaser.Scene {
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
     }
 
-    init() {
+    init(data) {
         this.totalDiamonds = 10;
         this.collectedDiamonds = 0;
+        this.socket = data.socket;
+        this.lobbyID = data.lobbyID;
     }
 
     create() {
@@ -39,6 +41,10 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
         this.setupPlayerMovement();
+
+        // Send the new player position to the server on key release
+        // This happens on ANY key release that is part of the scene input
+        this.input.keyboard.on('keyup', this.handlePlayerMoved.bind(this));
         
         // Stick camera to the player
         this.cameras.main.startFollow(this.player);
@@ -113,5 +119,18 @@ export default class Game extends Phaser.Scene {
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
+    }
+
+    /**
+     * Fires an event on the socket for player movement, sending the new player
+     * position.
+     */
+    handlePlayerMoved() {
+        this.socket.emit('playerMove', {
+            roomId: this.lobbyID,
+            x: this.player.x,
+            y: this.player.y,
+            orientation: this.player.orientation
+        });
     }
 }
