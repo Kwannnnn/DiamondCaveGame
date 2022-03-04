@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from "../CST";
+import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
@@ -10,7 +10,7 @@ export default class Game extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.GAME
-        })
+        });
     }
 
     preload() {
@@ -27,6 +27,7 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds = 0;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
+        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
     }
 
     create() {
@@ -89,7 +90,11 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds++;
         
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
-        this.handleDiamondCollected(diamond);
+
+        this.socket.emit('gemCollected', {
+            roomId: this.lobbyID,
+            gemId: diamond.id
+        });
     }
 
     setupPlayerMovement() {
@@ -139,6 +144,14 @@ export default class Game extends Phaser.Scene {
     }
 
     handleDiamondCollected(diamond){
-        this.socket.emit('gemCollected', diamond.id);
+        this.diamonds.children.each((child) => this.removeDiamond(child, diamond)); //Iterate through diamond list to remove matching diamond
+    }
+
+    removeDiamond(testDiamond, targetID){
+        if (testDiamond.id === targetID){
+            testDiamond.disableBody(true, true);
+            this.collectedDiamonds++;
+            DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+        }
     }
 }

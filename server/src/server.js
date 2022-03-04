@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
 
     socket.on('playerMove', (newPosition) => handlePlayerMove(newPosition, player));
 
-    socket.on('gemCollected', (diamond) => handleCollectDiamond(diamond));
+    socket.on('gemCollected', (diamond) => handleCollectDiamond(player, diamond));
 });
 
 function handlePlayerMove(newPosition, player) {
@@ -311,6 +311,15 @@ function handleGameOver(roomId) {
     io.to(roomId).emit('gameOver', gameState);
 }
 
-function handleCollectDiamond(diamond) {
-    console.log('Collected diamond ID: '+diamond);
+function handleCollectDiamond(player, diamond) {
+    const roomId = diamond.roomId;
+    const room = rooms[roomId];
+
+    if (room) {
+        // Notify teammate about collected diamond
+        player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+    } else {
+        socket.emit('roomNotFound', roomId);
+    }
+    console.log(diamond);
 }
