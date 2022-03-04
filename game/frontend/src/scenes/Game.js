@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from "../CST";
+import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
@@ -10,7 +10,7 @@ export default class Game extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.GAME
-        })
+        });
     }
 
     preload() {
@@ -27,6 +27,7 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds = 0;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
+        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
     }
 
     create() {
@@ -89,6 +90,11 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds++;
         
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+
+        this.socket.emit('gemCollected', {
+            roomId: this.lobbyID,
+            gemId: diamond.id
+        });
     }
 
     setupPlayerMovement() {
@@ -112,9 +118,12 @@ export default class Game extends Phaser.Scene {
             setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
         });
 
+        let id = 1;
         // Scope each diamond
         this.diamonds.children.iterate(function (child) {
             child.setScale(0.2);
+            child.id = id;
+            id++;
         });        
 
         // Adding overalap between player and diamonds (collecting diamonds)
@@ -132,5 +141,17 @@ export default class Game extends Phaser.Scene {
             y: this.player.y,
             orientation: this.player.orientation
         });
+    }
+
+    handleDiamondCollected(diamond){
+        this.diamonds.children.each((child) => this.removeDiamond(child, diamond)); //Iterate through diamond list to remove matching diamond
+    }
+
+    removeDiamond(testDiamond, targetID){
+        if (testDiamond.id === targetID){
+            testDiamond.disableBody(true, true);
+            this.collectedDiamonds++;
+            DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+        }
     }
 }

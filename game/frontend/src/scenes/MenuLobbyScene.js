@@ -16,11 +16,12 @@ export default class LobbyScene extends Phaser.Scene {
     init(data){
         /* FIXME: The way the 2nd player display the scene is based on client variables. Should be another way to do that but I haven't figured out. */
         console.log(data);
-        if (data === undefined) return;
-        lobbyID = data.roomId;
-        playerIDs = data.playerIDs;
+        if (data === undefined || data.args === undefined || data.lobbyID === undefined || data.socket === undefined) return;
+        lobbyID = data.lobbyID;
+        playerIDs = data.args.playerIDs;
         console.log(lobbyID);
         console.log(playerIDs);
+        this.socket = data.socket;
     }
 
     create() {
@@ -64,7 +65,7 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.socket.on('roomCreated', (args)=>{this.createRoom(args);});
 
-        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);} // re-render the scene if new player joins);
+        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);}); // re-render the scene if new player joins)
 
         this.socket.on('connect_error', ()=>{this.displayError();});
     }

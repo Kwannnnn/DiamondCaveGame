@@ -112,6 +112,8 @@ io.on('connection', (socket) => {
     socket.on('gameStart', (roomId) => handleGameStart(roomId));
 
     socket.on('playerMove', (newPosition) => handlePlayerMove(newPosition, player));
+
+    socket.on('gemCollected', (diamond) => handleCollectDiamond(player, diamond));
 });
 
 function handlePlayerMove(newPosition, player) {
@@ -234,7 +236,7 @@ function generateInitialGameState(room) {
     const player2 = room.players[1];
 
     let gameState = {
-        "tileMap": [
+        'tileMap': [
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
             2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
             2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
@@ -255,43 +257,43 @@ function generateInitialGameState(room) {
             2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
         ],
-        "players": [{
-            "playerId": player1.id, // the id of player 1
-            "x": 32 + 16, // player 1 spawn x position
-            "y": 32 + 16, // player 1 spawn y position
-            "orientation": 0
+        'players': [{
+            'playerId': player1.id, // the id of player 1
+            'x': 32 + 16, // player 1 spawn x position
+            'y': 32 + 16, // player 1 spawn y position
+            'orientation': 0
         }, {
-            "playerId": player2.id, // the id of player 2
-            "x": 64 + 16, // player 2 spawn x position
-            "y": 64 + 16, // player 2 spawn y position
-            "orientation": 0
+            'playerId': player2.id, // the id of player 2
+            'x': 64 + 16, // player 2 spawn x position
+            'y': 64 + 16, // player 2 spawn y position
+            'orientation': 0
         }],
-        "gems": [{
-            "gemId": 1,
-            "x": 112, // gem spawn x position
-            "y": 48 // gem spawn y position
+        'gems': [{
+            'gemId': 1,
+            'x': 112, // gem spawn x position
+            'y': 48 // gem spawn y position
         },
         {
-            "gemId": 2,
-            "x": 178, // gem spawn x position
-            "y": 80 // gem spawn y position
+            'gemId': 2,
+            'x': 178, // gem spawn x position
+            'y': 80 // gem spawn y position
         },
         {
-            "gemId": 3,
-            "x": 240, // gem spawn x position
-            "y": 112 // gem spawn y position
+            'gemId': 3,
+            'x': 240, // gem spawn x position
+            'y': 112 // gem spawn y position
         },
         {
-            "gemId": 4,
-            "x": 304, // gem spawn x position
-            "y": 144 // gem spawn y position
+            'gemId': 4,
+            'x': 304, // gem spawn x position
+            'y': 144 // gem spawn y position
         },
         {
-            "gemId": 5,
-            "x": 368, // gem spawn x position
-            "y": 176 // gem spawn y position
+            'gemId': 5,
+            'x': 368, // gem spawn x position
+            'y': 176 // gem spawn y position
         }]
-    }
+    };
     return gameState;
 }
 
@@ -301,19 +303,23 @@ function handleGameOver(roomId) {
 
     if (room) {
         const gameState = {
-            "score": 6969, // the total score for the team
-            "diamonds": 69 // the amount of diamonds collected
-        }
+            'score': 6969, // the total score for the team
+            'diamonds': 69 // the amount of diamonds collected
+        };
     }
 
-    io.to(roomId).emit('gameOver', gameState)
+    io.to(roomId).emit('gameOver', gameState);
 }
 
-function handlePlayerMove() {
-    
+function handleCollectDiamond(player, diamond) {
+    const roomId = diamond.roomId;
+    const room = rooms[roomId];
 
-}
-
-function handleCollectDiamond() {
-    
+    if (room) {
+        // Notify teammate about collected diamond
+        player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+    } else {
+        socket.emit('roomNotFound', roomId);
+    }
+    console.log(diamond);
 }
