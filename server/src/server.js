@@ -9,7 +9,7 @@ dotenv.config();
 // more info: https://github.com/ai/nanoid
 const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
 
-const httpServer = app.listen(process.env.PORT, function() {
+const httpServer = app.listen(process.env.PORT, function () {
     console.log(`Started application on port ${process.env.PORT}`);
 });
 
@@ -28,7 +28,7 @@ let players = {};
 let rooms = {};
 
 // Send socket initialization scripts to the client
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.send(`
     <form>
         <input placeholder="Enter your username">
@@ -221,26 +221,86 @@ function generateInitialGameState(room) {
     const player2 = room.players[1];
 
     let gameState = {
-        'tileMap': [
-            [2, 2, 2, 2],
-            [2, 1, 1, 2],
-            [2, 1, 1, 2],
-            [2, 2, 2, 2]
+        "tileMap": [
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
         ],
-        'players': [{
-            'playerId': player1.id, // the id of player 1
-            'x': 32 + 16, // player 1 spawn x position
-            'y': 32 + 16, // player 1 spawn y position
+        "players": [{
+            "playerId": player1.id, // the id of player 1
+            "x": 32 + 16, // player 1 spawn x position
+            "y": 32 + 16, // player 1 spawn y position
+            "orientation": 0
         }, {
-            'playerId': player2.id, // the id of player 2
-            'x': 64 + 16, // player 2 spawn x position
-            'y': 64 + 16, // player 2 spawn y position
+            "playerId": player2.id, // the id of player 2
+            "x": 64 + 16, // player 2 spawn x position
+            "y": 64 + 16, // player 2 spawn y position
+            "orientation": 0
         }],
-        'gems': [{
-            'x': 64, // gem spawn x position
-            'y': 64 // gem spawn y position
+        "gems": [{
+            "gemId": 1,
+            "x": 112, // gem spawn x position
+            "y": 48 // gem spawn y position
+        },
+        {
+            "gemId": 2,
+            "x": 178, // gem spawn x position
+            "y": 80 // gem spawn y position
+        },
+        {
+            "gemId": 3,
+            "x": 240, // gem spawn x position
+            "y": 112 // gem spawn y position
+        },
+        {
+            "gemId": 4,
+            "x": 304, // gem spawn x position
+            "y": 144 // gem spawn y position
+        },
+        {
+            "gemId": 5,
+            "x": 368, // gem spawn x position
+            "y": 176 // gem spawn y position
         }]
-    };
-
+    }
     return gameState;
+}
+
+
+function handleGameOver(roomId) {
+    const room = rooms[roomId];
+
+    if (room) {
+        const gameState = {
+            "score": 6969, // the total score for the team
+            "diamonds": 69 // the amount of diamonds collected
+        }
+    }
+
+    io.to(roomId).emit('gameOver', gameState)
+}
+
+function handlePlayerMove() {
+    
+
+}
+
+function handleCollectDiamond() {
+    
 }
