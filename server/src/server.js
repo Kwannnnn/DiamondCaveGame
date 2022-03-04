@@ -140,6 +140,8 @@ function joinRoom(room, player) {
     console.log(player.id, 'Joined', room.id);
 }
 
+
+
 function handleCreateRoom(player) {
     //generate unique one time code for the lobby
     const roomId = nanoid(6);
@@ -151,11 +153,14 @@ function handleCreateRoom(player) {
     };
     // add it to rooms dictionary
     rooms[roomId] = room;
-
+    console.log(rooms);
     joinRoom(room, player);
-    console.log("Room info", rooms[roomId]);
-    //send message back to player with room id
-    player.socket.emit('roomCreated', roomId, player.id);
+    let playerIDs = [];
+    for (player of room.players) {
+        playerIDs.push(player.id);
+    }
+    //send message back to player with room id and list of playerID
+    player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
 }
 
 function handleJoinRoom(roomId, player) {
@@ -177,11 +182,19 @@ function handleJoinRoom(roomId, player) {
         }
 
         joinRoom(room, player);
-        console.log(rooms[roomId]);
-        player.socket.emit('roomJoined', roomId, player.id);
+        let playerIDs = [];
+        for (player of room.players) {
+            playerIDs.push(player.id);
+        }
+        let data = {
+            roomId: roomId,
+            playerIDs: playerIDs
+        };
+        // send room data to the player joins the room
+        player.socket.emit('roomJoined', data);
 
         // broadcast to every other team member
-        player.socket.to(room.id).emit('newPlayerJoined', player.id);
+        player.socket.to(room.id).emit('newPlayerJoined', playerIDs);
 
         // send game-ready-to-start game event if room is full
         if (room.players.length == process.env.MAX_ROOM_SIZE) {

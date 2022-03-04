@@ -29,7 +29,6 @@ export default class LoadScene extends Phaser.Scene {
             { 
                 fontFamily: 'Arial', fontSize: 64, color: '#fff'
             });
-            console.log(percent)
         })
 
     }

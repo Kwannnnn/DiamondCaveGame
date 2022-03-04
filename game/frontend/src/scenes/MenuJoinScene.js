@@ -61,7 +61,7 @@ export default class JoinScene extends Phaser.Scene {
             this.socket.emit('joinRoom',lobby);
         });
 
-        this.socket.on('roomJoined', ()=>{this.scene.start(CST.SCENES.LOBBY, {lobbyID: lobby});});
+        this.socket.on('roomJoined', (args)=>{this.scene.start(CST.SCENES.LOBBY, args);}); // jump to menu scene with data responded from server
 
         this.socket.on('alreadyInRoom', ()=>{this.message.setText('Someone by that name is already in the lobby');});
         this.socket.on('roomFull', ()=>{this.message.setText('This lobby is full');});

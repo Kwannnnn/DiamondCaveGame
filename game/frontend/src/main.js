@@ -4,7 +4,6 @@ import GameScreen from './scenes/Game';
 import LoadScene from './scenes/LoadScene';
 import JoinScene from './scenes/MenuJoinScene';
 import MenuScene from './scenes/MenuScene';
-import LobbyScene from './scenes/LobbyScene';
 
 const config = {
     mode: Phaser.Scale.FIT,
