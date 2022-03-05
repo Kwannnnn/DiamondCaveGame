@@ -15,18 +15,19 @@ export default class LobbyScene extends Phaser.Scene {
 
     init(data){
         /* FIXME: The way the 2nd player display the scene is based on client variables. Should be another way to do that but I haven't figured out. */
-        console.log(data);
-        if (data === undefined || data.args === undefined || data.lobbyID === undefined || data.socket === undefined) return;
-        lobbyID = data.lobbyID;
-        playerIDs = data.args.playerIDs;
-        console.log(lobbyID);
-        console.log(playerIDs);
-        this.socket = data.socket;
+        if (data === undefined) return;
+        lobbyID = data.roomId;
+        playerIDs = data.playerIDs;
     }
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0,0, 'title_bg').setOrigin(0).setDepth(0);
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+
+        this.backButton.on('pointerdown', () => {this.scene.start(CST.SCENES.MENU);});
+        this.backButton.on('pointerover', () => {this.backButton.setTint(0x30839f);});
+        this.backButton.on('pointerout', () => {this.backButton.clearTint();});
 
         this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Disconnected', {
             color: '#FFFFFF',
@@ -65,7 +66,7 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.socket.on('roomCreated', (args)=>{this.createRoom(args);});
 
-        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);}); // re-render the scene if new player joins)
+        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);}); // re-render the scene if new player joins
 
         this.socket.on('connect_error', ()=>{this.displayError();});
     }
