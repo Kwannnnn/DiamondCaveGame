@@ -98,7 +98,7 @@ io.on('connection', (socket) => {
     // generate new unique id for the player
     let username = socket.request._query['username'];
     if (username === undefined) return;
-    console.log(socket.request._query['username']);
+    // console.log(socket.request._query['username']);
     const player = new Player(username, socket);
 
     handleConnect(player);
@@ -120,17 +120,20 @@ function handlePlayerMove(newPosition, player) {
     const roomId = newPosition.roomId;
     const room = rooms[roomId];
 
+    console.log(player.id);
+
     if (room) {
         // Notify all teammates about the movement
         player.socket.to(roomId).emit('teammateMoved', {
-            playerId: player.socket.id,
+            playerId: player.id,
             x: newPosition.x,
-            y: newPosition.y
+            y: newPosition.y,
+            orientation: newPosition.orientation
         });
     } else {
         socket.emit('roomNotFound', roomId);
     } 
-    console.log(newPosition);
+    // console.log(newPosition);
 }
 
 function joinRoom(room, player) {
