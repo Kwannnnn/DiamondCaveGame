@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from "../CST";
+import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
@@ -11,7 +11,7 @@ export default class Game extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.GAME
-        })
+        });
     }
 
     preload() {
@@ -23,11 +23,17 @@ export default class Game extends Phaser.Scene {
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
     }
 
-    init() {
+    init(data) {
         this.totalDiamonds = 10;
         this.collectedDiamonds = 0;
+
         //the ideal delay for the normal speed to begin with is 200
         this.delay=200;
+
+        this.socket = data.socket;
+        this.lobbyID = data.lobbyID;
+        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
+
     }
 
     create() {
@@ -42,6 +48,10 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
         this.setupPlayerMovement();
+
+        // Send the new player position to the server on key release
+        // This happens on ANY key release that is part of the scene input
+        this.input.keyboard.on('keyup', this.handlePlayerMoved.bind(this));
         
         // Stick camera to the player
         this.cameras.main.startFollow(this.player);
@@ -88,9 +98,16 @@ export default class Game extends Phaser.Scene {
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
 
 
+
         //this is a small test for the speed increase 
         /* this.increaseSpeed();
         console.log('current delay:'+this.delay); */
+
+        this.socket.emit('gemCollected', {
+            roomId: this.lobbyID,
+            gemId: diamond.id
+        });
+
     }
 
     setupPlayerMovement() {
@@ -114,9 +131,12 @@ export default class Game extends Phaser.Scene {
             setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
         });
 
+        let id = 1;
         // Scope each diamond
         this.diamonds.children.iterate(function (child) {
             child.setScale(0.2);
+            child.id = id;
+            id++;
         });        
 
         // Adding overalap between player and diamonds (collecting diamonds)
@@ -124,7 +144,33 @@ export default class Game extends Phaser.Scene {
     }
 
 
+
     increaseSpeed(){
         this.delay=this.delay*7/10;
+    }
+    /**
+     * Fires an event on the socket for player movement, sending the new player
+     * position.
+     */
+    handlePlayerMoved() {
+        this.socket.emit('playerMove', {
+            roomId: this.lobbyID,
+            x: this.player.x,
+            y: this.player.y,
+            orientation: this.player.orientation
+        });
+    }
+
+    handleDiamondCollected(diamond){
+        this.diamonds.children.each((child) => this.removeDiamond(child, diamond)); //Iterate through diamond list to remove matching diamond
+    }
+
+    removeDiamond(testDiamond, targetID){
+        if (testDiamond.id === targetID){
+            testDiamond.disableBody(true, true);
+            this.collectedDiamonds++;
+            DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+        }
+
     }
 }

@@ -1,8 +1,8 @@
-# Game State Communication Protocol
+# Game Communication Protocol
 
 The portocol described below contains a list of events clients should be able
 to intercept (server events), and emit (client events) in order to communicate
-the game state in the correct manner.
+the logic of the game in a correct manner.
 
 ## Server Events
 <table>
@@ -12,33 +12,95 @@ the game state in the correct manner.
         <th>Descriotion</th>
     </tr>
     <tr>
-        <td>gameStart</td>
+        <td>roomCreated</td>
+<td>
+<p>
+
+```javascript
+// The id of the created room as string
+roomId
+```
+</p>
+</td>
+        <td>Sent whenever a room has been successfully created.</td>
+    </tr>
+    <tr>
+        <td>roomJoined</td>
+<td>
+<p>
+
+```javascript
+// The id of the joined room as string
+roomId
+```
+</p>
+</td>
+        <td>Sent whenever a user has been successfully joined a room.</td>
+    </tr>
+    <tr>
+        <td>newPlayerJoined</td>
+<td>
+<p>
+
+```javascript
+// The username of the player that joined the room
+playerId
+```
+</p>
+</td>
+        <td>
+            Notifies all players in the lobby that a new player has joined
+            the game room.
+        </td>
+    </tr>
+    <tr>
+        <td>gameReadyToStart</td>
+        <td>-</td>
+        <td>
+            Indicates that the room has the required amount of players to begin
+            the game.
+        </td>
+    </tr>
+    <tr>
+        <td>initialGameState</td>
 <td>
 <p>
 
 ```javascript
 {
-    "tileMap": [
+    tileMap: [
         [2,2,2,2],
         [2,1,1,2],
         [2,1,1,2],
         [2,2,2,2]
     ],
-    "players": [
+    players: [
         {
-            "playerId": ..., // the id of the player (sockedid, perhaps)
-            "x": ..., // player spawn x position
-            "y": ..., // player spawn y position
-            "orientation": ... /* The direction the player is facing
-                                * 0 - right, 90 - up, 180 - left, 270 - down
-                                */
+            // the username of the player
+            playerId: ...,
+
+            // player spawn x position
+            x: ...,
+
+            // player spawn y position
+            y: ...,
+
+            // The direction the player is facing
+            // 0 - right, 180 - left
+            // 90 - up, 270 - down
+            orientation: ...
         }, ...
     ],
-    "gems": [
+    gems: [
         {
-            "gemId": ..., // a unique identifier for a gem
-            "x": ..., // gem spawn x position
-            "y": ... // gem spawn y position
+            // a unique identifier for a gem
+            gemId: ...,
+
+            // gem spawn x position
+            x: ...,
+
+            // gem spawn y position
+            y: ...
         }, ...
     ]
 }
@@ -46,6 +108,7 @@ the game state in the correct manner.
 </p>
 </td>
         <td>
+        <p>
             With this event the server indicates the beginning of a new game.
             <br>The <i>map</i> is represented by a matrix of integers, where
             '1' represents an empty spot, and '2' represents a wall.<br>
@@ -62,13 +125,11 @@ the game state in the correct manner.
 
 ```javascript
 {
-    "score": ..., // the total score for the team
-    "players": [
-        {   
-            "playerId": ..., // the id of the player (sockedid, perhaps)
-            "diamonds": ..., // the amount of diamonds collected by a player
-        }, ...
-    ]
+    // the total score for the team
+    score: ...,
+
+    // the total amount of diamonds collected
+    diamonds: ...
 }
 ```
 </p>
@@ -78,19 +139,25 @@ the game state in the correct manner.
         </td>
     </tr>
     <tr>
-        <td>playerMoved</td>
+        <td>teammateMoved</td>
 <td>
 <p>
 
 ```javascript
 {
-    "playerId": ..., // the id of the player (sockedid, perhaps)
-    "x": ..., // the new x position of the player
-    "y": ..., // the new y position of the player
-    
+    // the username of the player that moved
+    playerId: ..., 
+
+    // the new x position of the player
+    x: ...,
+
+    // the new y position of the player
+    y: ...,
+
     // The new direction the player is facing
-    // 0 - right, 90 - up, 180 - left, 270 - down
-    "orientation": ...
+    // 0 - right, 180 - left
+    // 90 - up, 270 - down 
+    orientation: ...
 }
 ```
 </p>
@@ -106,9 +173,8 @@ the game state in the correct manner.
 <p>
 
 ```javascript
-{
-    "gemId": ... // the id of the collected gem
-}
+// the id of the collected gem as string
+gemId
 ```
 </p>
 </td>
@@ -132,9 +198,8 @@ the game state in the correct manner.
 <p>
 
 ```javascript
-{
-    "roomId": ... // the invalid roomId
-}
+// the invalid roomId as string
+roomId
 ```
 </p>
 </td>
@@ -144,20 +209,35 @@ the game state in the correct manner.
         </td>
     </tr>
     <tr>
+        <td>roomFull</td>
+        <td>-</td>
+        <td>
+            The room a client is trying to join already contains the maximum
+            amount of players.
+        </td>
+    </tr>
+    <tr>
+        <td>alreadyInRoom</td>
+        <td>-</td>
+        <td>
+            Triggered whenever the client already belongs to the room they are
+            trying to join.
+        </td>
+    </tr>
+    <tr>
         <td>gemNotFound</td>
 <td>
 <p>
 
 ```javascript
-{
-    "gemId": ... // the invalid gemId
-}
+// the invalid gemId
+gemId
 ```
 </p>
 </td>
         <td>
-            This response indicates that there is no gem with the specified gemId
-            of a previous client message.
+            There is no gem with the specified gemId of a previous client
+            message.
         </td>
     </tr>
     <tr>
@@ -167,19 +247,25 @@ the game state in the correct manner.
 
 ```javascript
 {
-    "playerId": ..., // the id of the player
-    "x": ..., // the (possibly) illegal x position
-    "y": ..., // the (possibly) illegal y position
-    "orientation": ... // the (possibly) illegal orientation
+    // the id of the player
+    playerId: ...,
+
+    // the (possibly) illegal x position
+    x: ...,
+
+    // the (possibly) illegal y position
+    y: ...,
+
+    // the (possibly) illegal orientation
+    orientation: ...
 }
 ```
 </p>
 </td>
         <td>
-            This response indicates that a previous message tried to modify the
-            state of the player (position, orientation) in an illegal state,
-            e.g. outside of the map boundires, and/or orientation facing 
-            south-west.
+            A previous message tried to modify the state of a player (position,
+            orientation) in an illegal state, e.g. outside of the map
+            boundires, and/or orientation facing south-west.
         </td>
     </tr>
 </table>
@@ -192,19 +278,63 @@ the game state in the correct manner.
         <th>Description</th>
     </tr>
     <tr>
+        <td>createRoom</td>
+        <td>-</td>
+        <td>
+            A message sent whenever a client wants to create a new game room.
+        </td>
+    </tr>
+    <tr>
+        <td>joinRoom</td>
+<td>
+<p>
+
+```javascript
+// The id of the room as string
+roomId
+```
+</p>
+</td>
+        <td>
+            Sent whenever a client tries to join a game room. Payload contains
+            a string representing the id of the room.
+        </td>
+    </tr>
+    <tr>
+        <td>gameStart</td>
+<td>
+<p>
+
+```javascript
+// The id of the room as string
+roomId
+```
+</p>
+</td>
+        <td>
+            A message sent from the client indicating the team is ready to
+            begin the game.
+        </td>
+    </tr>
+    <tr>
         <td>playerMove</td>
 <td>
 <p>
 
 ```javascript
 {
-    "roomId": ...,
-    "x": ..., // the new x position of the player
-    "y": ..., // the new y position of the player
+    roomId: ...,
+
+    // the new x position of the player
+    x: ...,
+
+    // the new y position of the player
+    y: ...,
     
     // The new direction the player is facing
-    // 0 - right, 90 - up, 180 - left, 270 - down
-    "orientation": ..., 
+    // 0 - right, 180 - left
+    // 90 - up, 270 - down
+    orientation: ..., 
 }
 ```
 </p>
@@ -221,8 +351,11 @@ the game state in the correct manner.
 
 ```javascript
 {
-    "roomId": ..., // the id of the game room
-    "gemId": ..., // the id of the collected gem
+    // the id of the game room
+    roomId: ...,
+
+    // the id of the collected gem
+    gemId: ...,
 }
 ```
 </p>
