@@ -21,6 +21,12 @@ export default class JoinScene extends Phaser.Scene {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0,0, 'title_bg').setOrigin(0).setDepth(0);
 
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+
+        this.backButton.on('pointerdown', () => {this.scene.start(CST.SCENES.MENU);});
+        this.backButton.on('pointerover', () => {this.backButton.setTint(0x30839f);});
+        this.backButton.on('pointerout', () => {this.backButton.clearTint();});
+
         this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Disconnected', {
             color: '#FFFFFF',
             fontSize: 60
