@@ -16,8 +16,9 @@ export default class Game extends Phaser.Scene {
 
     preload() {
         this.load.image('gem', 'assets/gem.png');
-        this.load.image("exit", "assets/exit.png")
+
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
+
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
     }
@@ -90,12 +91,6 @@ export default class Game extends Phaser.Scene {
                     break;
             }
         });
-
-        this.setupDiamondLocations(this.totalDiamonds);
-
-        this.placeExit(200,300);
-
-        this.player.depth = 100;
     }
 
     update() {
@@ -187,25 +182,6 @@ export default class Game extends Phaser.Scene {
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
-    }
-
-    placeExit(x, y){
-        this.exit = this.physics.add.sprite(x, y, "exit");
-        this.physics.add.overlap(this.player, this.exit, ()=>{
-            this.exitScene()
-            this.exit.disableBody(false,false)
-        }, this.canExitScene, this)
-    }
-    canExitScene(){
-        if(this.collectedDiamonds == this.totalDiamonds){
-            return true;
-        }else{
-            console.log("Not all diamonds have been collected!")
-            return false;
-        }
-    }
-    exitScene(){
-        console.log("Exit! Logic neends to be implemented.")
     }
 
     increaseSpeed(){
