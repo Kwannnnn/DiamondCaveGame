@@ -28,7 +28,7 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds = 0;
 
         //the ideal delay for the normal speed to begin with is 200
-        this.delay=200;
+        this.delay = 200;
 
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
@@ -107,7 +107,6 @@ export default class Game extends Phaser.Scene {
             roomId: this.lobbyID,
             gemId: diamond.id
         });
-
     }
 
     setupPlayerMovement() {
@@ -172,5 +171,11 @@ export default class Game extends Phaser.Scene {
             DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
         }
 
+    }
+
+    // Restore health to the player
+    // This could be any sort of healing, just pass the health change in percentage
+    changeHealth(healthChange) {
+        HUD.changeHealth(healthChange);
     }
 }
