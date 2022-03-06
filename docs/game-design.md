@@ -197,10 +197,6 @@ This wireframe shows the menu after you pressed “Join a Team”. On the top yo
 
 ## 4.2. Gameplay
 
-_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
-
----
-
 ### 4.2.1. Map
 
 ![image](wireframes/game-design/map-1.png)
