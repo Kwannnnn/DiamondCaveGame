@@ -44,7 +44,7 @@ export default class JoinScene extends Phaser.Scene {
 
     join(){
         let lobby = this.lobbyCodeInput.getChildByName('lobby').value;
-        let username = this.username.getChildByName('username').value;
+        this.username = this.username.getChildByName('username').value;
         if (lobby === ''){
             this.message.setText('Please enter the lobby code');
             return;
@@ -54,12 +54,12 @@ export default class JoinScene extends Phaser.Scene {
             return;
         }
         lobby = lobby.toUpperCase();
-        if (username === ''){
+        if (this.username === ''){
             this.message.setText('Please enter a username');
             return;
         }
         this.message.setText('Connecting to lobby:'+lobby);
-        this.socket = io(SERVER_URL, {query: 'username='+username, reconnection: false});
+        this.socket = io(SERVER_URL, {query: 'username=' + this.username, reconnection: false});
 
         this.socket.on('connect_error', ()=>{this.message.setText('Could not connect to server');});
 
@@ -67,7 +67,7 @@ export default class JoinScene extends Phaser.Scene {
             this.socket.emit('joinRoom',lobby);
         });
 
-        this.socket.on('roomJoined', (args)=>{this.scene.start(CST.SCENES.LOBBY, {args, lobbyID: lobby, socket: this.socket});}); // jump to menu scene with data responded from server
+        this.socket.on('roomJoined', (args)=>{this.scene.start(CST.SCENES.LOBBY, {roomId: args.roomId, username: this.username, playerIDs: args.playerIDs, socket: this.socket});}); // jump to menu scene with data responded from server
 
         this.socket.on('alreadyInRoom', ()=>{this.message.setText('Someone by that name is already in the lobby');});
         this.socket.on('roomFull', ()=>{this.message.setText('This lobby is full');});
