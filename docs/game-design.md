@@ -214,3 +214,16 @@ If you press the “Quit” button you get to see your score and it gives you 2 
 ![image](wireframes/game-design/death-screen.png)
 
 If you die you get to see a quite similar screen to the quit menu screen but this time there is a text saying that you died.
+
+## 5 Diagrams
+
+### 5.1 Flowchart
+![image](diagrams/flowchart.png)
+
+#### 5.1.1 Proccesses
+
+To start playing the game a lobby has to be created as well as a second player has to join afterwards. If player does not have a room created by a friend before, he has to create a new lobby. The generated room code will be displayed to the player, which is required for the second player to connect. The second participant has to receive this code using any type of communication, so he can join the lobby afterwards. On the other hand, the second player does not have to create anything if he knows that a room has already been created. He should wait for the code from his teammate and then he can choose "Join room" option, where the room code and a username has to be provided. After all of these is completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
+
+#### 5.1.2 Scenes
+
+Following the previously described steps, there is a number of scenes the system goes through. The first scene is LoadScene and a player sees it only for a few seconds while game is loading. The next scene is MenuScene where there are several options to choose for a player. If the room has already been created, the player should choose to join the room, which leads him to MenuJoinScene. After entering username and lobby code, it leads the player to lobby which is MenuLobbyScene. On the other hand, if room has to be created, the player should choose to create a new room. It leads him to MenuLobbyScene. When two players are inside lobby, they can start the game, which gets them to Game scene.
