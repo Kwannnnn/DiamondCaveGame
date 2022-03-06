@@ -1,6 +1,8 @@
 # _Technical design_
 
-_Group 1 – DHI2V.So_ - Project Server and Client
+_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
+
+---
 
 ## 1 Game Engines Researched and Discussed
 
@@ -61,4 +63,4 @@ For managing our work flow we are going to use git lab. The reason is that GitLa
 
 The way our git flow is going to be managed is that we are going to have two main remote repositories: one for testing, another one for already-tested code.
 
-Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch. 
+Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch.

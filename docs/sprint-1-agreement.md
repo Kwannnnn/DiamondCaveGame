@@ -1,5 +1,9 @@
 # Sprint 1 Deliverables
 
+_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
+
+---
+
 Team: GameChangers
 
 Game: Diamond Mine

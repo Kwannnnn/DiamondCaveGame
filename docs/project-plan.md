@@ -1,5 +1,9 @@
 # Project Plan
 
+_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
+
+---
+
 ## User Stories
 
 ### 1. As a player I want to be able to visually identify the different objects in the game world
