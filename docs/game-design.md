@@ -193,3 +193,9 @@ If you press the “Quit” button you get to see your score and it gives you 2 
 ![image](wireframes/death-screen.png)
 
 If you die you get to see a quite similar screen to the quit menu screen but this time there is a text saying that you died.
+
+## 5 Process
+
+### 5.1 Flowchart
+
+![image](diagrams/flowchart.png)
