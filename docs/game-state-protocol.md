@@ -1,10 +1,15 @@
 # Game Communication Protocol
 
-The portocol described below contains a list of events clients should be able
-to intercept (server events), and emit (client events) in order to communicate
+_Group 1: GameChangers – DHI2V.So_ - Project Server and Client
+
+---
+
+The protocol described below contains a list of events clients should be able
+to intercept (server events) and emit (client events) to communicate
 the logic of the game in a correct manner.
 
 ## Server Events
+
 <table>
     <tr>
         <th>Event</th>
@@ -17,9 +22,10 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// The id of the created room as string
+// The id of the created room as a string
 roomId
 ```
+
 </p>
 </td>
         <td>Sent whenever a room has been successfully created.</td>
@@ -30,9 +36,10 @@ roomId
 <p>
 
 ```javascript
-// The id of the joined room as string
+// The id of the joined room as a string
 roomId
 ```
+
 </p>
 </td>
         <td>Sent whenever a user has been successfully joined a room.</td>
@@ -46,6 +53,7 @@ roomId
 // The username of the player that joined the room
 playerId
 ```
+
 </p>
 </td>
         <td>
@@ -105,6 +113,7 @@ playerId
     ]
 }
 ```
+
 </p>
 </td>
         <td>
@@ -132,6 +141,7 @@ playerId
     diamonds: ...
 }
 ```
+
 </p>
 </td>
         <td>
@@ -160,6 +170,7 @@ playerId
     orientation: ...
 }
 ```
+
 </p>
 </td>
         <td>
@@ -173,9 +184,10 @@ playerId
 <p>
 
 ```javascript
-// the id of the collected gem as string
+// the id of the collected gem as a string
 gemId
 ```
+
 </p>
 </td>
         <td>
@@ -186,6 +198,7 @@ gemId
 </table>
 
 ### Possible errors
+
 <table>
     <tr>
         <th>Event</th>
@@ -201,6 +214,7 @@ gemId
 // the invalid roomId as string
 roomId
 ```
+
 </p>
 </td>
         <td>
@@ -233,6 +247,7 @@ roomId
 // the invalid gemId
 gemId
 ```
+
 </p>
 </td>
         <td>
@@ -260,6 +275,7 @@ gemId
     orientation: ...
 }
 ```
+
 </p>
 </td>
         <td>
@@ -271,6 +287,7 @@ gemId
 </table>
 
 ## Client Events
+
 <table>
     <tr>
         <th>Event</th>
@@ -290,9 +307,10 @@ gemId
 <p>
 
 ```javascript
-// The id of the room as string
+// The id of the room as a string
 roomId
 ```
+
 </p>
 </td>
         <td>
@@ -306,9 +324,10 @@ roomId
 <p>
 
 ```javascript
-// The id of the room as string
+// The id of the room as a string
 roomId
 ```
+
 </p>
 </td>
         <td>
@@ -337,6 +356,7 @@ roomId
     orientation: ..., 
 }
 ```
+
 </p>
 </td>
         <td>
@@ -358,6 +378,7 @@ roomId
     gemId: ...,
 }
 ```
+
 </p>
 </td>
         <td>
