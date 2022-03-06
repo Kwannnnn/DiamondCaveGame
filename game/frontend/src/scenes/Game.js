@@ -16,14 +16,14 @@ export default class Game extends Phaser.Scene {
 
     preload() {
         this.load.image('gem', 'assets/gem.png');
-        this.load.image("exit", "assets/exit.png")
+        //this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
+
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
     }
 
     init(data) {
-        this.totalDiamonds = 10;
         this.collectedDiamonds = 0;
 
         //the ideal delay for the normal speed to begin with is 200
@@ -31,6 +31,9 @@ export default class Game extends Phaser.Scene {
 
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
+        this.username = data.username;
+        this.initialGameState = data.initialGameState;
+        console.log(this.initialGameState);
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
 
     }
@@ -42,25 +45,58 @@ export default class Game extends Phaser.Scene {
         layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
 
         // Add the HUD scene
-        this.scene.add('hud', HUD, true, {world: 1, stage: 1, totalDiamonds: this.totalDiamonds});
+        this.scene.add('hud', HUD, true, {world: 1, stage: 1, totalDiamonds: this.initialGameState.gems.length});
 
+        this.players = new Map();
         // Having the player added to the game
-        this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
+        this.initialGameState.players.forEach(p => {
+            this.players.set(p.playerId, this.physics.add.sprite(p.x, p.y, 'player').setScale(0.14));
+        });
+
+        this.player = this.players.get(this.username);
+
         this.setupPlayerMovement();
+
+        this.diamonds = this.physics.add.group();
 
         // Send the new player position to the server on key release
         // This happens on ANY key release that is part of the scene input
-        this.input.keyboard.on('keyup', this.handlePlayerMoved.bind(this));
+        // this.input.keyboard.on('keyup', this.handlePlayerMoved.bind(this));
         
         // Stick camera to the player
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
 
-        this.setupDiamondLocations(this.totalDiamonds);
+        this.setupDiamondLocations();
+
+        this.socket.on('teammateMoved', (args) => {
+            console.log(args);
+            let p = this.players.get(args.playerId);
+            p.x = args.x;
+            p.y = args.y;
+            p.orientation =  args.orientation;
+
+            switch(p.orientation) {
+                case 0: 
+                    p.anims.play('right', true);
+                    break;
+                case 90:
+                    p.anims.play('up', true);
+                    break;
+                case 180:
+                    p.anims.play('left', true);
+                    break;
+                default:
+                    p.anims.play('down', true);
+                    break;
+            }
+        });
+
+        /*this.setupDiamondLocations(this.totalDiamonds);
 
         this.placeExit(200,300);
 
-        this.player.depth = 100;
+        this.player.depth = 100;*/
     }
 
     update() {
@@ -74,15 +110,19 @@ export default class Game extends Phaser.Scene {
         if (this.input.keyboard.checkDown(this.keys.A, this.delay)) {     
             this.player.anims.play('left', true);
             movementX = -32;
+            this.player.orientation = 180;
         } else if (this.input.keyboard.checkDown(this.keys.D, this.delay)) {
             this.player.anims.play('right', true);
             movementX = 32;
+            this.player.orientation = 0;
         } else if (this.input.keyboard.checkDown(this.keys.S, this.delay)) {
             this.player.anims.play('down', true);
             movementY = 32;
+            this.player.orientation = 270;
         } else if (this.input.keyboard.checkDown(this.keys.W, this.delay)) {
             this.player.anims.play('up', true);
             movementY = -32;
+            this.player.orientation = 90;
         }
 
         // Check tile we are attempting to move to
@@ -92,6 +132,14 @@ export default class Game extends Phaser.Scene {
             this.player.x = this.player.x + movementX;
             this.player.y = this.player.y + movementY;
         }
+
+        if(movementX !== 0 || movementY !== 0)
+        this.socket.emit('playerMove', {
+            roomId: this.lobbyID,
+            x: this.player.x,
+            y: this.player.y,
+            orientation: this.player.orientation
+        });
     }
 
     collectDiamond(player, diamond) {
@@ -99,8 +147,6 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds++;
         
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
-
-
 
         //this is a small test for the speed increase 
         /* this.increaseSpeed();
@@ -126,12 +172,11 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    setupDiamondLocations(numberOfDiamonds) {
-        this.diamonds = this.physics.add.group({
-            key: 'gem',
-            repeat: numberOfDiamonds - 1,
-            setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
-        });
+    setupDiamondLocations() {
+        this.initialGameState.gems.forEach(g => {
+            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+            this.diamonds.add(sprite);
+        });    
 
         let id = 1;
         // Scope each diamond
@@ -139,14 +184,13 @@ export default class Game extends Phaser.Scene {
             child.setScale(0.2);
             child.id = id;
             id++;
-        });        
+        });
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
     }
 
-
-    placeExit(x, y){
+    /*placeExit(x, y){
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.player, this.exit, ()=>{
             this.exitScene()
@@ -163,13 +207,12 @@ export default class Game extends Phaser.Scene {
     }
     exitScene(){
         console.log("Exit! Logic neends to be implemented.")
-    }
-
-    
+    }*/
 
     increaseSpeed(){
         this.delay=this.delay*7/10;
     }
+
     /**
      * Fires an event on the socket for player movement, sending the new player
      * position.
