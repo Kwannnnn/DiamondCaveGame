@@ -1,11 +1,11 @@
 # Game Communication Protocol
 
-_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
+_Group 1: GameChangers – DHI2V.So_ - Project Server and Client
 
 ---
 
-The portocol described below contains a list of events clients should be able
-to intercept (server events), and emit (client events) in order to communicate
+The protocol described below contains a list of events clients should be able
+to intercept (server events) and emit (client events) to communicate
 the logic of the game in a correct manner.
 
 ## Server Events
@@ -22,7 +22,7 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// The id of the created room as string
+// The id of the created room as a string
 roomId
 ```
 
@@ -36,7 +36,7 @@ roomId
 <p>
 
 ```javascript
-// The id of the joined room as string
+// The id of the joined room as a string
 roomId
 ```
 
@@ -184,7 +184,7 @@ playerId
 <p>
 
 ```javascript
-// the id of the collected gem as string
+// the id of the collected gem as a string
 gemId
 ```
 
@@ -307,7 +307,7 @@ gemId
 <p>
 
 ```javascript
-// The id of the room as string
+// The id of the room as a string
 roomId
 ```
 
@@ -324,7 +324,7 @@ roomId
 <p>
 
 ```javascript
-// The id of the room as string
+// The id of the room as a string
 roomId
 ```
 

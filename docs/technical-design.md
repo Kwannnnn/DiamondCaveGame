@@ -78,3 +78,17 @@ For managing our work flow we are going to use git lab. The reason is that GitLa
 The way our git flow is going to be managed is that we are going to have two main remote repositories: one for testing, another one for already-tested code.
 
 Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch.
+
+## 5 Diagrams
+
+### 5.1 Flowchart
+
+![image](diagrams/flowchart.png)
+
+#### 5.1.1 Proccesses
+
+A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room created by a friend before, he has to create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
+
+#### 5.1.2 Scenes
+
+There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where there are several options for a player. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
