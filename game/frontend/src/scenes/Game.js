@@ -1,51 +1,41 @@
 import Phaser from 'phaser';
-import { CST } from "../CST";
+import { CST } from '../CST';
 
-let keys;
+import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import HUD from './HUD';
+
 let layer;
-let coinLayer;
-let diamonds;
-
-let timedEvent;
-let clock;
-
-let gamestageOffsets = {
-    x: 350,
-    y: -350,
-}
+let delay;
 
 export default class Game extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.GAME
-        })
+        });
     }
 
     preload() {
         this.load.image('gem', 'assets/gem.png');
-
+        //this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
 
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
-
-        //preloading assets for lifepool
-        this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
-        this.load.image('middle', 'assets/barHorizontal_green_mid.png')
-        this.load.image('right-cap', 'assets/barHorizontal_green_right.png')
-
-        this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
-        this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
-        this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
     }
 
+    init(data) {
+        this.collectedDiamonds = 0;
 
-    init(data)
-    {
-        this.fullWidth = 300
+        //the ideal delay for the normal speed to begin with is 200
+        this.delay = 200;
 
-        this.world = data.world;
-        this.stage = data.stage;
+        this.socket = data.socket;
+        this.lobbyID = data.lobbyID;
+        this.username = data.username;
+        this.initialGameState = data.initialGameState;
+        console.log(this.initialGameState);
+        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
+
     }
 
     create() {
@@ -54,217 +44,204 @@ export default class Game extends Phaser.Scene {
 
         layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
 
-        let tile = layer.getTileAtWorldXY(64, 32); // Retrieve a specific tile based on a world position
+        // Add the HUD scene
+        this.scene.add('hud', HUD, true, {world: 1, stage: 1, totalDiamonds: this.initialGameState.gems.length});
 
+        this.players = new Map();
         // Having the player added to the game
-        this.player = this.physics.add.sprite(32+16, 32+16, 'player').setScale(0.14);
-
-        // Creating a group of diamonds
-        diamonds = this.physics.add.group({
-            key: 'gem',
-            repeat: 7,
-            setXY: {x: 112, y: 48, stepX: 64, stepY: 32}
+        this.initialGameState.players.forEach(p => {
+            this.players.set(p.playerId, this.physics.add.sprite(p.x, p.y, 'player').setScale(0.14));
         });
 
-        // Scope each diamond
-        diamonds.children.iterate(function (child) {
-            child.setScale(0.2);
-        });
+        this.player = this.players.get(this.username);
 
-        this.diamondCounter = 0;
+        this.setupPlayerMovement();
 
-        // Adding overalap between player and diamonds (collecting diamonds)
-        this.physics.add.overlap(this.player, diamonds, this.hitDiamond, null, this); 
+        this.diamonds = this.physics.add.group();
 
-        tile.index = 0; // Update what image a tile should render as
-
-        // Add used keys to the scene
-        keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
-
-        // Create the animation for movement
-        this.anims.create({
-            key: 'up',
-            frames: [ { key: 'player', frame: 0 } ],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'down',
-            frames: [ { key: 'player', frame: 1 } ],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: [ { key: 'player', frame: 2 } ],
-            frameRate: 10
-        });
-
-        this.anims.create({
-            key: 'left',
-            frames: [ { key: 'player', frame: 3 } ],
-            frameRate: 10
-        });
+        // Send the new player position to the server on key release
+        // This happens on ANY key release that is part of the scene input
+        // this.input.keyboard.on('keyup', this.handlePlayerMoved.bind(this));
         
         // Stick camera to the player
         this.cameras.main.startFollow(this.player);
-
         this.cameras.main.setBounds(-400, -400, 1880, 1320);
 
-        //life pool
-        const y = -50
-        const x = -50
+        this.setupDiamondLocations();
 
-        // background shadow
-        const leftShadowCap = this.add.image(x, y, 'left-cap-shadow')
-            .setOrigin(0, 0.5)
+        this.socket.on('teammateMoved', (args) => {
+            console.log(args);
+            let p = this.players.get(args.playerId);
+            p.x = args.x;
+            p.y = args.y;
+            p.orientation =  args.orientation;
 
-        const middleShaddowCap = this.add.image(leftShadowCap.x + leftShadowCap.width, y, 'middle-shadow')
-            .setOrigin(0, 0.5)
-        middleShaddowCap.displayWidth = this.fullWidth
-
-        this.add.image(middleShaddowCap.x + middleShaddowCap.displayWidth, y, 'right-cap-shadow')
-            .setOrigin(0, 0.5)
-
-        this.leftCap = this.add.image(x, y, 'left-cap')
-            .setOrigin(0, 0.5)
-
-        this.middle = this.add.image(this.leftCap.x + this.leftCap.width, y, 'middle')
-            .setOrigin(0, 0.5)
-
-        this.rightCap = this.add.image(this.middle.x + this.middle.displayWidth, y, 'right-cap')
-            .setOrigin(0, 0.5)
-
-        this.setMeterPercentage(1)
-
-        // Create the world and stage text
-        this.gamestage = this.add.text(this.cameras.main.x + gamestageOffsets.x, this.cameras.main.y + gamestageOffsets.y, `World: ${this.world}: ${this.stage}`, {
-            color: "#FFFFFF",
-            fontSize: 40,
-        });
-
-        this.gamestage.fixedToCamera = true;
-
-        this.seconds = 0;
-        this.minutes = 0;
-
-        // Draw HUD clock
-        clock = this.add.text(-50, -100, `Time: ${this.seconds}:${this.minutes}`, {
-            color: "#FFFFFF",
-            fontSize: 40,
-        });
-
-        // Actual clock
-        timedEvent = this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
-    }
-
-    // Update time and clock
-    updateClock () {
-        // Change time
-        this.seconds++;
-        if (this.seconds === 60) {
-            this.minutes++;
-            this.seconds = 0;
-        }
-        // Update clock text
-        clock.setText(`Time: ${this.minutes}:${this.seconds}`);
-    }
-
-    // function that removes tile at the given tileindex and adds 1 to the diamondCounter
-    // returns false so it doesnt collide with the player
-    // diamondCOunter is not shown at the moment
-    hitDiamond (player, star){
-
-        star.disableBody(true, true);
-        this.diamondCounter += 1;
-
-        console.log("Collected! Diamonds collected: " + this.diamondCounter);
-            
-    }
-
-    setMeterPercentage(percent = 1)
-    {
-        const width = this.fullWidth * percent
-
-        this.middle.displayWidth = width
-        this.rightCap.x = this.middle.x + this.middle.displayWidth
-    }
-
-    setMeterPercentageAnimated(percent = 1, duration = 1000)
-    {
-        const width = this.fullWidth * percent
-
-        this.tweens.add({
-            targets: this.middle,
-            displayWidth: width,
-            duration,
-            ease: Phaser.Math.Easing.Sine.Out,
-            onUpdate: () => {
-                this.rightCap.x = this.middle.x + this.middle.displayWidth
-
-                this.leftCap.visible = this.middle.displayWidth > 0
-                this.middle.visible = this.middle.displayWidth > 0
-                this.rightCap.visible = this.middle.displayWidth > 0
+            switch(p.orientation) {
+                case 0: 
+                    p.anims.play('right', true);
+                    break;
+                case 90:
+                    p.anims.play('up', true);
+                    break;
+                case 180:
+                    p.anims.play('left', true);
+                    break;
+                default:
+                    p.anims.play('down', true);
+                    break;
             }
-        })
+        });
+
+        /*this.setupDiamondLocations(this.totalDiamonds);
+
+        this.placeExit(200,300);
+
+        this.player.depth = 100;*/
     }
 
     update() {
-        if (this.input.keyboard.checkDown(keys.A, 200)) {            
-                this.player.anims.play('left', true);
-                let tile = layer.getTileAtWorldXY(this.player.x - 32, this.player.y,true);
-    
-                if (tile.index !== 2){
-    
-                    tile = layer.getTileAtWorldXY(this.player.x - 32, this.player.y,true);
-                    this.player.x -= 32;
-                    
-    
-                }
-            
-        } else if (this.input.keyboard.checkDown(keys.D, 200)) {
+        this.handlePlayerMovement();
+    }
+
+    handlePlayerMovement() {
+        let movementX = 0;
+        let movementY = 0;
+
+        if (this.input.keyboard.checkDown(this.keys.A, this.delay)) {     
+            this.player.anims.play('left', true);
+            movementX = -32;
+            this.player.orientation = 180;
+        } else if (this.input.keyboard.checkDown(this.keys.D, this.delay)) {
             this.player.anims.play('right', true);
-
-                this.player.anims.play('right', true);
-
-                let tile = layer.getTileAtWorldXY(this.player.x + 32, this.player.y,true);
-    
-                if (tile.index !== 2){
-                    tile = layer.getTileAtWorldXY(this.player.x + 32, this.player.y,true);
-                    this.player.x += 32;
-                }
-            
-
-        } else if (this.input.keyboard.checkDown(keys.S, 200)) {
+            movementX = 32;
+            this.player.orientation = 0;
+        } else if (this.input.keyboard.checkDown(this.keys.S, this.delay)) {
             this.player.anims.play('down', true);
-
-            this.player.anims.play('down', true);
-
-                let tile = layer.getTileAtWorldXY(this.player.x, this.player.y + 32,true);
-    
-                if (tile.index !== 2){
-                    tile = layer.getTileAtWorldXY(this.player.x, this.player.y + 32,true);
-                    this.player.y += 32;
-    
-                }
-
-
-        } else if (this.input.keyboard.checkDown(keys.W, 200)) {
+            movementY = 32;
+            this.player.orientation = 270;
+        } else if (this.input.keyboard.checkDown(this.keys.W, this.delay)) {
             this.player.anims.play('up', true);
-
-                this.player.anims.play('up', true);
-
-                let tile = layer.getTileAtWorldXY(this.player.x, this.player.y - 32,true);
-    
-                if (tile.index !== 2){
-                    tile = layer.getTileAtWorldXY(this.player.x, this.player.y - 32,true);
-                    this.player.y -= 32;
-    
-                }
+            movementY = -32;
+            this.player.orientation = 90;
         }
 
-        // Update the game stage text position
-        this.gamestage.x = this.cameras.main.midPoint.x + gamestageOffsets.x;
-        this.gamestage.y = this.cameras.main.midPoint.y + gamestageOffsets.y;
+        // Check tile we are attempting to move to
+        let tile = layer.getTileAtWorldXY(this.player.x + movementX, this.player.y + movementY, true);
+
+        if (tile && tile.index !== 2) {
+            this.player.x = this.player.x + movementX;
+            this.player.y = this.player.y + movementY;
+        }
+
+        if(movementX !== 0 || movementY !== 0)
+        this.socket.emit('playerMove', {
+            roomId: this.lobbyID,
+            x: this.player.x,
+            y: this.player.y,
+            orientation: this.player.orientation
+        });
+    }
+
+    collectDiamond(player, diamond) {
+        diamond.disableBody(true, true);
+        this.collectedDiamonds++;
+        
+        DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+
+        //this is a small test for the speed increase 
+        /* this.increaseSpeed();
+        console.log('current delay:'+this.delay); */
+
+        this.socket.emit('gemCollected', {
+            roomId: this.lobbyID,
+            gemId: diamond.id
+        });
+    }
+
+    setupPlayerMovement() {
+        // Register player movement keys
+        this.keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
+
+        const animationKeys = ['up', 'down', 'right', 'left'];
+        for (const index in animationKeys) {
+            this.anims.create({
+                key: animationKeys[index],
+                frames: [ { key: 'player', frame: index } ],
+                frameRate: 20
+            });
+        }
+    }
+
+    setupDiamondLocations() {
+        this.initialGameState.gems.forEach(g => {
+            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+            this.diamonds.add(sprite);
+        });    
+
+        let id = 1;
+        // Scope each diamond
+        this.diamonds.children.iterate(function (child) {
+            child.setScale(0.2);
+            child.id = id;
+            id++;
+        });
+
+        // Adding overalap between player and diamonds (collecting diamonds)
+        this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
+    }
+
+    /*placeExit(x, y){
+        this.exit = this.physics.add.sprite(x, y, "exit");
+        this.physics.add.overlap(this.player, this.exit, ()=>{
+            this.exitScene()
+            this.exit.disableBody(false,false)
+        }, this.canExitScene, this)
+    }
+    canExitScene(){
+        if(this.collectedDiamonds == this.totalDiamonds){
+            return true;
+        }else{
+            console.log("Not all diamonds have been collected!")
+            return false;
+        }
+    }
+    exitScene(){
+        console.log("Exit! Logic neends to be implemented.")
+    }*/
+
+    increaseSpeed(){
+        this.delay=this.delay*7/10;
+    }
+
+    /**
+     * Fires an event on the socket for player movement, sending the new player
+     * position.
+     */
+    handlePlayerMoved() {
+        this.socket.emit('playerMove', {
+            roomId: this.lobbyID,
+            x: this.player.x,
+            y: this.player.y,
+            orientation: this.player.orientation
+        });
+    }
+
+    handleDiamondCollected(diamond){
+        this.diamonds.children.each((child) => this.removeDiamond(child, diamond)); //Iterate through diamond list to remove matching diamond
+    }
+
+    removeDiamond(testDiamond, targetID){
+        if (testDiamond.id === targetID){
+            testDiamond.disableBody(true, true);
+            this.collectedDiamonds++;
+            DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+        }
+
+    }
+
+    // Restore health to the player
+    // This could be any sort of healing, just pass the health change in percentage
+    changeHealth(healthChange) {
+        HUD.changeHealth(healthChange);
     }
 }

@@ -1,6 +1,8 @@
 # _Technical design_
 
-_Group 1 – DHI2V.So_ - Project Server and Client
+_Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
+
+---
 
 ## 1 Game Engines Researched and Discussed
 
@@ -28,7 +30,7 @@ After conducting research on those options, we come up with the advantages and d
 | PixiJS | - Great to create interactive graphics and animations <br> - Many resources available => better learning experience <br> - Hundreds of global brands are using PixiJS | - Hard to know how to modularize as a beginner who never used PixiJS before <br> - Not very compatible with ReactJS <br> - The available documentation is good for implementing functionality but not ideal for setting up and identifying bugs <br> - Boilerplate is outdated |
 | Phaser | - Well suited to create 2D games that can be played right in the browser <br> - Simple to learn and utilize to build a game <br> - Relatively easy to learn how to modularize <br> - Documentation is helpful | - Not ideal for creating interactive graphics and animations <br> - Need to have 2D sprites (recommend 32x32 for canvas and 64x64 for pixels) |
 
-## 2Game Engine Chosen
+## 2 Game Engine Chosen
 
 The game engine chosen for this project is **Phaser** which is used to create 2D games for the browser. Our main concerns when choosing an engine were the following:
 
@@ -43,7 +45,7 @@ Phaser is a JavaScript framework that can be imported and provides useful tools 
 
 It is using HTML5 and Canvas or WebGL to render the game in the browser depending on the support from the browser. This allows very good performance across all platforms and it is also possible to port a game for mobile devices as well.
 
-## 3Technology Stack
+## 3 Technology Stack
 
 ### 3.1 Backend
 
@@ -55,10 +57,38 @@ PostgreSQL was chosen for persisting data. A discussion on whether we should use
 
 Having decided that relational databases will be used for persisting data, the team reached the conclusion that PostgreSQL will be the database management system that we use for the project. PostgreSQL is the one that most team members are experienced in and comfortable with and it was decided that using tools that the team is experienced in can significantly speed up the development progress and can help with avoiding problems.
 
+### 3.3 Communication (frontend-backend)
+
+For connecting the frontend and backend applications, we chose to go with Socket.io. This socket library was chosen for its simple api to establish a connection and signal events between two systems using it. Additionally, it was chosen for its ease of implementation in browser Javascript. Socket.io is able to download the library binary from either a server using Socket.io or the official developers' host when running in a browser, which saves time on working out a way to distribute the library or having to create our own. Finally, the library choice was informed by our prior experience with sockets in another project.
+
+To transmit game state data, we defined a set of JSON structures that encode the necessary data for sending via Socket.io. These definitions can be found in the Game State Protocol file, within this documentation package.
+
+### 3.4 Development packages
+
+During development we use several packages to help us quickly test both the frontend and backend applications.
+
+For frontend development, we use the Parcel web bundler as it offers a comprehensive set of development and deployment features, like hot-reloading and error diagnostics, as well compatibility with Phaser.
+
+For backend development, we use the Nodemon package to offer us a similar set of development features to Parcel when running a Node.js application.
+
 ## 4 Git Flow
 
 For managing our work flow we are going to use git lab. The reason is that GitLab is **a web-based Git repository** that provides free open and private repositories, issue-following capabilities, and wikis.
 
 The way our git flow is going to be managed is that we are going to have two main remote repositories: one for testing, another one for already-tested code.
 
-Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch. 
+Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch.
+
+## 5 Diagrams
+
+### 5.1 Flowchart
+
+![image](diagrams/flowchart.png)
+
+#### 5.1.1 Proccesses
+
+A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room created by a friend before, he has to create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
+
+#### 5.1.2 Scenes
+
+There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where there are several options for a player. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
