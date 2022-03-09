@@ -149,7 +149,7 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-01 | Send a list of active games to client and display it in a separate scene | M | 5 | - |
 | BI-02 | Define the spectator model and enable spectators to join lobbies | M | 4 | - |
 | BI-03 | Create a spectator game scene that only receives game data and have a player scene extend it with player functionality | M | 7 | - |
-| BI-04 | Enable spectators to move the camera and show number of spectators to everyone | M | 4 | - |
+| BI-04 | Enable spectators to move the camera and show number of spectators to everyone | M | 4 | US15-BI04 |
 
 ### US 16
 
