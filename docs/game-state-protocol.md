@@ -22,8 +22,12 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// The id of the created room as a string
-roomId
+{ 
+    // id of the created room
+    roomId: ...,
+    // list of id of the players in the room
+    playerIDs: [...] 
+}
 ```
 
 </p>
@@ -36,8 +40,13 @@ roomId
 <p>
 
 ```javascript
-// The id of the joined room as a string
-roomId
+{ 
+    // id of the joined room
+    roomId: ...,
+    // list of id of the players in the room
+    playerIDs: [...] 
+}
+
 ```
 
 </p>
@@ -50,8 +59,8 @@ roomId
 <p>
 
 ```javascript
-// The username of the player that joined the room
-playerId
+// A list of id of the players in the room
+playerIDs
 ```
 
 </p>
