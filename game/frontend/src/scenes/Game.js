@@ -48,13 +48,18 @@ export default class Game extends Phaser.Scene {
         this.scene.add('hud', HUD, true, {world: 1, stage: 1, totalDiamonds: this.initialGameState.gems.length});
 
         this.players = new Map();
+        this.names = new Map();
         // Having the player added to the game
         this.initialGameState.players.forEach(p => {
-            this.players.set(p.playerId, this.physics.add.sprite(p.x, p.y, 'player').setScale(0.14));
+            var player =  this.physics.add.sprite(p.x, p.y, 'player').setScale(0.14)
+            this.players.set(p.playerId, player);
+            var name = this.add.text(p.x-5,p.y-10,p.playerId);
+            this.names.set(p.playerId, name);
+            this.setNamePosition(name, player);
         });
 
         this.player = this.players.get(this.username);
-
+        this.name = this.names.get(this.username);
         this.setupPlayerMovement();
 
         this.diamonds = this.physics.add.group();
@@ -72,11 +77,13 @@ export default class Game extends Phaser.Scene {
         this.socket.on('teammateMoved', (args) => {
             console.log(args);
             let p = this.players.get(args.playerId);
+            let name = this.names.get(args.playerId);
             p.x = args.x;
             p.y = args.y;
             p.orientation =  args.orientation;
+            this.setNamePosition(name, p);
 
-            switch(p.orientation) {
+            switch(p.orientation){
                 case 0: 
                     p.anims.play('right', true);
                     break;
@@ -131,6 +138,7 @@ export default class Game extends Phaser.Scene {
         if (tile && tile.index !== 2) {
             this.player.x = this.player.x + movementX;
             this.player.y = this.player.y + movementY;
+            this.setNamePosition(this.name, this.player);
         }
 
         if(movementX !== 0 || movementY !== 0)
@@ -140,6 +148,11 @@ export default class Game extends Phaser.Scene {
             y: this.player.y,
             orientation: this.player.orientation
         });
+    }
+
+    setNamePosition(name,player){
+        name.x = player.x - 20;
+        name.y = player.y - 40;
     }
 
     collectDiamond(player, diamond) {
