@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from '../CST';
+import { CST } from '../utils/CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
