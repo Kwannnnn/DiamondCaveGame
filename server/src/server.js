@@ -8,6 +8,7 @@ const rooms = require('./model/rooms.js');
 const players = require('./model/players.js');
 const lManager = require('./lobbyManager.js');
 const gManager = require('./gameManager.js');
+const cManager =  require('./chatManager.js');
 const debugPage = require('./debugWebServer.js');
 dotenv.config();
 
@@ -26,6 +27,7 @@ const io = socket(httpServer, {
 
 const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
 const gameManager = new gManager(io);
+const chatManager = new cManager(io);
 
 // Send socket initialization scripts to the client
 debugPage.sendDebugWebPage(app);
@@ -46,6 +48,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => handleDisconnect(player));
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player,roomId));
+
+    socket.on('chatMessage', (message) => chatManager.handleChatMessage(player, message));
 
     socket.on('playerMove', (newPosition) => gameManager.handlePlayerMove(newPosition, player));
 
