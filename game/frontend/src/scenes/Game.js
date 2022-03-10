@@ -99,6 +99,10 @@ export default class Game extends Phaser.Scene {
             }
         });
 
+        this.socket.on('choosePerks', (perks) => {
+            this.scene.start(CST.SCENES.PERKS, {perksToDisplay: perks})
+        })
+
         //this.setupDiamondLocations(this.totalDiamonds);
 
         this.placeExit(320,480);

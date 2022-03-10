@@ -5,6 +5,7 @@ export const CST = {
         LOBBY: "LOBBY",
         JOIN: "JOIN",
         GAME: "GAME",
+        PERKS: "PERKS",
         ACTIVEGAMES: "ACTIVEGAMES",
         SPECTATORJOIN: "SPECTATORJOIN"
     }
