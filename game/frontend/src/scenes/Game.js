@@ -99,11 +99,11 @@ export default class Game extends Phaser.Scene {
             }
         });
 
-        /*this.setupDiamondLocations(this.totalDiamonds);
+        //this.setupDiamondLocations(this.totalDiamonds);
 
-        this.placeExit(200,300);
+        this.placeExit(320,480);
 
-        this.player.depth = 100;*/
+        //this.player.depth = 100;
     }
 
     update() {
@@ -203,7 +203,10 @@ export default class Game extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
     }
 
-    /*placeExit(x, y){
+    /*
+        Exit functionality
+    */
+    placeExit(x, y){
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.player, this.exit, ()=>{
             this.exitScene()
@@ -211,7 +214,7 @@ export default class Game extends Phaser.Scene {
         }, this.canExitScene, this)
     }
     canExitScene(){
-        if(this.collectedDiamonds == this.totalDiamonds){
+        if(this.collectedDiamonds == this.initialGameState.gems.length){
             return true;
         }else{
             console.log("Not all diamonds have been collected!")
@@ -219,8 +222,9 @@ export default class Game extends Phaser.Scene {
         }
     }
     exitScene(){
+        this.socket.emit('reachedEnd', this.lobbyID);
         console.log("Exit! Logic neends to be implemented.")
-    }*/
+    }
 
 
     /**
