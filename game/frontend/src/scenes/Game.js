@@ -238,9 +238,7 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds+=4;
     }
     
-    timePerk(){
-        HUD.time
-    }
+    
 
     /**
      * Fires an event on the socket for player movement, sending the new player
