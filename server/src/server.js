@@ -45,6 +45,8 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
 
+    socket.on('joinRoomAsSpectator', (roomId) => lobbyManager.handleJoinRoomAsSpectator(roomId, player))
+
     socket.on('disconnect', () => handleDisconnect(player));
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player,roomId));

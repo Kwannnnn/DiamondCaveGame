@@ -15,7 +15,8 @@ class LobbyManager {
         // create new room
         let room = {
             id: roomId,
-            players: []
+            players: [],
+            spectators: []
         };
         // add it to rooms dictionary
         rooms[roomId] = room;
@@ -76,6 +77,19 @@ class LobbyManager {
                 player.socket.to(roomId).emit('gameReadyToStart');
             }
     
+        } else {
+            player.socket.emit('roomNotFound', roomId);
+        }
+    }
+
+    handleJoinRoomAsSpectator(roomId, player) {
+        roomId = roomId.toUpperCase();
+        const room = rooms[roomId];
+    
+        if (room) {
+            room.spectators.push(player);
+
+            player.socket.to(room.id).emit('newSpectatorJoined', player.id)
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
