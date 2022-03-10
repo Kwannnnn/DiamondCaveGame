@@ -319,7 +319,30 @@ function generateInitialGameState(room) {
             'gemId': 5,
             'x': 368, // gem spawn x position
             'y': 176 // gem spawn y position
-        }]
+        }],
+        'enemies': [{
+            'enemyId': 1,
+            'start': {
+                'x': 336,
+                'y': 336,
+            },
+            'path': [{
+                'x': 496,
+                'y': 336,
+            },
+            {
+                'x': 496,
+                'y': 496,
+            },
+            {
+                'x': 336,
+                'y': 496,
+            },
+            {
+                'x': 336,
+                'y': 336,
+            }],
+        }],
     };
     return gameState;
 }
