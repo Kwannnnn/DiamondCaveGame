@@ -178,6 +178,11 @@ function handleCreateRoom(player) {
     for (player of room.players) {
         playerIDs.push(player.id);
     }
+    for(let i=0;i<games.length;i++){
+        if(roomId===games[i].id){
+            games[i].players.push(player.id);
+        }
+    }
     //send message back to player with room id and list of playerID
     player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
 }
@@ -187,9 +192,10 @@ function handleJoinRoom(roomId, player) {
     const room = rooms[roomId];
     for(let i=0;i<games.length;i++){
         if(roomId===games[i].id){
-            games[i].players.add(player);
+            games[i].players.push(player.id);
         }
     }
+    console.log(games[0].players);
     // TODO: maybe the following code could be better written
     if (room) {
         // if player is already in the room

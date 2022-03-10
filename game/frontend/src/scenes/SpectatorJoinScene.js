@@ -64,7 +64,9 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.socket.emit('currentPlays', this.username);
         this.socket.on('currentPlays', (payload) => {
             console.log(payload);
-            this.scene.start(CST.SCENES.ACTIVEGAMES);
+            this.scene.start(CST.SCENES.ACTIVEGAMES,{
+                plays:payload
+            });
         });
 
     }
