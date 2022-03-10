@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import LobbyScene from './scenes/MenuLobbyScene';
-import GameScreen from './scenes/Game';
+import GameScene from './scenes/Game';
 import LoadScene from './scenes/LoadScene';
 import JoinScene from './scenes/MenuJoinScene';
 import MenuScene from './scenes/MenuScene';
@@ -12,7 +12,7 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [LoadScene, MenuScene, GameScreen, LobbyScene, JoinScene,ActiveGamesScene,SpectatorJoinScene],
+    scene: [LoadScene, MenuScene, GameScene, LobbyScene, JoinScene, ActiveGamesScene, SpectatorJoinScene],
     parent: "game",
     type: Phaser.AUTO,
     physics: {
