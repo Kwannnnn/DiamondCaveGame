@@ -49,7 +49,7 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 
 ### 17. As a player I want to see my global run ranking (we rank based on collected diamonds team run, run finishes when you die)
 
-### 18. As a admin I want to be able to influence the game
+### 18. As an admin I want to be able to influence the game
 
 ### 19. As a developer I want to have developer console (you can skip some)
 
@@ -114,7 +114,7 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-04 | Define a communication format for the game state | M | 5 | - |
 | BI-05 | Decode the game state on the client side and render the game | M | 6 | US07-BI03 |
 | BI-06 | Send player position between from client to server | M | 5 | - |
-| BI-07 | Send collectable state (i.e gems) between from client to server | M | 5 | - |
+| BI-07 | Send collectable state (i.e. gems) between from client to server | M | 5 | - |
 
 ### US 08
 
@@ -142,6 +142,26 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-05 | Display player's names in the HUD | M | 6 | - |
 | BI-06 | Display when the players can move to next map | M | 4 | - |
 
+### US 11
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | There are at least 4 perks implemented | M | 6 | - |
+| BI-02 | Perks are displayed after completing a map | M | 6 | - |
+| BI-03 | Perk picking logic is implemented | M | 8 | - |
+
+### US 12
+
+### US 13
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Traps are visible and they deal damage | M | 6 | - |
+| BI-02 | Enemies can move around the map in a predetermined pattern | M | 7 | - |
+| BI-03 | Find/Create enemy sprites | M | 4 | - |
+
+### US 14
+
 ### US 15
 
 Backlog item | Definition | Priority | Weight | Depends on |
@@ -157,3 +177,9 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | -| -| -| -| -|
 | BI-01 | Implement server functionality for players to broadcast messages to everyone and for spectators to chat with each other | M | 4 | - |
 | BI-02 | Create chat user interface and bind it to the protocol | M | 5 | - |
+
+### US 17
+
+### US 18
+
+### US 19
