@@ -26,6 +26,7 @@ let players = {};
 // key      | value
 // roomId | Room
 let rooms = {};
+let games=[];
 
 // Send socket initialization scripts to the client
 app.get('/', function (req, res) {
@@ -114,7 +115,15 @@ io.on('connection', (socket) => {
     socket.on('playerMove', (newPosition) => handlePlayerMove(newPosition, player));
 
     socket.on('gemCollected', (diamond) => handleCollectDiamond(player, diamond));
+    
+    socket.on('currentPlays',(username)=>{handleCurrentGames(player,games)})
 });
+
+function handleCurrentGames(player,games){
+    const plays=games;
+    console.log(plays);
+    player.socket.emit('currentPlays',plays);
+}
 
 function handlePlayerMove(newPosition, player) {
     const roomId = newPosition.roomId;
@@ -156,13 +165,23 @@ function handleCreateRoom(player) {
         id: roomId,
         players: []
     };
+    let game = {
+        id:roomId,
+        players: []
+    }
     // add it to rooms dictionary
     rooms[roomId] = room;
+    games[games.length]= game;
     console.log(rooms);
     joinRoom(room, player);
     let playerIDs = [];
     for (player of room.players) {
         playerIDs.push(player.id);
+    }
+    for(let i=0;i<games.length;i++){
+        if(roomId===games[i].id){
+            games[i].players.push(player.id);
+        }
     }
     //send message back to player with room id and list of playerID
     player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
@@ -171,7 +190,12 @@ function handleCreateRoom(player) {
 function handleJoinRoom(roomId, player) {
     roomId = roomId.toUpperCase();
     const room = rooms[roomId];
-
+    for(let i=0;i<games.length;i++){
+        if(roomId===games[i].id){
+            games[i].players.push(player.id);
+        }
+    }
+    console.log(games[0].players);
     // TODO: maybe the following code could be better written
     if (room) {
         // if player is already in the room
