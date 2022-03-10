@@ -222,8 +222,24 @@ export default class Game extends Phaser.Scene {
         console.log("Exit! Logic neends to be implemented.")
     }*/
 
+
+    /**
+     * this is a perk for increasing the movement speed
+     */
     increaseSpeed(){
         this.delay=this.delay*7/10;
+    }
+
+
+    /**
+     * this is a perk for adding 4 more diamonds into the number of collected diamonds
+     */
+    diamondPerk(){
+        this.collectedDiamonds+=4;
+    }
+    
+    timePerk(){
+        HUD.time
     }
 
     /**
