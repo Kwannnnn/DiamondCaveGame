@@ -5,7 +5,6 @@ import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import HUD from './HUD';
 
 let layer;
-let delay;
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -18,9 +17,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         //this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
-
         this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
-        this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
     }
 
     init(data) {
@@ -35,11 +32,10 @@ export default class Game extends Phaser.Scene {
         this.initialGameState = data.initialGameState;
         console.log(this.initialGameState);
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
-
     }
 
     create() {
-        let map = this.make.tilemap({key: 'map', tileWidth: 32, tileHeight: 32}); // Create the tilemap with the specified tile dimensions
+        let map = this.make.tilemap({data: this.initialGameState.tileMap, tileWidth: 32, tileHeight: 32});
         let tileSet = map.addTilesetImage('tiles'); // Map the correct part of the tiles image to the tilemap
 
         layer = map.createLayer(0, tileSet); // Draw the tiles on the screen
