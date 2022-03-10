@@ -29,6 +29,8 @@ const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
 const gameManager = new gManager(io);
 const chatManager = new cManager(io);
 
+const games = [];
+
 // Send socket initialization scripts to the client
 debugPage.sendDebugWebPage(app);
 
