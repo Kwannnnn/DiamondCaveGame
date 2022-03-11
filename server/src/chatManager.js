@@ -20,5 +20,5 @@ class ChatManager{
         console.log('Sent message from "' + player.id + '": ' + message);
     }
 }
-
+    
 module.exports = ChatManager;
