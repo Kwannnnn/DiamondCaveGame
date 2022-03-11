@@ -237,6 +237,20 @@ export default class Game extends Phaser.Scene {
     diamondPerk(){
         this.collectedDiamonds+=4;
     }
+
+
+    /**
+     * this perk for reducing 10 seconds for the team
+     */
+    timePerk(){
+        if(HUD.second<10){
+            HUD.minute--;
+            HUD.second+=60;
+            HUD.second-=10;
+        }else{
+            HUD.second-=10;
+        }
+    }
     
     
 
