@@ -35,10 +35,6 @@ export default class Game extends Phaser.Scene {
 
     init(data) {
         this.collectedDiamonds = 0;
-
-        //the ideal delay for the normal speed to begin with is 200
-        this.delay = 200;
-
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
@@ -58,19 +54,15 @@ export default class Game extends Phaser.Scene {
         this.setupDiamondLocations();
         // this.placeExit(200, 300);
         this.setupControlledUnit();
-        this.setupPlayerMovement();
         this.setupCamera();
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
 
         this.handleSocketEvents();
-    
-        this.controlledUnit.depth = 100;
     }
 
     update() {
-        this.handlePlayerMovement();
     }
 
     /**
@@ -89,7 +81,6 @@ export default class Game extends Phaser.Scene {
      * of the GameScene. 
      */
     setupPlayers() {
-        this.players = new Map();
         this.names = new Map();
 
         // Having the player added to the game
@@ -123,46 +114,6 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    handlePlayerMovement() {
-        let movementX = 0;
-        let movementY = 0;
-
-        if (this.input.keyboard.checkDown(this.keys.A, this.delay)) {     
-            this.controlledUnit.anims.play('left', true);
-            movementX = -32;
-            this.controlledUnit.orientation = 180;
-        } else if (this.input.keyboard.checkDown(this.keys.D, this.delay)) {
-            this.controlledUnit.anims.play('right', true);
-            movementX = 32;
-            this.controlledUnit.orientation = 0;
-        } else if (this.input.keyboard.checkDown(this.keys.S, this.delay)) {
-            this.controlledUnit.anims.play('down', true);
-            movementY = 32;
-            this.controlledUnit.orientation = 270;
-        } else if (this.input.keyboard.checkDown(this.keys.W, this.delay)) {
-            this.controlledUnit.anims.play('up', true);
-            movementY = -32;
-            this.controlledUnit.orientation = 90;
-        }
-
-        // Check tile we are attempting to move to
-        let tile = layer.getTileAtWorldXY(this.controlledUnit.x + movementX, this.controlledUnit.y + movementY, true);
-
-        if (tile && tile.index !== 2) {
-            this.controlledUnit.x = this.controlledUnit.x + movementX;
-            this.controlledUnit.y = this.controlledUnit.y + movementY;
-            this.setNamePosition(this.name, this.controlledUnit);
-        }
-
-        if(movementX !== 0 || movementY !== 0)
-        this.socket.emit('playerMove', {
-            roomId: this.lobbyID,
-            x: this.controlledUnit.x,
-            y: this.controlledUnit.y,
-            orientation: this.controlledUnit.orientation
-        });
-    }
-
     setNamePosition(name, player) {
         name.x = player.x - 20;
         name.y = player.y - 40;
@@ -182,20 +133,6 @@ export default class Game extends Phaser.Scene {
             roomId: this.lobbyID,
             gemId: diamond.id
         });
-    }
-
-    setupPlayerMovement() {
-        // Register player movement keys
-        this.keys = this.input.keyboard.addKeys('W,S,A,D', true, true);
-
-        const animationKeys = ['up', 'down', 'right', 'left'];
-        for (const index in animationKeys) {
-            this.anims.create({
-                key: animationKeys[index],
-                frames: [ { key: 'player', frame: index } ],
-                frameRate: 20
-            });
-        }
     }
 
     /**
@@ -256,7 +193,6 @@ export default class Game extends Phaser.Scene {
         this.collectedDiamonds += 4;
     }
 
-
     /**
      * this perk for reducing 10 seconds for the team
      */
@@ -268,19 +204,6 @@ export default class Game extends Phaser.Scene {
         }else{
             HUD.second-=10;
         }
-    }
-
-    /**
-     * Fires an event on the socket for player movement, sending the new player
-     * position.
-     */
-    handlePlayerMoved() {
-        this.socket.emit('playerMove', {
-            roomId: this.lobbyID,
-            x: this.controlledUnit.x,
-            y: this.controlledUnit.y,
-            orientation: this.controlledUnit.orientation
-        });
     }
 
     handleDiamondCollected(diamond){
