@@ -204,6 +204,26 @@ gemId
             a gem has been collected.
         </td>
     </tr>
+    <tr>
+        <td>chatMessage</td>
+<td>
+<p>
+
+```javascript
+{
+    // the username of message's sender as a string
+    sender: ...,
+    // the message body as a string
+    message: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server forwards a message sent by another player
+        </td>
+    </tr>
 </table>
 
 ### Possible errors
@@ -392,6 +412,22 @@ roomId
 </td>
         <td>
             With this event the client indicates that a gem has been collected.
+        </td>
+    </tr>
+    <tr>
+        <td>chatMessage</td>
+<td>
+<p>
+
+```javascript
+// the message body as a string
+message:
+```
+
+</p>
+</td>
+        <td>
+            With this event the client sends a broadcast chat message
         </td>
     </tr>
 </table>
