@@ -117,7 +117,22 @@ io.on('connection', (socket) => {
     socket.on('gemCollected', (diamond) => handleCollectDiamond(player, diamond));
     
     socket.on('currentPlays',(username)=>{handleCurrentGames(player,games)})
+
+    socket.on('reachedEnd', (roomID) => handleReachingMapEnd(roomID));
 });
+
+function handleReachingMapEnd(roomID) {
+    const room = rooms[roomID];
+    const perks = ["Movement Speed", "Health", "Add diamonds"];
+
+    if (room) {
+        room.players.forEach(player => {
+            player.socket.emit('choosePerks', perks);
+        });
+    } else {
+        console.log("Room id for exit has not been found");
+    }
+}
 
 function handleCurrentGames(player,games){
     const plays=games;
@@ -128,8 +143,6 @@ function handleCurrentGames(player,games){
 function handlePlayerMove(newPosition, player) {
     const roomId = newPosition.roomId;
     const room = rooms[roomId];
-
-    console.log(player.id);
 
     if (room) {
         // Notify all teammates about the movement
