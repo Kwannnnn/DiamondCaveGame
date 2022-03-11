@@ -25,8 +25,6 @@ const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
 const gameManager = new gManager(io);
 const chatManager = new cManager(io);
 
-let games=[];
-
 // Send socket initialization scripts to the client
 debugPage.sendDebugWebPage(app);
 
@@ -39,7 +37,7 @@ io.on('connection', (socket) => {
 
     handleConnect(player);
 
-    socket.on('currentPlays',(username)=>{handleCurrentGames(player,games)})
+    socket.on('currentPlays',()=> lobbyManager.handleCurrentGames(player));
 
     socket.on('createRoom', () => lobbyManager.handleCreateRoom(player));
 
@@ -55,12 +53,6 @@ io.on('connection', (socket) => {
 
     socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
 });
-
-function handleCurrentGames(player,games){
-    const plays=games;
-    console.log(plays);
-    player.socket.emit('currentPlays',plays);
-}
 
 function handleConnect(player) {
     players[player.id] = player;
