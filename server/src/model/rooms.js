@@ -1,5 +1,5 @@
 // key      | value
 // roomId | Room
-const rooms = {};
+const rooms = new Map();
 
 module.exports = rooms;

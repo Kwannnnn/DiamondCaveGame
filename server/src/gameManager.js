@@ -8,7 +8,7 @@ class GameManager{
     }
 
     handleGameStart(player, roomId) {
-        const room = rooms[roomId];
+        const room = rooms.get(roomId);
     
         if (room) {
             const initialGameState = this.generateInitialGameState(room);
@@ -19,7 +19,7 @@ class GameManager{
 
     handlePlayerMove(newPosition, player) {
         const roomId = newPosition.roomId;
-        const room = rooms[roomId];
+        const room = rooms.get(roomId);
     
         console.log(player.id);
     
@@ -39,7 +39,7 @@ class GameManager{
 
     handleCollectDiamond(player, diamond) {
         const roomId = diamond.roomId;
-        const room = rooms[roomId];
+        const room = rooms.get(roomId);
     
         if (room) {
             // Notify teammate about collected diamond
