@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import Player from '../model/Player';
 import HUD from './HUD';
 
 let layer;
@@ -38,7 +39,7 @@ export default class Game extends Phaser.Scene {
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
-        this.initialGameState = data.initialGameState;
+        this.gameState = data.initialGameState;
     }
 
     create() {
@@ -47,7 +48,7 @@ export default class Game extends Phaser.Scene {
         // Map the correct part of the tiles image to the tilemap
         let tileSet = map.addTilesetImage('tiles');
         // Draw the tiles on the screen
-        layer = map.createLayer(0, tileSet);
+        this.layer = map.createLayer(0, tileSet);
 
         this.setupHUD();
         this.setupPlayers();
@@ -63,6 +64,7 @@ export default class Game extends Phaser.Scene {
     }
 
     update() {
+        this.controlledUnit.update();
     }
 
     /**
@@ -72,7 +74,7 @@ export default class Game extends Phaser.Scene {
         this.scene.add('hud', HUD, true, {
             world: 1,
             stage: 1,
-            totalDiamonds: this.initialGameState.gems.length
+            totalDiamonds: this.gameState.gems.length
         });
     }
 
@@ -84,8 +86,8 @@ export default class Game extends Phaser.Scene {
         this.names = new Map();
 
         // Having the player added to the game
-        this.initialGameState.players.forEach(p => {
-            var player = this.physics.add.sprite(p.x, p.y, 'player').setScale(0.14);
+        this.gameState.players.forEach(p => {
+            var player = new Player(this, p.x, p.y, p.playerId);
             this.players.set(p.playerId, player);
             var name = this.add.text(p.x-5, p.y-10, p.playerId);
             this.names.set(p.playerId, name);
@@ -142,7 +144,7 @@ export default class Game extends Phaser.Scene {
     setupDiamondLocations() {
         this.diamonds = this.physics.add.group();
         
-        this.initialGameState.gems.forEach(g => {
+        this.gameState.gems.forEach(g => {
             let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
             this.diamonds.add(sprite);
         });    
@@ -177,14 +179,12 @@ export default class Game extends Phaser.Scene {
         console.log("Exit! Logic neends to be implemented.")
     }
 
-
     /**
      * this is a perk for increasing the movement speed
      */
     increaseSpeed() {
         this.delay = this.delay * 7 / 10;
     }
-
 
     /**
      * this is a perk for adding 4 more diamonds into the number of collected diamonds
