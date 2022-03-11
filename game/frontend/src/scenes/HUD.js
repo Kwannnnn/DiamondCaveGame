@@ -92,6 +92,17 @@ export default class HUD extends Phaser.Scene {
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
     }
 
+    // The difference between setting and changing health is that changing is relative, while setting is absolute
+    // Setting to +20 makes the player's health 20%
+    // Changing to +20 makes the player's health equal to their current health + 20
+    changeHealth(difference) {
+        this.setHealth(this.middle.displayWidth + difference);
+    }
+
+    changeHealthAnimated(difference) {
+        this.setHealthAnimated(this.middle.displayWidth + difference);
+    }
+
     setHealth(percentage) {
         this.middle.displayWidth = this.fullWidth * (percentage / 100);
         this.rightCap.x = this.middle.x + this.middle.displayWidth;
