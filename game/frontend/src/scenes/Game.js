@@ -118,6 +118,7 @@ export default class Game extends Phaser.Scene {
         let movementX = 0;
         let movementY = 0;
 
+        // Movement logic
         if (this.input.keyboard.checkDown(this.keys.A, this.delay)) {     
             this.player.anims.play('left', true);
             movementX = -32;
