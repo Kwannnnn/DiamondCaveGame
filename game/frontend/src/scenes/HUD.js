@@ -36,6 +36,11 @@ export default class HUD extends Phaser.Scene {
         this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
         this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
         this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
+        
+        //preloading assets for chat
+        this.load.image('chat', "assets/comment-message.png");
+        this.load.image('close', "assets/close.png");
+        this.load.html('form', 'assets/pages/form.html');
     }
 
     create() {
@@ -58,6 +63,8 @@ export default class HUD extends Phaser.Scene {
         this.rightCap = this.add.image(this.healthBarX + this.middle.displayWidth, this.healthBarY, 'right-cap')
             .setOrigin(0, 0.5)
 
+        
+
         // Value given in percentage
         this.setHealth(this.currentHealth);
 
@@ -79,6 +86,39 @@ export default class HUD extends Phaser.Scene {
             fontSize: 40,
         });
 
+        // Create chat interface
+        // chat icon
+        this.chatButton = this.add.sprite(40, 680, 'chat')
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setScale(1.5)
+            .setInteractive();
+        // chat input
+        this.chatButton.on('pointerdown', () => {
+            this.chatInput = this.add.dom(150, 620).createFromCache('form').setOrigin(0.5);
+            this.chat = this.add.text(15, 150, "", {
+                lineSpacing: 15,
+                backgroundColor: "#dddddd",
+                color: "#26924F",
+                padding: 10,
+                fontStyle: "bold"
+            })
+            this.chat.setFixedSize(270, 450); // chat box 
+            // close button
+            this.closeBtn = this.add.sprite(40, 170, 'close')
+                .setDepth(1)
+                .setInteractive();
+            this.closeBtn.on('pointerdown', () => {
+                this.chatInput.destroy();
+                this.chat.destroy();
+                this.closeBtn.destroy();
+            })
+            this.closeBtn.on('pointerover', () => {this.closeBtn.setTint(0x30839f);});
+            this.closeBtn.on('pointerout', () => {this.closeBtn.clearTint();});
+        });
+        this.chatButton.on('pointerover', () => {this.chatButton.setTint(0x30839f);});
+        this.chatButton.on('pointerout', () => {this.chatButton.clearTint();});
+
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
@@ -90,6 +130,17 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+    }
+
+    // The difference between setting and changing health is that changing is relative, while setting is absolute
+    // Setting to +20 makes the player's health 20%
+    // Changing to +20 makes the player's health equal to their current health + 20
+    changeHealth(difference) {
+        this.setHealth(this.middle.displayWidth + difference);
+    }
+
+    changeHealthAnimated(difference) {
+        this.setHealthAnimated(this.middle.displayWidth + difference);
     }
 
     setHealth(percentage) {

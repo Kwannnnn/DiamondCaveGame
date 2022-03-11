@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
-import { CST } from '../CST';
+import { CST } from '../utils/CST';
 
+import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
@@ -8,6 +9,8 @@ import HUD from './HUD';
 export default class Game extends Phaser.Scene {
     // A physics group representing the diamond sprites
     diamonds;
+    // A physics group representing the enemies sprites
+    enemies;
     // ???
     layer;
     // A maping of playerIds to player sprites
@@ -15,7 +18,7 @@ export default class Game extends Phaser.Scene {
     // The unit the client is able to control
     controlledUnit;
     // The current state of the game
-    gameState
+    gameState;
 
     constructor() {
         super({
@@ -25,6 +28,7 @@ export default class Game extends Phaser.Scene {
 
     preload() {
         this.load.image('gem', 'assets/gem.png');
+        this.load.image('enemy', 'assets/dirt.png'); // FIXME: Add an actual enemy sprite
         //this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
 
@@ -40,6 +44,7 @@ export default class Game extends Phaser.Scene {
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
+        console.log(this.gameState);
     }
 
     create() {
@@ -53,6 +58,7 @@ export default class Game extends Phaser.Scene {
         this.setupHUD();
         this.setupPlayers();
         this.setupDiamondLocations();
+        this.setupEnemies();
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
@@ -105,6 +111,8 @@ export default class Game extends Phaser.Scene {
             this.name = this.names.get(this.username);
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
+            // Adding overalap between player and enemies (enemy collision)
+            this.physics.add.overlap(this.controlledUnit, this.enemies, this.collideEnemy, null, this); 
             this.controlledUnit.setSocket(this.socket);
         } else {
             // if the game state does not contain the username of the client
@@ -126,27 +134,6 @@ export default class Game extends Phaser.Scene {
     setNamePosition(name, player) {
         name.x = player.x - 20;
         name.y = player.y - 40;
-    }
-
-    /**
-     * Creates all diamond objects and places them in a physics group, and
-     * renders them on the map.
-     */
-    setupDiamondLocations() {
-        this.diamonds = this.physics.add.group();
-        
-        this.gameState.gems.forEach(g => {
-            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
-            this.diamonds.add(sprite);
-        });    
-
-        let id = 1;
-        // Scope each diamond
-        this.diamonds.children.iterate(function (child) {
-            child.setScale(0.2);
-            child.id = id;
-            id++;
-        }); 
     }
 
     /**
@@ -204,12 +191,103 @@ export default class Game extends Phaser.Scene {
                 
     }
 
+    /**
+     * Creates all diamond objects and places them in a physics group, and
+     * renders them on the map.
+     */
+    setupDiamondLocations() {
+        this.diamonds = this.physics.add.group();
+
+        this.gameState.gems.forEach(g => {
+            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+            this.diamonds.add(sprite);
+        });    
+
+        let id = 1;
+        // Scope each diamond
+        this.diamonds.children.iterate(function (child) {
+            child.setScale(0.2);
+            child.id = id;
+            id++;
+        });
+    }
+
+    /**
+     * Spawn in all initial enemies and start the overall movement event
+     */
+    setupEnemies() {
+        this.enemyData = new Map();
+        this.enemies = this.physics.add.group();
+
+        this.gameState.enemies.forEach(e => {
+            let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy');
+            sprite.id = e.enemyId;
+            this.enemies.add(sprite);
+
+            this.enemyData.set(e.enemyId, {
+                'path': e.path,
+                'target': 0,
+            });
+        });
+
+        // Start a timer to check the enemy positions
+        this.timedEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.updateEnemyPositions,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    /**
+     * Update the enemy positions and their velocity
+     */
+    updateEnemyPositions() {
+        this.enemies.children.each(e => {
+            if (this.enemyData.get(e.id).path.length > 0) {
+                const {id, x, y} = e;
+                const {velocity} = e.body;
+
+                const data = this.enemyData.get(id);
+                let targetLocation = data.path[data.target];
+
+                if (velocity.x === 0 && velocity.y === 0) {
+                    const {velocityX, velocityY} = determineVelocity({x, y}, targetLocation);
+                    e.body.setVelocity(velocityX, velocityY);
+                }
+
+                // Check if we are at, or have passed our current target position.
+                if (isAtOrPastTarget({x, y}, targetLocation, velocity)) {
+                    e.body.setVelocity(0, 0);
+                    // Set the enemy to the actual target position to handle moving too far
+                    e.x = targetLocation.x;
+                    e.y = targetLocation.y;
+
+                    // Update the new target index, loops at the end of the path array.
+                    data.target = (data.target + 1) >= data.path.length ? 0 : data.target + 1;
+                    targetLocation = data.path[data.target];
+                }
+
+                this.enemyData.set(id, data);
+            }
+        });
+    }
+
+    /**
+     * Handle colliding with an enemy
+     */
+    collideEnemy(player, enemy) {
+        console.log(`Hit enemy: ${enemy.id}`);
+
+        // TODO: Do something meaningful when you collide
+    }
+
     placeExit(x, y) {
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            this.exitScene()
-            this.exit.disableBody(false,false)
-        }, this.canExitScene, this)
+            this.exitScene();
+            this.exit.disableBody(false,false);
+        }, this.canExitScene, this);
     }
 
     canExitScene() {

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from '../CST';
+import { CST } from '../utils/CST';
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 const lobbyCodeForm = '<input type="text" name="lobby" placeholder="Enter lobby code"/>';
