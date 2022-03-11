@@ -2,8 +2,7 @@ import Phaser from 'phaser';
 import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
-import Player from '../model/Player';
-import Spectator from '../model/Spectator';
+import { Player, Spectator } from '../model';
 import HUD from './HUD';
 
 export default class Game extends Phaser.Scene {

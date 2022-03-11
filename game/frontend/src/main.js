@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
-import LobbyScene from './scenes/MenuLobbyScene';
-import GameScene from './scenes/Game';
-import LoadScene from './scenes/LoadScene';
-import JoinScene from './scenes/MenuJoinScene';
-import MenuScene from './scenes/MenuScene';
-import ActiveGamesScene from './scenes/ActiveGames'
-import SpectatorJoinScene from './scenes/SpectatorJoinScene'
+import {
+    LobbyScene,
+    GameScene,
+    LoadScene,
+    JoinScene,
+    MenuScene,
+    ActiveGamesScene,
+    SpectatorJoinScene
+} from './scenes';
 
 const config = {
     mode: Phaser.Scale.FIT,
