@@ -22,12 +22,8 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-{ 
-    // id of the created room
-    roomId: ...,
-    // list of id of the players in the room
-    playerIDs: [...] 
-}
+// The id of the created room as a string
+roomId;
 ```
 
 </p>
@@ -40,13 +36,8 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-{ 
-    // id of the joined room
-    roomId: ...,
-    // list of id of the players in the room
-    playerIDs: [...] 
-}
-
+// The id of the joined room as a string
+roomId;
 ```
 
 </p>
@@ -59,8 +50,8 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// A list of id of the players in the room
-playerIDs
+// The username of the player that joined the room
+playerId;
 ```
 
 </p>
@@ -165,7 +156,7 @@ playerIDs
 ```javascript
 {
     // the username of the player that moved
-    playerId: ..., 
+    playerId: ...,
 
     // the new x position of the player
     x: ...,
@@ -175,7 +166,7 @@ playerIDs
 
     // The new direction the player is facing
     // 0 - right, 180 - left
-    // 90 - up, 270 - down 
+    // 90 - up, 270 - down
     orientation: ...
 }
 ```
@@ -194,7 +185,7 @@ playerIDs
 
 ```javascript
 // the id of the collected gem as a string
-gemId
+gemId;
 ```
 
 </p>
@@ -204,6 +195,47 @@ gemId
             a gem has been collected.
         </td>
     </tr>
+    <tr>
+        <td>chatMessage</td>
+<td>
+<p>
+
+```javascript
+{
+    // the username of message's sender as a string
+    sender: ...,
+    // the message body as a string
+    message: ...,
+}
+```
+</p>
+        
+<td>
+    With this event the server forwards a message sent by another player
+</td>
+
+<tr>
+    <td>
+        spectatorJoined
+    </td>
+
+
+<td>
+
+```javascript
+// the username of spectator as a string
+playerId: ...,
+```
+
+</td>
+
+<td>
+    With this event the server informs all participants in a game room that
+    a new spectator has joined.
+</td>
+
+</tr>
+
 </table>
 
 ### Possible errors
@@ -221,7 +253,7 @@ gemId
 
 ```javascript
 // the invalid roomId as string
-roomId
+roomId;
 ```
 
 </p>
@@ -254,7 +286,7 @@ roomId
 
 ```javascript
 // the invalid gemId
-gemId
+gemId;
 ```
 
 </p>
@@ -317,7 +349,7 @@ gemId
 
 ```javascript
 // The id of the room as a string
-roomId
+roomId;
 ```
 
 </p>
@@ -327,14 +359,39 @@ roomId
             a string representing the id of the room.
         </td>
     </tr>
-    <tr>
+
+<!-- this is one row -->
+<tr>
+    <td>
+        joinRoomAsSpectator
+    </td>
+
+
+<td>
+
+```javascript
+// the id of the room as a string
+roomId:;
+```
+
+</td>
+
+<td>
+    Sent whenever there is a spectator wanting to join a room.
+</td>
+
+</tr>
+<!-- this is one row -->
+
+
+<tr>
         <td>gameStart</td>
 <td>
 <p>
 
 ```javascript
 // The id of the room as a string
-roomId
+roomId;
 ```
 
 </p>
@@ -358,11 +415,11 @@ roomId
 
     // the new y position of the player
     y: ...,
-    
+
     // The new direction the player is facing
     // 0 - right, 180 - left
     // 90 - up, 270 - down
-    orientation: ..., 
+    orientation: ...,
 }
 ```
 
@@ -392,6 +449,22 @@ roomId
 </td>
         <td>
             With this event the client indicates that a gem has been collected.
+        </td>
+    </tr>
+    <tr>
+        <td>chatMessage</td>
+<td>
+<p>
+
+```javascript
+// the message body as a string
+message:
+```
+
+</p>
+</td>
+        <td>
+            With this event the client sends a broadcast chat message
         </td>
     </tr>
 </table>
