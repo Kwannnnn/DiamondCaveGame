@@ -194,12 +194,12 @@ export default class Game extends Phaser.Scene {
             id++;
         });
 
-        // Adding overalap between player and diamonds (collecting diamonds)
+        // Adding overlap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.player, this.diamonds, this.collectDiamond, null, this); 
     }
 
     /**
-     * Spawn in all of the initial enemies and start the overall movement event
+     * Spawn in all initial enemies and start the overall movement event
      */
     setupEnemies() {
         this.enemyData = new Map();
@@ -228,34 +228,36 @@ export default class Game extends Phaser.Scene {
     }
 
     /**
-     * Update the enemy positions and their velocitiy
+     * Update the enemy positions and their velocity
      */
     updateEnemyPositions() {
         this.enemies.getChildren().forEach(e => {
-            const {id, x, y} = e;
-            const { velocity } = e.body;
+            if (this.enemyData.get(e).path.length > 0) {
+                const {id, x, y} = e;
+                const {velocity} = e.body;
 
-            const data = this.enemyData.get(id);
-            let targetLocation = data.path[data.target];
+                const data = this.enemyData.get(id);
+                let targetLocation = data.path[data.target];
 
-            if (velocity.x === 0 && velocity.y === 0) {
-                const { velocityX, velocityY } = determineVelocity({x, y}, targetLocation);
-                e.body.setVelocity(velocityX, velocityY);
+                if (velocity.x === 0 && velocity.y === 0) {
+                    const {velocityX, velocityY} = determineVelocity({x, y}, targetLocation);
+                    e.body.setVelocity(velocityX, velocityY);
+                }
+
+                // Check if we are at, or have passed our current target position.
+                if (isAtOrPastTarget({x, y}, targetLocation, velocity)) {
+                    e.body.setVelocity(0, 0);
+                    // Set the enemy to the actual target position to handle moving too far
+                    e.x = targetLocation.x;
+                    e.y = targetLocation.y;
+
+                    // Update the new target index, loops at the end of the path array.
+                    data.target = (data.target + 1) >= data.path.length ? 0 : data.target + 1;
+                    targetLocation = data.path[data.target];
+                }
+
+                this.enemyData.set(id, data);
             }
-
-            // Check if we are at, or have passed our current target position.
-            if (isAtOrPastTarget({x, y}, targetLocation, velocity)) {
-                e.body.setVelocity(0, 0);
-                // Set the enemy to the actual target position to handle moving too far
-                e.x = targetLocation.x;
-                e.y = targetLocation.y;
-    
-                // Update the new target index, loops at the end of the path array.
-                data.target = (data.target + 1) >= data.path.length ? 0 : data.target + 1;
-                targetLocation = data.path[data.target];
-            }
-
-            this.enemyData.set(id, data);
         });
     }
 
@@ -266,6 +268,7 @@ export default class Game extends Phaser.Scene {
         console.log(`Hit enemy: ${enemy.id}`);
 
         // TODO: Do something meaningful when you collide
+            HUD.changeHealth
     }
 
     /*placeExit(x, y){

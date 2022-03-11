@@ -123,11 +123,11 @@ playerId
             },
             
             // The path the enenmy will travel
-            path: [{
-                x: 496,
-                y: 336,
-            }, ...
-            ]
+            // path: {
+            //     x: 496,
+            //     y: 336,
+            // }
+            path: [] 
         }, ...
     ]
 }
