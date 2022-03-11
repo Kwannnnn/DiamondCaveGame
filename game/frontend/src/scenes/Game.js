@@ -100,6 +100,7 @@ export default class Game extends Phaser.Scene {
         });
 
         this.socket.on('choosePerks', (perks) => {
+            this.scene.stop("hud")
             this.scene.start(CST.SCENES.PERKS, {perksToDisplay: perks})
         })
 
