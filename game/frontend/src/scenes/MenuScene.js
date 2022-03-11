@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from "../CST";
+import { CST } from "../utils/CST";
 
 export default class MenuScene extends Phaser.Scene {
     constructor() {
