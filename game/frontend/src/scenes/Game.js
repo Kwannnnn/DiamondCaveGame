@@ -5,8 +5,6 @@ import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import Player from '../model/Player';
 import HUD from './HUD';
 
-let layer;
-
 export default class Game extends Phaser.Scene {
     // A physics group representing the diamond sprites
     diamonds;
@@ -30,8 +28,10 @@ export default class Game extends Phaser.Scene {
         //this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
 
-        this.load.image('tiles', 'assets/tiles.png'); // These are all the tiles that can be mapped toa number in the tilemap CSV file
-        this.load.tilemapCSV('map', 'assets/tileMap.csv'); // CSV representation of the map
+        // These are all the tiles that can be mapped toa number in the tilemap CSV file
+        this.load.image('tiles', 'assets/tiles.png');
+        // CSV representation of the map
+        this.load.tilemapCSV('map', 'assets/tileMap.csv');
     }
 
     init(data) {
@@ -104,6 +104,7 @@ export default class Game extends Phaser.Scene {
         // TODO: check if controlled unit is a Player or a Spectator
         this.controlledUnit = this.players.get(this.username);
         this.name = this.names.get(this.username);
+        this.controlledUnit.setSocket(this.socket);
     }
 
     /**
@@ -119,22 +120,6 @@ export default class Game extends Phaser.Scene {
     setNamePosition(name, player) {
         name.x = player.x - 20;
         name.y = player.y - 40;
-    }
-
-    collectDiamond(player, diamond) {
-        diamond.disableBody(true, true);
-        this.collectedDiamonds++;
-        
-        DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
-
-        //this is a small test for the speed increase 
-        /* this.increaseSpeed();
-        console.log('current delay:'+this.delay); */
-
-        this.socket.emit('gemCollected', {
-            roomId: this.lobbyID,
-            gemId: diamond.id
-        });
     }
 
     /**
@@ -156,6 +141,61 @@ export default class Game extends Phaser.Scene {
             child.id = id;
             id++;
         }); 
+    }
+
+    /**
+     * Removes a diamond from the visual map.
+     * @param diamondSprite the diamond sprite to remove
+     */
+    destroyDiamondSprite(diamondSprite) {
+        if (diamondSprite) {
+            diamondSprite.disableBody(true, true);
+        }
+    }
+
+    /**
+     * Updates the count of collected diamonds and fires an 'update-count'
+     * event to the DiamondCollectEventHandler.
+     */
+    updateCollectedDiamondsCount() {
+        this.collectedDiamonds++;
+        DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
+    }
+
+    /**
+     * Handles diamond collection whenever a player overlaps with a diamond
+     * sprite.
+     * @param {Player} player the player that collected the diamond
+     * @param diamond the collected diamond
+     */
+    collectDiamond(player, diamond) {
+        this.destroyDiamondSprite(diamond);
+        this.updateCollectedDiamondsCount();
+
+        //this is a small test for the speed increase 
+        /* this.increaseSpeed();
+        console.log('current delay:'+this.delay); */
+
+        this.socket.emit('gemCollected', {
+            roomId: this.lobbyID,
+            gemId: diamond.id
+        });
+    }
+
+    /**
+     * Handles diamond collection whenever the server sends a 'gemCollected'
+     * event on the web socket.
+     * @param diamond the diamond that has been collected
+     */
+    handleDiamondCollected(diamond){
+        // Iterate through diamond physics group to remove matching diamond
+        this.diamonds.children.each((child) => {
+            if (child.id === diamond) {
+                this.destroyDiamondSprite(child);
+                this.updateCollectedDiamondsCount();
+            }
+        });
+                
     }
 
     placeExit(x, y) {
@@ -196,7 +236,7 @@ export default class Game extends Phaser.Scene {
     /**
      * this perk for reducing 10 seconds for the team
      */
-    timePerk(){
+    timePerk() {
         if (HUD.second<10){
             HUD.minute--;
             HUD.second+=60;
@@ -206,50 +246,43 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    handleDiamondCollected(diamond){
-        this.diamonds.children.each((child) => this.removeDiamond(child, diamond)); //Iterate through diamond list to remove matching diamond
-    }
-
-    removeDiamond(testDiamond, targetID){
-        if (testDiamond.id === targetID){
-            testDiamond.disableBody(true, true);
-            this.collectedDiamonds++;
-            DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
-        }
-
-    }
-
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
         HUD.changeHealth(healthChange);
     }
 
+    /**
+     * Handles player movement logic for a non-controlled player unit.
+     * @param {Object} args the arguments sent from the server
+     */
+     handlePlayerMoved(args) { 
+        console.log(args);
+        let p = this.players.get(args.playerId);
+        let name = this.names.get(args.playerId);
+        p.x = args.x;
+        p.y = args.y;
+        p.orientation =  args.orientation;
+        this.setNamePosition(name, p);
+
+        switch (p.orientation){
+            case 0: 
+                p.anims.play('right', true);
+                break;
+            case 90:
+                p.anims.play('up', true);
+                break;
+            case 180:
+                p.anims.play('left', true);
+                break;
+            default:
+                p.anims.play('down', true);
+                break;
+        }
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
-        this.socket.on('teammateMoved', (args) => {
-            console.log(args);
-            let p = this.players.get(args.playerId);
-            let name = this.names.get(args.playerId);
-            p.x = args.x;
-            p.y = args.y;
-            p.orientation =  args.orientation;
-            this.setNamePosition(name, p);
-
-            switch (p.orientation){
-                case 0: 
-                    p.anims.play('right', true);
-                    break;
-                case 90:
-                    p.anims.play('up', true);
-                    break;
-                case 180:
-                    p.anims.play('left', true);
-                    break;
-                default:
-                    p.anims.play('down', true);
-                    break;
-            }
-        });
+        this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
     }
 }
