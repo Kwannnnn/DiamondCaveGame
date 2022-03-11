@@ -8,6 +8,7 @@ export default class Player extends ControlledUnit {
         this.scene = scene;
         this.username = username;
         this.setupPlayerMovement();
+        this.setupAnimations();
 
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
@@ -30,6 +31,17 @@ export default class Player extends ControlledUnit {
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
         }, true, true);
+    }
+
+    setupAnimations() {
+        const animationKeys = ['up', 'down', 'right', 'left'];
+        for (const index in animationKeys) {
+            this.scene.anims.create({
+                key: animationKeys[index],
+                frames: [ { key: 'player', frame: index } ],
+                frameRate: 20
+            });
+        }
     }
 
     /**
