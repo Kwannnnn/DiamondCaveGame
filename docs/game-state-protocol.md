@@ -110,6 +110,25 @@ playerId;
             // gem spawn y position
             y: ...
         }, ...
+    ],
+    enemies: [
+        {
+            // a unique identifier for an enemy
+            enemyId: ...,
+
+            // Enemy starting position
+            start: {
+                x: 336,
+                y: 336,
+            },
+            
+            // The path the enenmy will travel
+            // path: {
+            //     x: 496,
+            //     y: 336,
+            // }
+            path: [] 
+        }, ...
     ]
 }
 ```
@@ -124,7 +143,7 @@ playerId;
             <i>Players</i> are sent as an array of player objects, containing
             the spawn coordinates and facing directions of each player.<br>
             Lastly, <i>gems</i> are in the format of an array of gem objects,
-            containing the spawn coordinates of each gem.
+            containing the spawn coordinates of each gem.<br> <i>enemies</i> contain enemy objects that define a start position and a path they will traverse.
         </td>
     </tr>
     <tr>
