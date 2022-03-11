@@ -1,13 +1,15 @@
 const express = require('express');
 const app = express();
-const { customAlphabet } = require('nanoid');
 const socket = require('socket.io');
-const Player = require('./model/player.js');
 const dotenv = require('dotenv');
-dotenv.config();
 
-// more info: https://github.com/ai/nanoid
-const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
+const Player = require('./model/player.js');
+const players = require('./model/players.js');
+const lManager = require('./lobbyManager.js');
+const gManager = require('./gameManager.js');
+const cManager =  require('./chatManager.js');
+const debugPage = require('./debugWebServer.js');
+dotenv.config();
 
 const httpServer = app.listen(process.env.PORT, function () {
     console.log(`Started application on port ${process.env.PORT}`);
@@ -19,81 +21,12 @@ const io = socket(httpServer, {
     }
 });
 
-// key      | value
-// playerId | Player
-let players = {};
-
-// key      | value
-// roomId | Room
-let rooms = {};
-let games=[];
+const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
+const gameManager = new gManager(io);
+const chatManager = new cManager(io);
 
 // Send socket initialization scripts to the client
-app.get('/', function (req, res) {
-    res.send(`
-    <form>
-        <input placeholder="Enter your username">
-        <button>Create team</button>     
-    </form>
-    
-    <form>
-        <input placeholder="Enter your username">
-        <input placeholder="Enter your room id">
-        <button>Join</button>     
-    </form>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-
-    let createForm = document.getElementsByTagName('form')[0];
-
-    createForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let username = document.getElementsByTagName('input')[0].value;
-        socketLogic(username, null);
-    });
-
-    let joinForm = document.getElementsByTagName('form')[1];
-
-    joinForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let username = document.getElementsByTagName('input')[1].value;
-        let roomID = document.getElementsByTagName('input')[2].value;
-        socketLogic(username,roomID);
-    });
-    
-
-    function socketLogic(username, room){
-        let socket = io({query: 'username='+username});
-
-        if (room === null) socket.emit("createRoom");
-        else socket.emit('joinRoom',room);
-    
-        socket.on('roomCreated', (lobbyId) => {
-            const p = document.createElement('p');
-            p.innerText = 'new lobby created with id: ' + lobbyId;
-            document.body.append(p);
-        });
-        
-        socket.on('roomJoined', (roomId) => {
-            const p = document.createElement('p');
-            p.innerText = 'joined room with id: ' + roomId;
-            document.body.append(p);
-        })
-
-        socket.on('roomNotFound', (roomId) => {
-            const p = document.createElement('p');
-            p.innerText = 'Room ' + roomId + ' does not exist';
-            document.body.append(p);
-        })
-
-        socket.on('newPlayerJoined', (playerId) => {
-            const p = document.createElement('p');
-            p.innerText = 'Player ' + playerId + ' joined the room';
-            document.body.append(p);
-        })
-    }
-</script>`);
-});
+debugPage.sendDebugWebPage(app);
 
 io.on('connection', (socket) => {
     // generate new unique id for the player
@@ -104,148 +37,24 @@ io.on('connection', (socket) => {
 
     handleConnect(player);
 
-    socket.on('createRoom', () => handleCreateRoom(player));
+    socket.on('currentPlays',()=> lobbyManager.handleCurrentGames(player));
 
-    socket.on('joinRoom', (roomId) => handleJoinRoom(roomId, player));
+    socket.on('createRoom', () => lobbyManager.handleCreateRoom(player));
+
+    socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
+
+    socket.on('joinRoomAsSpectator', (roomId) => lobbyManager.handleJoinRoomAsSpectator(roomId, player))
 
     socket.on('disconnect', () => handleDisconnect(player));
 
-    socket.on('gameStart', (roomId) => handleGameStart(roomId));
+    socket.on('gameStart', (roomId) => gameManager.handleGameStart(player,roomId));
 
-    socket.on('playerMove', (newPosition) => handlePlayerMove(newPosition, player));
+    socket.on('chatMessage', (message) => chatManager.handleChatMessage(player, message));
 
-    socket.on('gemCollected', (diamond) => handleCollectDiamond(player, diamond));
-    
-    socket.on('currentPlays',(username)=>{handleCurrentGames(player,games)})
+    socket.on('playerMove', (newPosition) => gameManager.handlePlayerMove(newPosition, player));
+
+    socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
 });
-
-function handleCurrentGames(player,games){
-    const plays=games;
-    console.log(plays);
-    player.socket.emit('currentPlays',plays);
-}
-
-function handlePlayerMove(newPosition, player) {
-    const roomId = newPosition.roomId;
-    const room = rooms[roomId];
-
-    console.log(player.id);
-
-    if (room) {
-        // Notify all teammates about the movement
-        player.socket.to(roomId).emit('teammateMoved', {
-            playerId: player.id,
-            x: newPosition.x,
-            y: newPosition.y,
-            orientation: newPosition.orientation
-        });
-    } else {
-        socket.emit('roomNotFound', roomId);
-    } 
-    // console.log(newPosition);
-}
-
-function joinRoom(room, player) {
-    room.players.push(player);
-    player.socket.join(room.id);
-    // Store roomId for future use
-    // Might not be needed lol
-    player.socket.roomId = room.id;
-    console.log(player.id, 'Joined', room.id);
-}
-
-
-
-function handleCreateRoom(player) {
-    //generate unique one time code for the lobby
-    const roomId = nanoid(6);
-
-    // create new room
-    let room = {
-        id: roomId,
-        players: []
-    };
-    let game = {
-        id:roomId,
-        players: []
-    }
-    // add it to rooms dictionary
-    rooms[roomId] = room;
-    games[games.length]= game;
-    console.log(rooms);
-    joinRoom(room, player);
-    let playerIDs = [];
-    for (player of room.players) {
-        playerIDs.push(player.id);
-    }
-    for(let i=0;i<games.length;i++){
-        if(roomId===games[i].id){
-            games[i].players.push(player.id);
-        }
-    }
-    //send message back to player with room id and list of playerID
-    player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
-}
-
-function handleJoinRoom(roomId, player) {
-    roomId = roomId.toUpperCase();
-    const room = rooms[roomId];
-    for(let i=0;i<games.length;i++){
-        if(roomId===games[i].id){
-            games[i].players.push(player.id);
-        }
-    }
-    console.log(games[0].players);
-    // TODO: maybe the following code could be better written
-    if (room) {
-        // if player is already in the room
-        if (room.players.includes(player)) {
-            player.socket.emit('alreadyInRoom');
-            return;
-        }
-
-        // if room already has 2 players
-        if (room.players.length == process.env.MAX_ROOM_SIZE) {
-            player.socket.emit('roomFull');
-            return;
-        }
-
-        joinRoom(room, player);
-        let playerIDs = [];
-        for (player of room.players) {
-            playerIDs.push(player.id);
-        }
-        let data = {
-            roomId: roomId,
-            playerIDs: playerIDs
-        };
-        // send room data to the player joins the room
-        player.socket.emit('roomJoined', data);
-
-        // broadcast to every other team member
-        player.socket.to(room.id).emit('newPlayerJoined', playerIDs);
-
-        // send game-ready-to-start game event if room is full
-        if (room.players.length == process.env.MAX_ROOM_SIZE) {
-            player.socket.to(roomId).emit('gameReadyToStart');
-        }
-
-    } else {
-        player.socket.emit('roomNotFound', roomId);
-    }
-}
-
-function handleGameStart(roomId) {
-    const room = rooms[roomId];
-
-    if (room) {
-        const initialGameState = generateInitialGameState(room);
-        // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
-        io.to(roomId).emit('initialGameState', initialGameState);
-    } else {
-        socket.emit('roomNotFound', roomId);
-    }
-}
 
 function handleConnect(player) {
     players[player.id] = player;

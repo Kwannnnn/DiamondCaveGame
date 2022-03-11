@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { CST } from '../CST';
+import { CST } from '../utils/CST';
 
 import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
@@ -290,9 +290,37 @@ export default class Game extends Phaser.Scene {
         console.log("Exit! Logic neends to be implemented.")
     }*/
 
+
+    /**
+     * this is a perk for increasing the movement speed
+     */
     increaseSpeed(){
         this.delay=this.delay*7/10;
     }
+
+
+    /**
+     * this is a perk for adding 4 more diamonds into the number of collected diamonds
+     */
+    diamondPerk(){
+        this.collectedDiamonds+=4;
+    }
+
+
+    /**
+     * this perk for reducing 10 seconds for the team
+     */
+    timePerk(){
+        if(HUD.second<10){
+            HUD.minute--;
+            HUD.second+=60;
+            HUD.second-=10;
+        }else{
+            HUD.second-=10;
+        }
+    }
+    
+    
 
     /**
      * Fires an event on the socket for player movement, sending the new player
