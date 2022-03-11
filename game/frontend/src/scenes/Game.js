@@ -3,6 +3,7 @@ import { CST } from '../CST';
 
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import Player from '../model/Player';
+import Spectator from '../model/Spectator';
 import HUD from './HUD';
 
 export default class Game extends Phaser.Scene {
@@ -100,11 +101,17 @@ export default class Game extends Phaser.Scene {
      * with the GameScene.
      */
     setupControlledUnit() {
-        // this.controlledUnit = new Spectator(this, 32 + 16, 32 + 16);
-        // TODO: check if controlled unit is a Player or a Spectator
-        this.controlledUnit = this.players.get(this.username);
-        this.name = this.names.get(this.username);
-        this.controlledUnit.setSocket(this.socket);
+        if (this.gameState.players.find(p => p.playerId, this.username)) {
+            this.controlledUnit = this.players.get(this.username);
+            this.name = this.names.get(this.username);
+            // Adding overalap between player and diamonds (collecting diamonds)
+            this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
+            this.controlledUnit.setSocket(this.socket);
+        } else {
+            // if the game state does not contain the username of the client
+            // it means he must be a spectator
+            this.controlledUnit = new Spectator(this, 32 + 16, 32 + 16, this.username);
+        }
     }
 
     /**
