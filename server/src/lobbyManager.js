@@ -122,7 +122,9 @@ class LobbyManager {
         if (room) {
             room.spectators.push(player);
 
+            // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.id)
+            console.log('Spectator ' + player.id + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);
         }

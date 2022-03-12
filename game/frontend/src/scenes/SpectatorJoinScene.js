@@ -18,7 +18,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, "logo").setDepth(1);
+        this.logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, "logo").setDepth(1);
         this.add.image(0,0, "title_bg").setOrigin(0).setDepth(0)
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
@@ -66,31 +66,39 @@ export default class SpectatorJoinScene extends Phaser.Scene {
             //     plays:payload
             // });
             console.log(payload);
-            // this.showCurrentGames(payload)
+
+            this.showCurrentGames(payload)
         });
     }
 
-    showCurrentGames() {
+    showCurrentGames(payload) {
+        this.logo.destroy();
         this.usernameForm.destroy();
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 425, 'All active games: ', {
+        this.message = this.add.text(this.game.renderer.width / 2, 100, 'All active games: ', {
             color: '#FFFFFF',
-            fontSize: 60
+            fontSize: 50
         }).setOrigin(0.5);
 
-        let position = this.game.renderer.height - 370;
-        for (let i = 0; i < this.plays.length; i++) {
-            let listOfPlayers = "";
-            for (let k = 0; k < this.plays[i].players.length; k++) {
-                listOfPlayers += this.plays[i].players[k]
-                if (k + 1 !== this.plays[i].players.length) {
-                    listOfPlayers += ',';
-                }
-            }
-            this.message = this.add.text(this.game.renderer.width / 2, position, this.plays[i].id + "(" + listOfPlayers + ")", {
+        let yPosition = 180;
+
+        this.header = this.add.text()
+        for (let room of payload) {
+            // create a new row
+            this.message = this.add.text(300, yPosition, room.roomId + "(" + room.playerIds.join(', ') + ")", {
                 color: '#FFFFFF',
-                fontSize: 60
+                fontSize: 40
             }).setOrigin(0.5);
-            position += 55
+
+            const spectateButton = this.add.text(1000, yPosition, 'Spectate', {
+                color: '#FFFFFF',
+                fontSize: 40
+            }).setOrigin(0.5).setInteractive();
+
+            spectateButton.on('pointerdown', () => this.socket.emit('joinRoomAsSpectator', room.roomId));
+            spectateButton.on('pointerover', () => {spectateButton.setTint(0x30839f);});
+            spectateButton.on('pointerout', () => {spectateButton.clearTint();});
+
+            yPosition += 55
         }
     }
 
