@@ -8,10 +8,24 @@ class LobbyManager {
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
 
-    handleCurrentGames(player) {
+    handleGetCurrentGames(player) {
         // TODO: change this, this is only place holder code
-        const plays = []
-        player.socket.emit('currentPlays', plays);
+        //get all active games
+        const games = []
+        for (let room of rooms.values()) {
+            const roomObject = {
+                id: room.id,
+                playerIDs: []
+            }
+
+            // get ids of players in the room
+            for (let player of room.players) {
+                roomObject.playerIDs.push(player.id)
+            }
+
+            games.push(roomObject);
+        }
+        player.socket.emit('currentGames', games);
     }
 
     handleCreateRoom(player) {

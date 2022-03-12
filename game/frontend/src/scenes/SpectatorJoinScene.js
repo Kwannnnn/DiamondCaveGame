@@ -27,12 +27,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.backButton.on('pointerover', () => {this.backButton.setTint(0x30839f);});
         this.backButton.on('pointerout', () => {this.backButton.clearTint();});
 
-        /*this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 425, 'All active games: ', {
-            color: '#FFFFFF',
-            fontSize: 60
-        }).setOrigin(0.5);*/
-
-        this.username = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 350).createFromHTML(usernameForm);
+        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 350).createFromHTML(usernameForm);
         this.actionButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, lobbyID === undefined ? 'Connect' : 'Start game', {
             color: '#FFFFFF',
             fontSize: 40
@@ -52,23 +47,51 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         //         initialGameState: payload
         //     });
         // });
+
+        
     }
 
     connect(){
-        this.username = this.username.getChildByName('username').value;
+        this.username = this.usernameForm.getChildByName('username').value;
         this.socket = io(SERVER_URL, {query: 'username=' + this.username, reconnection: false});
         this.socket.on('connect_error', ()=>{this.message.setText('Could not connect to server');});
         this.socket.on('connect', ()=>{
             console.log("Connection was successful")
         });
-        this.socket.emit('currentPlays', this.username);
-        this.socket.on('currentPlays', (payload) => {
-            console.log(payload);
-            this.scene.start(CST.SCENES.ACTIVEGAMES,{
-                plays:payload
-            });
-        });
+        this.socket.emit('getCurrentGames');
 
+        this.socket.on('currentGames', (payload) => {
+            // console.log(payload);
+            // this.scene.start(CST.SCENES.ACTIVEGAMES,{
+            //     plays:payload
+            // });
+            console.log(payload);
+            // this.showCurrentGames(payload)
+        });
+    }
+
+    showCurrentGames() {
+        this.usernameForm.destroy();
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 425, 'All active games: ', {
+            color: '#FFFFFF',
+            fontSize: 60
+        }).setOrigin(0.5);
+
+        let position = this.game.renderer.height - 370;
+        for (let i = 0; i < this.plays.length; i++) {
+            let listOfPlayers = "";
+            for (let k = 0; k < this.plays[i].players.length; k++) {
+                listOfPlayers += this.plays[i].players[k]
+                if (k + 1 !== this.plays[i].players.length) {
+                    listOfPlayers += ',';
+                }
+            }
+            this.message = this.add.text(this.game.renderer.width / 2, position, this.plays[i].id + "(" + listOfPlayers + ")", {
+                color: '#FFFFFF',
+                fontSize: 60
+            }).setOrigin(0.5);
+            position += 55
+        }
     }
 
 
