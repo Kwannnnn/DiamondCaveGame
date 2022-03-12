@@ -8,10 +8,24 @@ class LobbyManager {
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
 
-    handleCurrentGames(player) {
+    handleGetCurrentGames(player) {
         // TODO: change this, this is only place holder code
-        const plays = []
-        player.socket.emit('currentPlays', plays);
+        //get all active games
+        const games = []
+        for (let room of rooms.values()) {
+            const roomObject = {
+                roomId: room.id,
+                playerIds: []
+            }
+
+            // get ids of players in the room
+            for (let player of room.players) {
+                roomObject.playerIds.push(player.id)
+            }
+
+            games.push(roomObject);
+        }
+        player.socket.emit('currentGames', games);
     }
 
     handleCreateRoom(player) {
@@ -26,7 +40,7 @@ class LobbyManager {
         // games[games.length]= game;
 
         //add player to the room
-        this.joinRoom(room, player);
+        this.joinRoom(room, player, false);
         let playerIDs = [];
         for (player of room.players) {
             playerIDs.push(player.id);
@@ -42,8 +56,9 @@ class LobbyManager {
         player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
     }
 
-    joinRoom(room, player) {
-        room.players.push(player);
+    joinRoom(room, player, isSpectator) {
+        if (!isSpectator) room.players.push(player);
+        else room.spectators.push(player);
         player.socket.join(room.id);
         // Store roomId for future use
         // Might not be needed lol
@@ -75,7 +90,7 @@ class LobbyManager {
                 return;
             }
 
-            this.joinRoom(room, player);
+            this.joinRoom(room, player, false);
 
             let playerIDs = [];
             for (player of room.players) {
@@ -108,7 +123,9 @@ class LobbyManager {
         if (room) {
             room.spectators.push(player);
 
+            // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.id)
+            console.log('Spectator ' + player.id + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);
         }

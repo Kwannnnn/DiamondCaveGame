@@ -7,16 +7,26 @@ class ChatManager{
     }
 
     handleChatMessage(player, message){
-        let roomID;
-        for (let room of player.socket.rooms){
-            if (rooms[room] !== undefined) roomID = room;
+        let spectator = false;
+
+        if (rooms.get(player.roomId) === undefined) return;
+
+        // Are we a spectator?
+        for (let roomSpectator of rooms.get(player.roomId).spectators){
+            if (roomSpectator.id === player.id){
+                spectator = true;
+                break;
+            }
         }
-        //TODO: Implement check for spectators
         const data = {
             sender: player.id,
             message: message
         };
-        this.io.to(roomID).emit('chatMessage', data);
+
+        if (!spectator) this.io.to(player.roomId).emit('chatMessage', data); // Not a spectator
+        else {
+            for (let roomSpectator of rooms.get(player.roomId).spectators) roomSpectator.socket.emit('chatMessage', data); // Is a spectator
+        }
         console.log('Sent message from "' + player.id + '": ' + message);
     }
 }

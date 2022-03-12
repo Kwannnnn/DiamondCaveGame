@@ -255,6 +255,39 @@ playerId: ...,
 
 </tr>
 
+<!-- this is one row -->
+<tr>
+    <td>
+        currentGames
+    </td>
+
+
+<td>
+
+```javascript
+[
+    {
+        // the id of the game room
+        roomId: ...,
+
+        // the ids of the players in the room as strings
+        playerIds: [...]
+    },
+
+    // other rooms
+    ...
+]
+```
+
+</td>
+
+<td>
+    A response to the <b>getCurrentGames</b> request from the client, which contains a list of active game objects
+</td>
+
+</tr>
+<!-- this is one row -->
+
 </table>
 
 ### Possible errors
@@ -486,4 +519,20 @@ message:
             With this event the client sends a broadcast chat message
         </td>
     </tr>
+
+<!-- this is one row -->
+<tr>
+    <td>
+        getCurrentGames
+    </td>
+
+
+<td>-</td>
+
+<td>
+    With this event the client requests a list of active game rooms
+</td>
+
+</tr>
+<!-- this is one row -->
 </table>

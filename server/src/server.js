@@ -43,6 +43,8 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
 
+    socket.on('getCurrentGames', () => lobbyManager.handleGetCurrentGames(player));
+
     socket.on('joinRoomAsSpectator', (roomId) => lobbyManager.handleJoinRoomAsSpectator(roomId, player))
 
     socket.on('disconnect', () => handleDisconnect(player));
@@ -57,11 +59,11 @@ io.on('connection', (socket) => {
 });
 
 function handleConnect(player) {
-    players[player.id] = player;
+    players.set(player.id,player);
     console.log(`Established connection with player ${player.id}`);
 }
 
 function handleDisconnect(player) {
-    delete players[player.id];
+    players.delete(player.id);
     console.log(`Player ${player.id} has disconnected!`);
 }
