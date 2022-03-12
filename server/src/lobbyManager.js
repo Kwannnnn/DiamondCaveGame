@@ -26,7 +26,7 @@ class LobbyManager {
         // games[games.length]= game;
 
         //add player to the room
-        this.joinRoom(room, player);
+        this.joinRoom(room, player, false);
         let playerIDs = [];
         for (player of room.players) {
             playerIDs.push(player.id);
@@ -42,8 +42,9 @@ class LobbyManager {
         player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
     }
 
-    joinRoom(room, player) {
-        room.players.push(player);
+    joinRoom(room, player, isSpectator) {
+        if (!isSpectator) room.players.push(player);
+        else room.spectators.push(player);
         player.socket.join(room.id);
         // Store roomId for future use
         // Might not be needed lol
@@ -75,7 +76,7 @@ class LobbyManager {
                 return;
             }
 
-            this.joinRoom(room, player);
+            this.joinRoom(room, player, false);
 
             let playerIDs = [];
             for (player of room.players) {
@@ -106,9 +107,8 @@ class LobbyManager {
         const room = rooms.get(roomId);
 
         if (room) {
-            room.spectators.push(player);
-
-            player.socket.to(room.id).emit('newSpectatorJoined', player.id)
+            this.joinRoom(room, player, true);
+            player.socket.to(room.id).emit('newSpectatorJoined', player.id);
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
