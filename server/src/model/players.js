@@ -1,5 +1,5 @@
 // key      | value
 // playerId | Player
-const players = {};
+const players = new Map();
 
 module.exports = players;

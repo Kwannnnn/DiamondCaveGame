@@ -8,10 +8,24 @@ class LobbyManager {
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
 
-    handleCurrentGames(player) {
+    handleGetCurrentGames(player) {
         // TODO: change this, this is only place holder code
-        const plays = []
-        player.socket.emit('currentPlays', plays);
+        //get all active games
+        const games = []
+        for (let room of rooms.values()) {
+            const roomObject = {
+                roomId: room.id,
+                playerIds: []
+            }
+
+            // get ids of players in the room
+            for (let player of room.players) {
+                roomObject.playerIds.push(player.id)
+            }
+
+            games.push(roomObject);
+        }
+        player.socket.emit('currentGames', games);
     }
 
     handleCreateRoom(player) {
@@ -107,8 +121,11 @@ class LobbyManager {
         const room = rooms.get(roomId);
 
         if (room) {
-            this.joinRoom(room, player, true);
-            player.socket.to(room.id).emit('newSpectatorJoined', player.id);
+            room.spectators.push(player);
+
+            // TODO: handle on client
+            player.socket.to(room.id).emit('newSpectatorJoined', player.id)
+            console.log('Spectator ' + player.id + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
