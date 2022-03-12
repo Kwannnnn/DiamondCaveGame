@@ -14,13 +14,13 @@ class LobbyManager {
         const games = []
         for (let room of rooms.values()) {
             const roomObject = {
-                id: room.id,
-                playerIDs: []
+                roomId: room.id,
+                playerIds: []
             }
 
             // get ids of players in the room
             for (let player of room.players) {
-                roomObject.playerIDs.push(player.id)
+                roomObject.playerIds.push(player.id)
             }
 
             games.push(roomObject);
