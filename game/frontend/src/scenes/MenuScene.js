@@ -13,7 +13,7 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-    
+        this.load.image("back", "assets/arrow-left.png");
 
     }
 
@@ -22,8 +22,8 @@ export default class MenuScene extends Phaser.Scene {
         this.add.image(0,0, "title_bg").setOrigin(0).setDepth(0)
         this.lobby = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 350, "play_button").setDepth(1).setInteractive();
         this.join = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 250, "join_button").setDepth(1).setInteractive();
-        this.activeGames = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 75, "activeGames_button").setDepth(1).setInteractive();
         this.options = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 150, "options_button").setDepth(1).setInteractive();
+        this.activeGames = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 50, "activeGames_button").setDepth(1).setInteractive();
 
         this.join.on('pointerdown', () => {this.scene.start(CST.SCENES.JOIN)});
         this.join.on('pointerover', () => {this.join.setTint(0x30839f)});
