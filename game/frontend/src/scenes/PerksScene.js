@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { CST } from "../CST";
+import { CST } from "../utils/CST";
 
 /*
     This scene is run after the team finishes the map. Here the perk for the next map is chosen.
@@ -21,6 +21,7 @@ export default class Perks extends Phaser.Scene {
     }
 
     create () {
+        console.log("YOU ARE AT PERKS SCENE")
         const speedPerk = this.add.image(400, 250, 'speed-icon');
         speedPerk.setScale(0.3);
         speedPerk.setInteractive();
