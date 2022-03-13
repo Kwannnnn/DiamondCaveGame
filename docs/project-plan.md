@@ -159,6 +159,9 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-01 | Traps are visible and they deal damage | M | 6 | - |
 | BI-02 | Enemies can move around the map in a predetermined pattern | M | 7 | - |
 | BI-03 | Find/Create enemy sprites | M | 4 | - |
+| BI-04 | Create a spike trap | M | 6 | - |
+| BI-05 | Create a laser trap | M | 7 | - |
+| BI-06 | Create a pressure pad trap | M | 7 | - |
 
 ### US 14
 
