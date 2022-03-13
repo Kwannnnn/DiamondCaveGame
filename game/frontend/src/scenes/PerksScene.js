@@ -16,27 +16,32 @@ export default class Perks extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('speed-icon', 'assets/speed-icon.png');
-        this.load.image('clock-icon', 'assets/perks/clock-solid.svg');
+        
     }
 
     create () {
-        console.log("YOU ARE AT PERKS SCENE")
-        const speedPerk = this.add.image(400, 250, 'speed-icon');
-        speedPerk.setScale(0.3);
-        speedPerk.setInteractive();
-        speedPerk.on('clicked', this.applySpeedPerk, this);
-
+        // const speedPerk = this.add.image(400, 250, 'speed-icon');
+        // speedPerk.setScale(0.3);
+        // speedPerk.setInteractive();
+        this.btnPerks = [];
         const style = { font: "36px Arial", fill: "#000"};
-        const speedPerkText = this.add.text(310, 350, 'Speed Perk', style);
-        speedPerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
+
+        for (let i = 0; i < this.perks.length; i++) {
+            const btn = this.add.text(100 + 300 * i + 1, 350, this.perks[i], style).setInteractive();
+            btn.on("clicked", () => {console.log("Clicked on " + this.perks[i])}, this)
+            this.btnPerks.push(btn);            
+        }
+
+        // const speedPerkText = this.add.text(310, 350, 'Speed Perk', style);
+        // speedPerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
+        // speedPerk.on('clicked', this.applySpeedPerk, this);
 
 
-        const timePerk = this.add.image(800, 250, 'clock-icon').setInteractive();
-        timePerk.on("clicked", this.applyTimePerk, this);
+        // const timePerk = this.add.image(800, 250, 'clock-icon').setInteractive();
+        // timePerk.on("clicked", this.applyTimePerk, this);
 
-        const timePerkText = this.add.text(710, 350, 'Time Perk', style);
-        timePerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
+        // const timePerkText = this.add.text(710, 350, 'Time Perk', style);
+        // timePerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
 
         this.cameras.main.setBackgroundColor('#fff');
 
