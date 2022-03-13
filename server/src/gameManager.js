@@ -138,7 +138,7 @@ class GameManager {
     }
 
     handleReachingMapEnd(roomID) {
-        const room = rooms[roomID];
+        const room = rooms.get(roomID);
         const perks = ["Movement Speed", "Health", "Add diamonds"];
     
         if (room) {
@@ -146,6 +146,7 @@ class GameManager {
                 player.socket.emit('choosePerks', perks);
             });
         } else {
+            console.log(rooms);
             console.log("Room id for exit has not been found");
         }
     }
