@@ -18,11 +18,11 @@ export default class HUD extends Phaser.Scene {
 
     init(data) {
         this.chatOn = false;
+        this.chatMessages = [];
 
         this.world = data.world;
         this.stage = data.stage;
         this.socket = data.socket;
-        this.username = data.username;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
 
@@ -42,7 +42,6 @@ export default class HUD extends Phaser.Scene {
         
         //preloading assets for chat
         this.load.image('chat', "assets/comment-message.png");
-        this.load.image('close', "assets/close.png");
         this.load.html('form', 'assets/pages/form.html');
     }
 
@@ -98,45 +97,61 @@ export default class HUD extends Phaser.Scene {
             .setInteractive();
         // chat input
         this.chatButton.on('pointerdown', () => {
+            // if chat box is off
             if (!this.chatOn) { 
                 this.chatOn = !this.chatOn;
                 this.chatInput = this.add.dom(150, 620).createFromCache('form').setOrigin(0.5);
+                // TODO: add line wrapping and scrollbar for seeing previous messages 
                 this.chat = this.add.text(15, 150, "", {
                     lineSpacing: 15,
                     backgroundColor: "#dddddd",
                     color: "#26924F",
                     padding: 10,
-                    fontStyle: "bold"
-                })
-                this.chat.setFixedSize(270, 450); // chat box 
-                // close button
-                this.closeBtn = this.add.sprite(40, 170, 'close')
-                    .setDepth(1)
-                    .setInteractive();
-                this.closeBtn.on('pointerdown', () => {
-                    this.chatInput.destroy();
-                    this.chat.destroy();
-                    this.closeBtn.destroy();
-                    this.chatOn = !this.chatOn;
+                    fontStyle: "bold",
+                    fixedWidth: 270,
+                    fixedHeight: 450,
+                    wordWrap: {
+                        width: 240,
+                        callback: null,
+                        callbackScope: null,
+                        useAdvancedWrap: false
+                    }
                 })
             }
-            this.closeBtn.on('pointerover', () => {this.closeBtn.setTint(0x30839f);});
-            this.closeBtn.on('pointerout', () => {this.closeBtn.clearTint();});
+            // if chat box is on
+            else {
+                this.chatInput.destroy();
+                this.chat.destroy();
+                this.chatOn = !this.chatOn;
+            }
         });
         this.chatButton.on('pointerover', () => {this.chatButton.setTint(0x30839f);});
         this.chatButton.on('pointerout', () => {this.chatButton.clearTint();});
 
+        // set enter key for sending message
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
+        // send message to server on enter key
         this.enterKey.on('down', event => {
-
+            let chatbox = this.chatInput.getChildByName('chat');
+            chatbox.value;
+            if (chatbox.value != "") {
+                this.socket.emit('chatMessage', chatbox.value);
+                chatbox.value = "";
+            }
         });
 
-        this.socket.connect();
-
-        this.socket.on('connect', async () => {
-            this.socket.emit()
+        // display the messages in chat box
+        this.socket.on('chatMessage', (data) => {
+            const { sender, message } = data;     
+            let chatMessage = sender + ": " + message;
+            this.chatMessages.push(chatMessage);
+            if (this.chatMessages.length > 15) {
+                this.chatMessages.shift();
+            }
+            this.chat.setText(this.chatMessages);
         })
+
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
