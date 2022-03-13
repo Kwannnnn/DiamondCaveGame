@@ -62,6 +62,7 @@ export default class Game extends Phaser.Scene {
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
+        this.placeExit(200, 200);
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
@@ -285,13 +286,16 @@ export default class Game extends Phaser.Scene {
     placeExit(x, y) {
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            this.exitScene();
-            this.exit.disableBody(false,false);
-        }, this.canExitScene, this);
+            console.log('collided');
+            if (this.canExitScene()) {
+                this.exitScene();
+                this.exit.disableBody(false,false);
+            }
+        });
     }
 
     canExitScene() {
-        if (this.collectedDiamonds == this.totalDiamonds){
+        if (this.collectedDiamonds == this.gameState.gems.length){
             return true;
         } else {
             console.log("Not all diamonds have been collected!")

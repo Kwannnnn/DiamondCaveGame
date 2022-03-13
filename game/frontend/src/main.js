@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+
 import {
     LobbyScene,
     GameScene,
@@ -6,16 +7,15 @@ import {
     JoinScene,
     MenuScene,
     PerksScene,
-    ActiveGamesScene,
     SpectatorJoinScene
-} from './scenes';
+} from './scenes'
 
 const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [LoadScene, MenuScene, GameScene, LobbyScene, JoinScene, SpectatorJoinScene],
+    scene: [LoadScene, MenuScene, GameScene, PerksScene, LobbyScene, JoinScene, SpectatorJoinScene],
     parent: "game",
     type: Phaser.AUTO,
     physics: {
