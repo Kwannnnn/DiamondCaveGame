@@ -150,6 +150,17 @@ class GameManager {
             console.log("Room id for exit has not been found");
         }
     }
+
+    handlePerkChoice(chosenPerk) {
+        const room = rooms.get(chosenPerk.lobbyID);
+
+        if (room) {
+            room.players.forEach(player => {
+                
+            })
+        }
+
+    }
 }
 
 module.exports = GameManager;

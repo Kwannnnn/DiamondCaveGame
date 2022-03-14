@@ -4,62 +4,80 @@ import { CST } from "../utils/CST";
 /*
     This scene is run after the team finishes the map. Here the perk for the next map is chosen.
 */
-export default class Perks extends Phaser.Scene {
+export default class PerkMenu extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.PERKS
         })
     }
 
-    init(data) {
-        this.perks = data.perksToDisplay;
+    init(data){
+        this.perksNames = data.perksNames;
+        this.username = data.username;
+        this.socket = data.socket;
+        this.lobbyID = data.lobbyID;
+        
+        // this.screenCenterX = this.game.renderer.width /2;
+        // this.screenCenterY = this.game.renderer.height /2;
     }
 
-    preload() {
+    preload(){
         
     }
 
-    create () {
-        // const speedPerk = this.add.image(400, 250, 'speed-icon');
-        // speedPerk.setScale(0.3);
-        // speedPerk.setInteractive();
-        this.btnPerks = [];
-        const style = { font: "36px Arial", fill: "#000"};
+    create(){
+        // this.background = this.add.rectangle(0,0,10000,10000, "black")
 
-        for (let i = 0; i < this.perks.length; i++) {
-            const btn = this.add.text(100 + 300 * i + 1, 350, this.perks[i], style).setInteractive();
-            btn.on("clicked", () => {console.log("Clicked on " + this.perks[i])}, this)
-            this.btnPerks.push(btn);            
+        this.cameras.main.setBackgroundColor("black");
+        this.title = this.add.text(100, 100, "Choose a perk", {
+            fontSize: 50,
+            fontStyle:"bold",
+        })
+        
+        this.timer = 20
+        this.countDown = this.add.text(270, 150, this.timer, {
+            fontSize: 50,
+            fontStyle:"bold",
+        })
+
+        setInterval(()=>{
+            if(this.timer > 0) {
+                this.timer--;
+                this.countDown.setText(this.timer) ;
+                if(this.timer < 1){
+                    console.log("timer hit 0.")
+                }
+            }
+        }, 1000)
+
+        this.perks = []
+        for (let i = 0; i < this.perksNames.length; i++) {
+            const perkName = this.perksNames[i];
+            this.perks.push(this.add.text(
+                100, 300+100*i, perkName, 
+                {
+                fontSize:40
+            }).setDepth(1).setInteractive())
+
+            this.perks[i].on('pointerdown', () => {
+                this.selectPerk(i);
+            })
         }
 
-        // const speedPerkText = this.add.text(310, 350, 'Speed Perk', style);
-        // speedPerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
-        // speedPerk.on('clicked', this.applySpeedPerk, this);
 
-
-        // const timePerk = this.add.image(800, 250, 'clock-icon').setInteractive();
-        // timePerk.on("clicked", this.applyTimePerk, this);
-
-        // const timePerkText = this.add.text(710, 350, 'Time Perk', style);
-        // timePerkText.on('pointerover', () => {speedPerkText.setTint(0x30839f)});
-
-        this.cameras.main.setBackgroundColor('#fff');
-
-        this.input.on('gameobjectup', function (pointer, gameObject)
-        {
-            gameObject.emit('clicked', gameObject);
-        }, this);        
+        this.add.text(900,300,"Teammate Choice:", {fontSize:30})
+        this.teammateChoice = this.add.text(900,340,"None",{fontSize:25})
     }
 
-    update () {
+    selectPerk(perkId){
+        this.perks.forEach(perk => {
+            perk.setColor('white')
+        });
 
+        this.socket.emit("chosenPerk", {username: this.username, perkId, lobbyID: this.lobbyID});
+        this.perks[perkId].setColor('green')
     }
 
-    applySpeedPerk() {
-        console.log("Speed Perk to be added")
-    }
 
-    applyTimePerk() {
-        console.log("Time perk to be added");
-    }
+
 }

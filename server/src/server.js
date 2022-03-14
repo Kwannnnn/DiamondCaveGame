@@ -57,7 +57,10 @@ io.on('connection', (socket) => {
 
     socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
 
+    // TODO Should be added to the protocol
     socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
+
+    socket.on("chosenPerk", (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
 });
 
 function handleConnect(player) {
