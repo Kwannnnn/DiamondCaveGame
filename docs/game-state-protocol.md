@@ -146,7 +146,9 @@ playerId;
             containing the spawn coordinates of each gem.<br> <i>enemies</i> contain enemy objects that define a start position and a path they will traverse.
         </td>
     </tr>
-    <tr>
+
+
+<!-- <tr>
         <td>gameOver</td>
 <td>
 <p>
@@ -166,9 +168,11 @@ playerId;
         <td>
             With this event the server indicates the  end of a new game.
         </td>
-    </tr>
-    <tr>
-        <td>teammateMoved</td>
+</tr> -->
+
+
+<tr>
+    <td>teammateMoved</td>
 <td>
 <p>
 
@@ -531,6 +535,37 @@ message:
 
 <td>
     With this event the client requests a list of active game rooms
+</td>
+
+</tr>
+<!-- this is one row -->
+
+
+<!-- this is one row -->
+<tr>
+    <td>
+        gameOver
+    </td>
+
+
+<td>
+
+```javascript
+// the id of the room as a string
+roomId:...,
+
+// the number of gems collected
+gemsCollected: ...,
+
+// the duration of the run in milliseconds
+time: ...
+```
+
+</td>
+
+<td>
+    This event indicates that the run has ended. Information necessary for the calculation of
+    the total score for the run is sent.
 </td>
 
 </tr>
