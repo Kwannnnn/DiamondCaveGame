@@ -56,6 +56,8 @@ io.on('connection', (socket) => {
     socket.on('playerMove', (newPosition) => gameManager.handlePlayerMove(newPosition, player));
 
     socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
+
+    socket.on('gameOver', (data) => gameManager.handleGameOver(data));
 });
 
 function handleConnect(player) {

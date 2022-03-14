@@ -70,12 +70,6 @@ class LobbyManager {
         roomId = roomId.toUpperCase();
         const room = rooms.get(roomId);
 
-        // commented since I'm not sure what this does
-        // for (let i = 0; i < games.length; i++) {
-        //     if (roomId === games[i].id) {
-        //         games[i].players.push(player.id);
-        //     }
-        // }
         // TODO: maybe the following code could be better written
         if (room) {
             // if player is already in the room
