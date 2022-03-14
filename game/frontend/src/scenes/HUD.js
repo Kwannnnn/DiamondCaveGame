@@ -1,6 +1,7 @@
 import CollectDiamond from "../events/CollectDiamondEvent";
 import SelectHealingPerk from "../events/HealingPerkEvent";
 
+let numberOfSpectators=0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
@@ -25,7 +26,7 @@ export default class HUD extends Phaser.Scene {
         this.socket = data.socket;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
-
+        
         // health in percentage
         this.currentHealth = 100;
     }
@@ -75,6 +76,13 @@ export default class HUD extends Phaser.Scene {
             color: "#FFFFFF",
             fontSize: 40,
         });
+
+        // Create the numberOfSpectstors and stage text
+        this.numberOfSpectators = this.add.text(35, 80, ` Number of spectators: ${numberOfSpectators}`, {
+            color: "#FFFFFF",
+            fontSize: 40,
+        });
+        this.socket.on('newSpectatorJoined',()=>{numberOfSpectators+=1; console.log("Success "+numberOfSpectators);this.updateNumberOfSpectators(numberOfSpectators);})
 
         // Create the Diamond counter
         this.diamondCounter = this.add.text(600, 25, `Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`, {
@@ -219,5 +227,9 @@ export default class HUD extends Phaser.Scene {
 
     updateHealth(health) {
         this.currentHealth += health;
+    }
+
+    updateNumberOfSpectators(numberOfSpectators) {
+        this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
     }
 }
