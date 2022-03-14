@@ -374,7 +374,12 @@ export default class Game extends Phaser.Scene {
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.stop('hud');
-            this.scene.start(CST.SCENES.PERKS, {perksToDisplay: perks});
+            this.scene.start(CST.SCENES.PERKS, {
+                perksNames: perks,
+                username: this.username,
+                socket: this.socket,
+                lobbyID: this.lobbyID
+            });
         })
     }
 }
