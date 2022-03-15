@@ -157,15 +157,43 @@ class GameManager {
 
         if (room) {
             room.players.forEach(player => {
+                // If the iterable object is not the player who chose the perk, notify teammate
+                // If it is the player, assign the chosen perk to the object
                 if (player.id !== chosenPerk.username) {
                     console.log(chosenPerk.username + " chose " + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
                     player.socket.emit("teammatePerkChoice", {teammatePerk: perks[chosenPerk.perkId]});
+                } else if (!player.perkChoice || player.perkChoice !== perks[chosenPerk.perkId]) {
+
+                    // To keep track of the choices players make, new property of the object is created
+                    player.perkChoice = perks[chosenPerk.perkId];
                 }
+
             })
         }
 
+    }
+
+    /**
+     * This method sends all player the final perk that is going to be applied
+     * @param {id of the lobby} lobbyID 
+     */
+    handleFinalPerkDecision(lobbyID) {
+        console.log("FINISHED PERK CHOOSING");
+        const room = rooms.get(lobbyID);
+
+        if (room) {
+            // if the choices are the same, apply perk
+            if (room.players[0].perkChoice === room.players[1].perkChoice) {
+                const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
+                console.log("Perk name without spaces: " + perkNameWithoutSpace);
+                const messageToSend = "use" + perkNameWithoutSpace;
+                room.players.forEach(player => {
+                    player.socket.emit(messageToSend);
+                })
+            }
+        }
     }
 }
 

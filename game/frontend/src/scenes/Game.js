@@ -44,6 +44,12 @@ export default class Game extends Phaser.Scene {
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
+
+        // Check if perk is added to the game
+        if (data.perk) {
+            this.perk = data.perk;
+        }
+        
         console.log(this.gameState);
     }
 
@@ -55,7 +61,7 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
-        this.setupHUD();
+        // this.setupHUD();
         this.setupPlayers();
         this.setupDiamondLocations();
         this.setupEnemies();
@@ -94,7 +100,8 @@ export default class Game extends Phaser.Scene {
 
         // Having the player added to the game
         this.gameState.players.forEach(p => {
-            var player = new Player(this, p.x, p.y, p.playerId);
+            console.log("PERK TO BE ADDED TO PLAYERS: " + this.perk)
+            var player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
             var name = this.add.text(p.x-5, p.y-10, p.playerId);
             this.names.set(p.playerId, name);
@@ -283,6 +290,11 @@ export default class Game extends Phaser.Scene {
         // TODO: Do something meaningful when you collide
     }
 
+    /**
+     * Places exit on the map
+     * @param {coordinate x for exit to be place} x 
+     * @param {coordinate y for exit to be place} y 
+     */
     placeExit(x, y) {
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
@@ -294,6 +306,10 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+    /**
+     * Checks if all dimonds were collected to exit the map
+     * @returns boolean
+     */
     canExitScene() {
         if (this.collectedDiamonds == this.gameState.gems.length){
             return true;
@@ -303,15 +319,11 @@ export default class Game extends Phaser.Scene {
         }
     }
 
+    /**
+     * Sends message to server to transfer players to PerkScene
+     */
     exitScene(){
         this.socket.emit('reachedEnd', this.lobbyID);
-    }
-
-    /**
-     * this is a perk for increasing the movement speed
-     */
-    increaseSpeed() {
-        this.delay = this.delay * 7 / 10;
     }
 
     /**
@@ -373,12 +385,14 @@ export default class Game extends Phaser.Scene {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
-            this.scene.stop('hud');
+            this.scene.remove('hud');
             this.scene.start(CST.SCENES.PERKS, {
                 perksNames: perks,
                 username: this.username,
                 socket: this.socket,
-                lobbyID: this.lobbyID
+                lobbyID: this.lobbyID,
+                // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
+                gameState: this.gameState
             });
         })
     }
