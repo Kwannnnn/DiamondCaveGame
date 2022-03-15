@@ -1,5 +1,7 @@
 // This class manages everything related to in-game events
 const rooms = require('./model/rooms.js');
+const perks = ["Movement Speed", "Health", "Add diamonds"];
+
 
 class GameManager {
     constructor(io){
@@ -19,9 +21,7 @@ class GameManager {
     handlePlayerMove(newPosition, player) {
         const roomId = newPosition.roomId;
         const room = rooms.get(roomId);
-    
-        console.log(player.id);
-    
+        
         if (room) {
             // Notify all teammates about the movement
             player.socket.to(roomId).emit('teammateMoved', {
@@ -139,7 +139,6 @@ class GameManager {
 
     handleReachingMapEnd(roomID) {
         const room = rooms.get(roomID);
-        const perks = ["Movement Speed", "Health", "Add diamonds"];
     
         if (room) {
             room.players.forEach(player => {
@@ -154,9 +153,16 @@ class GameManager {
     handlePerkChoice(chosenPerk) {
         const room = rooms.get(chosenPerk.lobbyID);
 
+        // TODO add choices to room object
+
         if (room) {
             room.players.forEach(player => {
-                
+                if (player.id !== chosenPerk.username) {
+                    console.log(chosenPerk.username + " chose " + perks[chosenPerk.perkId]);
+                    
+                    // TODO Should be added to the protocol
+                    player.socket.emit("teammatePerkChoice", {teammatePerk: perks[chosenPerk.perkId]});
+                }
             })
         }
 
