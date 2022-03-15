@@ -16,9 +16,9 @@ export default class PerkMenu extends Phaser.Scene {
         this.username = data.username;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
-        
-        // this.screenCenterX = this.game.renderer.width /2;
-        // this.screenCenterY = this.game.renderer.height /2;
+
+        // Only for testing
+        this.gameState = data.gameState;
     }
 
     preload(){
@@ -26,15 +26,15 @@ export default class PerkMenu extends Phaser.Scene {
     }
 
     create(){
-        // this.background = this.add.rectangle(0,0,10000,10000, "black")
-
+        // Set background to black and add title
         this.cameras.main.setBackgroundColor("black");
         this.title = this.add.text(100, 100, "Choose a perk", {
             fontSize: 50,
             fontStyle:"bold",
         })
         
-        this.timer = 20
+        // Start the timer
+        this.timer = 5
         this.countDown = this.add.text(270, 150, this.timer, {
             fontSize: 50,
             fontStyle:"bold",
@@ -45,39 +45,63 @@ export default class PerkMenu extends Phaser.Scene {
                 this.timer--;
                 this.countDown.setText(this.timer) ;
                 if(this.timer < 1){
-                    console.log("timer hit 0.")
+                    console.log("timer hit 0.");
+                    // TODO add message to protocol
+                    // Sends message indicating that the time
+                    this.socket.emit("finishedPerkChoosing", this.lobbyID);
                 }
             }
-        }, 1000)
+        }, 1000);
 
-        this.perks = []
+        // Create perk text objects from the list received from server
+        this.perks = [];
         for (let i = 0; i < this.perksNames.length; i++) {
             const perkName = this.perksNames[i];
             this.perks.push(this.add.text(
                 100, 300+100*i, perkName, 
                 {
                 fontSize:40
-            }).setDepth(1).setInteractive())
+            }).setDepth(1).setInteractive());
 
+            // Assing event to the click on the corresponding perk text
             this.perks[i].on('pointerdown', () => {
                 this.selectPerk(i);
-            })
+            });
         }
 
+        // Display teammate's choice
+        this.add.text(900,300,"Teammate Choice:", {fontSize:30});
+        this.teammateChoice = this.add.text(900,340, "None",{fontSize:25});
+        this.displayTeammatePerk();
 
-        this.add.text(900,300,"Teammate Choice:", {fontSize:30})
-        this.teammateChoice = this.add.text(900,340,"None",{fontSize:25})
+        // Wait for final perk to be sent from server (now it only listens to movement perk)
+        this.socket.on("useMovementSpeed", () => {
+            this.scene.start(CST.SCENES.GAME, {
+                username: this.username,
+                initialGameState: this.gameState,
+                lobbyID: this.lobbyID,
+                socket: this.socket,
+                perk: "useMovementSpeed"
+            })
+        })
     }
 
+    // Even that is getting called by clicking on the perk text
     selectPerk(perkId){
         this.perks.forEach(perk => {
-            perk.setColor('white')
+            perk.setColor('white');
         });
 
+        // TODO Add message to the protocol
+        // Send chosenPerk message to server 
         this.socket.emit("chosenPerk", {username: this.username, perkId, lobbyID: this.lobbyID});
-        this.perks[perkId].setColor('green')
+        this.perks[perkId].setColor('green');
     }
 
-
-
+    displayTeammatePerk() {
+        this.socket.on("teammatePerkChoice", (teammatePerk) => {
+            this.teammateChoice.destroy();
+            this.teammateChoice = this.add.text(900,340, teammatePerk.teammatePerk,{fontSize:25});
+        })
+    }
 }

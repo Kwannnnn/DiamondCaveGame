@@ -1,7 +1,7 @@
 import ControlledUnit from "./ControlledUnit";
 
 export default class Player extends ControlledUnit {
-    constructor(scene, x, y, username) {
+    constructor(scene, x, y, username, perk) {
         super(scene, x, y, 'player');
         this.setScale(0.14);
 
@@ -12,6 +12,21 @@ export default class Player extends ControlledUnit {
 
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
+
+        // Check if perk is applied to the room
+        if (perk) {
+            console.log(perk + " IS USED")
+            // Check which perk is applied
+            switch (perk) {
+                case "useMovementSpeed":
+                    this.increaseSpeed();
+                    break;
+
+                default:
+                    console.log("no perks for player " + username);
+
+            }
+        }
         // TODO: ???
         this.depth = 100;
     }
@@ -97,6 +112,13 @@ export default class Player extends ControlledUnit {
                 orientation: this.orientation
             });
         }
+    }
+
+    /**
+    * this is a perk for increasing the movement speed
+    */
+    increaseSpeed() {
+        this.delay = this.delay * 3 / 10;
     }
 
     setSocket(socket) {
