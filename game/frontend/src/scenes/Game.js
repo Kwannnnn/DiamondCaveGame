@@ -35,7 +35,7 @@ export default class Game extends Phaser.Scene {
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
-        this.load.tilemapCSV('map', 'assets/tileMap.csv');
+        // this.load.tilemapCSV('map', 'assets/tileMap.csv');
     }
 
     init(data) {
@@ -49,7 +49,7 @@ export default class Game extends Phaser.Scene {
 
     create() {
         // Create the tilemap with the specified tile dimensions
-        let map = this.make.tilemap({key: 'map', tileWidth: 32, tileHeight: 32});
+        let map = this.make.tilemap({data: this.gameState.tileMap, tileWidth: 32, tileHeight: 32});
         // Map the correct part of the tiles image to the tilemap
         let tileSet = map.addTilesetImage('tiles');
         // Draw the tiles on the screen
