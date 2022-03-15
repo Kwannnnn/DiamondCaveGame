@@ -4,3 +4,4 @@ export { default as LoadScene } from './LoadScene';
 export { default as JoinScene } from './MenuJoinScene';
 export { default as MenuScene } from './MenuScene';
 export { default as SpectatorJoinScene } from './SpectatorJoinScene';
+export { default as RankingScene } from './RankingScene';
