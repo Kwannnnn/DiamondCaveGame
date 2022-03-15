@@ -60,6 +60,7 @@ io.on('connection', (socket) => {
     // TODO Should be added to the protocol
     socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
 
+    // TODO Should be added to the protocol
     socket.on("chosenPerk", (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
 });
 
