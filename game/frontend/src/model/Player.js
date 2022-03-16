@@ -79,6 +79,11 @@ export default class Player extends ControlledUnit {
             // this.setNamePosition(this.name, this.player);
         }
 
+        if (tile && tile.index == 3) {
+            // Damage player method
+        }
+
+
         if (movementX !== 0 || movementY !== 0) {
             this.handlePlayerMoved();
         }
