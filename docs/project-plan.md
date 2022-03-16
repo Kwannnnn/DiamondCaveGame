@@ -201,10 +201,10 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | - | - | - | - | - |
-| PB-01 | The name of the current player doesn't follow character, not seen by other player | N | 3 | Open |
-| PB-02 | The server does not record the game state, which allows arbitrary data to be sent by clients without any integrity verification | H | 8 | Open |
-| PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | Open |
-| PB-04 | The game can be started with one player, causing a server crash | H | 4 | In progress |
+| PB-01 | The name of the current player doesn't follow character, not seen by other player | N | 3 | In progress |
+| PB-02 | The server does not record the game state, which allows arbitrary data to be sent by clients without any integrity verification | H | 8 | Done |
+| PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | In progress |
+| PB-04 | The game can be started with one player, causing a server crash | H | 4 | Done |
 | PB-05 | WASD cannot by typed in chat | H | 5 | In progress |
-| PB-06 | Spectator list can overflow, obscuring entries | H | 5 | Open |
-| PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Open |
+| PB-06 | Spectator list can overflow, obscuring entries | H | 5 | In progress |
+| PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
