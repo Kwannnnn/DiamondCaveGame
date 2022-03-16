@@ -3,7 +3,7 @@ class Room {
         this.id = id;
         this.players = [],
         this.spectators = [],
-            this.gameState={}
+        this.gameState = {}
     }
 }
 

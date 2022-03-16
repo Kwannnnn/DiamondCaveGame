@@ -103,6 +103,9 @@ playerId;
             orientation: ...
         }, ...
     ],
+    
+    gemsCollected:...,
+
     gems: [
         {
             // a unique identifier for a gem
@@ -563,20 +566,13 @@ message:
 
 ```javascript
 // the id of the room as a string
-roomId:...,
-
-// the number of gems collected
-gemsCollected: ...,
-
-// the duration of the run in milliseconds
-time: ...
+roomId:...
 ```
 
 </td>
 
 <td>
-    This event indicates that the run has ended. Information necessary for the calculation of
-    the total score for the run is sent.
+    This event indicates that the run has ended.
 </td>
 
 </tr>
