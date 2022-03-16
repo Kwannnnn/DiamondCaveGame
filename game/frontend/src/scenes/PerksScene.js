@@ -34,24 +34,30 @@ export default class PerkMenu extends Phaser.Scene {
         })
         
         // Start the timer
-        this.timer = 5
+        this.timer = 10;
         this.countDown = this.add.text(270, 150, this.timer, {
             fontSize: 50,
             fontStyle:"bold",
-        })
+        });
 
-        setInterval(()=>{
-            if(this.timer > 0) {
-                this.timer--;
-                this.countDown.setText(this.timer) ;
-                if(this.timer < 1){
-                    console.log("timer hit 0.");
-                    // TODO add message to protocol
-                    // Sends message indicating that the time
-                    this.socket.emit("finishedPerkChoosing", this.lobbyID);
+        this.countDownTimer = this.time.addEvent({
+            callback:()=>{
+                if(this.timer > 0) {
+                    this.timer--;
+                    this.countDown.setText(this.timer) ;
+                    if(this.timer < 1){
+                        console.log("timer hit 0.");
+                        // TODO add message to protocol
+                        // Sends message indicating that the time
+                        this.socket.emit("finishedPerkChoosing", this.lobbyID);
+                        this.countDownTimer.remove();
+                    }
                 }
-            }
-        }, 1000);
+            },
+            callbackScope:this,
+            delay:1000,
+            loop:true
+        })
 
         // Create perk text objects from the list received from server
         this.perks = [];
@@ -75,14 +81,17 @@ export default class PerkMenu extends Phaser.Scene {
         this.displayTeammatePerk();
 
         // Wait for final perk to be sent from server (now it only listens to movement perk)
-        this.socket.on("useMovementSpeed", () => {
+        this.socket.on("perkForNextGame", (perk) => {
+
             this.scene.start(CST.SCENES.GAME, {
                 username: this.username,
                 initialGameState: this.gameState,
                 lobbyID: this.lobbyID,
                 socket: this.socket,
-                perk: "useMovementSpeed"
-            })
+                perk: perk
+            });
+
+            this.scene.stop(this);
         })
     }
 
