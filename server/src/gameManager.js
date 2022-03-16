@@ -15,6 +15,8 @@ class GameManager {
                 return;
             }
             const initialGameState = this.generateInitialGameState(room);
+            rooms.get(roomId).gameState=initialGameState;
+            console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             this.io.to(roomId).emit('initialGameState', initialGameState);
         } else player.socket.emit('roomNotFound', roomId);
@@ -27,6 +29,17 @@ class GameManager {
         console.log(player.id);
     
         if (room) {
+            // Update the game state of room
+            for(let i=0;i<rooms.get(roomId).gameState.players.length;i++){
+                if(rooms.get(roomId).gameState.players[i].playerId==player.id){
+                    rooms.get(roomId).gameState.players[i]={
+                        playerId: player.id,
+                        x: newPosition.x,
+                        y: newPosition.y,
+                        orientation: newPosition.orientation
+                    }
+                }
+            }
             // Notify all teammates about the movement
             player.socket.to(roomId).emit('teammateMoved', {
                 playerId: player.id,
@@ -43,8 +56,13 @@ class GameManager {
     handleCollectDiamond(player, diamond) {
         const roomId = diamond.roomId;
         const room = rooms.get(roomId);
-    
         if (room) {
+            // Update the game state of the room
+            for(let i=0;i<rooms.get(roomId).gameState.gems.length;i++) {
+                if(rooms.get(roomId).gameState.gems[i].gemId==diamond.gemId){
+                    rooms.get(roomId).gameState.gems.splice(i, 1);
+                }
+            }
             // Notify teammate about collected diamond
             player.socket.to(roomId).emit('gemCollected', diamond.gemId);
         } else {
