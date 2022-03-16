@@ -37,9 +37,11 @@ export default class Player extends ControlledUnit {
 
     setupAnimations() {
         const animationKeys = ['up', 'down', 'right', 'left'];
-        for (const index in animationKeys) {
+        for (const [index, key] of animationKeys.entries()) {
+            console.log('index: ' + index);
+            console.log('key: ' + key);
             this.scene.anims.create({
-                key: animationKeys[index],
+                key: key,
                 frames: [ { key: 'player', frame: index } ],
                 frameRate: 20
             });
@@ -57,18 +59,18 @@ export default class Player extends ControlledUnit {
         this.orientation = orientation;
         this.setNamePosition();
 
-        switch (p.orientation){
+        switch (this.orientation){
             case 0: 
-                p.anims.play('right', true);
+                this.anims.play('right', true);
                 break;
             case 90:
-                p.anims.play('up', true);
+                this.anims.play('up', true);
                 break;
             case 180:
-                p.anims.play('left', true);
+                this.anims.play('left', true);
                 break;
             default:
-                p.anims.play('down', true);
+                this.anims.play('down', true);
                 break;
         }
     }
