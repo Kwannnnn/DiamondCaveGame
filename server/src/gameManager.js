@@ -56,6 +56,10 @@ class GameManager {
         // console.log(newPosition);
     }
 
+    handleGetRanking(player) {
+        player.socket.emit('rankList', runs.toArray());
+    }
+
     handleCollectDiamond(player, diamond) {
         const roomId = diamond.roomId;
         const room = rooms.get(roomId);
