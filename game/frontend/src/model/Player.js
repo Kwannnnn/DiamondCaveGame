@@ -1,4 +1,5 @@
 import ControlledUnit from "./ControlledUnit";
+import { CST } from "../utils/CST"
 
 export default class Player extends ControlledUnit {
     constructor(scene, x, y, username) {
@@ -17,7 +18,9 @@ export default class Player extends ControlledUnit {
     }
 
     update() {
-        this.handlePlayerMovement();
+        if (!this.scene.scene.isActive(CST.SCENES.CHAT)) {
+            this.handlePlayerMovement();
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
 
 export default class Game extends Phaser.Scene {
     // A physics group representing the diamond sprites
@@ -66,6 +67,7 @@ export default class Game extends Phaser.Scene {
         this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
 
         this.handleSocketEvents();
+
     }
 
     update() {
