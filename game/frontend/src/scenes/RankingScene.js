@@ -10,7 +10,25 @@ export default class RankingScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.dataToDisplay = [];
+        this.dataToDisplay = [{
+            rank: 1,
+            team: "A1B2C3",
+            player1: "test1",
+            player2: "test2",
+            score: "32767",
+        }, {
+            rank: 2,
+            team: "373737",
+            player1: "aaa",
+            player2: "bbb",
+            score: "37",
+        }, {
+            rank: 3,
+            team: "000000",
+            player1: "Aaaaaaaaaaaaaaaaaaaa",
+            player2: "a",
+            score: "1",
+        }];
         // this.dataToDisplay = data.ranklist;
     }
 
@@ -37,7 +55,11 @@ export default class RankingScene extends Phaser.Scene {
             scrollMode: 0, // 0 - vertical, 1 - horizontal
             background: this.setupBackground(),
             table: this.setupTable(),
+            header: this.createTableItem(CST.COLORS.RANKLIST_SECONDARY),
             slider: this.setupSlider(),
+
+            // A callback function that renders each table cell
+            createCellContainerCallback: (cell, cellContainer) => this.populateCellContainer(cell, cellContainer),
             items: this.dataToDisplay // the array of data objects
         })
         .layout()
@@ -63,5 +85,48 @@ export default class RankingScene extends Phaser.Scene {
                 padding: 2,
             }
         }
+    }
+
+    /**
+     * Creates a row in the ranking table with the following table fields:
+     * - Rank, Team, Player 1, Player 2, Score
+     */
+    createTableItem(backgroundColor) {
+        var background = this.rankingScene.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor);
+        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', {fixedWidth: 40, halign:'right', valign:'center'});
+        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', {fixedWidth: 70, halign:'left', valign:'center'});
+        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', {fixedWidth: 100, halign:'left', valign:'center'});
+        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', {fixedWidth: 100, halign:'left', valign:'center'});
+        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', {fixedWidth: 70, halign:'right', valign:'center'});
+
+        return this.rankingScene.add.sizer({
+            width: undefined,
+            height: 30,
+            orientation: 0,
+            align: 'right'
+        })
+        .addBackground(background)
+        .add(rank, 0, 'center', { left: 10, right: 20 }, false, 'rank')
+        .add(team, 0, 'center', { right: 20 }, false, 'team')
+        .add(player1, 0, 'center', {right: 20}, false, 'player1')
+        .add(player2, 0, 'center', {right: 20}, false, 'player2')
+        .add(score, 0, 'center', { right: 20 }, false, 'score');
+    }
+
+    populateCellContainer(cell, cellContainer) {
+        var scene = cell.scene;
+        var item = cell.item;
+                    
+        if (cellContainer === null) {
+            cellContainer = this.createTableItem(CST.COLORS.RANKLIST_PRIMARY)
+        }
+    
+        // Feed the container with the actual data
+        cellContainer.getElement('rank').setText(item.rank);
+        cellContainer.getElement('team').setText(item.team);
+        cellContainer.getElement('player1').setText(item.player1);
+        cellContainer.getElement('player2').setText(item.player2);
+        cellContainer.getElement('score').setText(item.score);
+        return cellContainer;
     }
 }
