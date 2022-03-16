@@ -57,6 +57,7 @@ export default class RankingScene extends Phaser.Scene {
             table: this.setupTable(),
             header: this.createTableItem(CST.COLORS.RANKLIST_SECONDARY),
             slider: this.setupSlider(),
+            space: this.setupSpacing(),
 
             // A callback function that renders each table cell
             createCellContainerCallback: (cell, cellContainer) => this.populateCellContainer(cell, cellContainer),
@@ -84,6 +85,17 @@ export default class RankingScene extends Phaser.Scene {
             mask: {
                 padding: 2,
             }
+        }
+    }
+
+    setupSpacing() {
+        return {
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20,
+            table: 10,
+            header: 10,
         }
     }
 
