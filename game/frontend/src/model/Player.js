@@ -9,6 +9,8 @@ export default class Player extends ControlledUnit {
         this.username = username;
         this.setupPlayerMovement();
         this.setupAnimations();
+        this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
+        this.setNamePosition();
 
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
@@ -44,6 +46,33 @@ export default class Player extends ControlledUnit {
         }
     }
 
+    setNamePosition() {
+        this.nameLabel.x = this.x - 20;
+        this.nameLabel.y = this.y - 40;
+    }
+
+    move(x, y, orientation) {
+        this.x = x;
+        this.y = y;
+        this.orientation = orientation;
+        this.setNamePosition();
+
+        switch (p.orientation){
+            case 0: 
+                p.anims.play('right', true);
+                break;
+            case 90:
+                p.anims.play('up', true);
+                break;
+            case 180:
+                p.anims.play('left', true);
+                break;
+            default:
+                p.anims.play('down', true);
+                break;
+        }
+    }
+
     /**
      * Updates the player positioning based on the keystrokes registered
      * from the client keyboard.
@@ -76,7 +105,7 @@ export default class Player extends ControlledUnit {
         if (tile && tile.index !== 2) {
             this.x += movementX;
             this.y += movementY;
-            // this.setNamePosition(this.name, this.player);
+            this.setNamePosition();
         }
 
         if (movementX !== 0 || movementY !== 0) {
