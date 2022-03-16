@@ -22,8 +22,12 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// The id of the created room as a string
-roomId;
+{
+    // The id of the created room as a string
+    roomId: ...,
+    // An array of connected player usernames as strings
+    playerIDs: [...]
+}
 ```
 
 </p>
@@ -317,6 +321,13 @@ roomId;
         <td>
             With this response the server indicates that there is no room with the
             specified roomId of a previous client message.
+        </td>
+    </tr>
+    <tr>
+        <td>roomNotReady</td>
+        <td>-</td>
+        <td>
+            With this response the server indicates that the room the client is attempting to start does not have enough players.
         </td>
     </tr>
     <tr>
