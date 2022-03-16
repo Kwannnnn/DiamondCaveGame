@@ -78,7 +78,10 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.socket.on('roomCreated', (args)=>{this.createRoom(args);});
 
-        this.socket.on('newPlayerJoined', (playerIDs)=>{this.displayRoom(playerIDs);}); // re-render the scene if new player joins
+        this.socket.on('newPlayerJoined', (playerNames)=>{
+            playerIDs = playerNames;
+            this.displayRoom(playerIDs);
+        }); // re-render the scene if new player joins
 
         this.socket.on('connect_error', ()=>{this.displayError();});
 
@@ -99,10 +102,9 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     // Room creation (new room)
-    createRoom(args){
-        const { roomId, playerIDs } = args;
-        lobbyID = roomId;
-        playerIDs = playerIDs;
+    createRoom(args){ 
+        lobbyID = args.roomId;
+        playerIDs = args.playerIDs;
         console.log(playerIDs);
         this.displayRoom(playerIDs);
     }
@@ -110,8 +112,8 @@ export default class LobbyScene extends Phaser.Scene {
     displayRoom(playerIDs) {
         this.displayCode();
         this.displayPlayer(playerIDs);
-        this.displayStartButton();
         this.usernameFormObject.destroy();
+        this.displayStartButton();
     }
 
     displayError(){
@@ -119,12 +121,12 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     displayCode() {
-        this.message.setText("Lobby Code: " + lobbyID);
+        this.message.setText('Lobby Code: ' + lobbyID);
     }
 
     displayPlayer(playerIDs) {
         for (let i = 1; i <= playerIDs.length; i++) {
-            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ": " + playerIDs[i-1], {
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ': ' + playerIDs[i-1], {
                 color: '#FFFFFF',
                 fontSize: 40
             }).setOrigin(0.5);
@@ -134,6 +136,15 @@ export default class LobbyScene extends Phaser.Scene {
     displayStartButton() {
         this.actionButton.setText('Start game');
         this.actionButton.off('pointerdown');
-        this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', lobbyID));
+        if (playerIDs.length !== 2){
+            this.actionButton.off('pointerover');
+            this.actionButton.off('pointerout');
+            this.actionButton.setTint(0x71797E);
+        } else {
+            this.actionButton.clearTint();
+            this.actionButton.on('pointerover', () => {this.actionButton.setTint(0x30839f);});
+            this.actionButton.on('pointerout', () => {this.actionButton.clearTint();});
+            this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', lobbyID));
+        }
     }
 }
