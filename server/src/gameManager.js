@@ -10,6 +10,10 @@ class GameManager {
         const room = rooms.get(roomId);
     
         if (room) {
+            if (room.players.length !== 2){
+                player.socket.emit('roomNotReady');
+                return;
+            }
             const initialGameState = this.generateInitialGameState(room);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             this.io.to(roomId).emit('initialGameState', initialGameState);
