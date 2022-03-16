@@ -103,6 +103,9 @@ playerId;
             orientation: ...
         }, ...
     ],
+    
+    gemsCollected:...,
+
     gems: [
         {
             // a unique identifier for a gem
@@ -374,6 +377,13 @@ roomId;
         </td>
     </tr>
     <tr>
+        <td>roomNotReady</td>
+        <td>-</td>
+        <td>
+            With this response the server indicates that the room the client is attempting to start does not have enough players.
+        </td>
+    </tr>
+    <tr>
         <td>roomFull</td>
         <td>-</td>
         <td>
@@ -606,36 +616,13 @@ message:
 
 ```javascript
 // the id of the room as a string
-roomId:...,
-
-// the number of gems collected
-gemsCollected: ...,
-
-// the duration of the run in milliseconds
-time: ...
+roomId:...
 ```
 
 </td>
 
 <td>
-    This event indicates that the run has ended. Information necessary for the
-    calculation of the total score for the run is sent.
-</td>
-
-</tr>
-<!-- this is one row -->
-
-<!-- this is one row -->
-<tr>
-    <td>
-        getRanking
-    </td>
-
-
-<td>-</td>
-
-<td>
-    With this event the client requests a sorted by total score list of runs.
+    This event indicates that the run has ended.
 </td>
 
 </tr>
