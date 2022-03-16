@@ -147,7 +147,9 @@ playerId;
             <i>Players</i> are sent as an array of player objects, containing
             the spawn coordinates and facing directions of each player.<br>
             Lastly, <i>gems</i> are in the format of an array of gem objects,
-            containing the spawn coordinates of each gem.<br> <i>enemies</i> contain enemy objects that define a start position and a path they will traverse.
+            containing the spawn coordinates of each gem.<br> <i>enemies</i>
+            contain enemy objects that define a start position and a path they
+            will traverse.
         </td>
     </tr>
 
@@ -290,7 +292,47 @@ playerId: ...,
 </td>
 
 <td>
-    A response to the <b>getCurrentGames</b> request from the client, which contains a list of active game objects
+    A response to the <b>getCurrentGames</b> request from the client, which
+    contains a list of active game objects
+</td>
+
+</tr>
+<!-- this is one row -->
+<!-- this is one row -->
+<tr>
+    <td>
+        rankList
+    </td>
+
+
+<td>
+
+```javascript
+[
+    {
+        // the id of run (the lobby code)
+        runId: ...,
+
+        // the total score of the team
+        totalScore: ...,
+
+        // the time the team spent to complete the run
+        totalScore: ...,
+
+        // the time the team spent to complete the run
+        playerUsernames: [..., ...]
+    },
+
+    // other rooms
+    ...
+]
+```
+
+</td>
+
+<td>
+    A response to the <b>getRanking</b> request from the client, which contains
+    a sorted by total score array of the completed game runs.
 </td>
 
 </tr>
@@ -319,15 +361,16 @@ roomId;
 </p>
 </td>
         <td>
-            With this response the server indicates that there is no room with the
-            specified roomId of a previous client message.
+            With this response the server indicates that there is no room with
+            the specified roomId of a previous client message.
         </td>
     </tr>
     <tr>
         <td>roomNotReady</td>
         <td>-</td>
         <td>
-            With this response the server indicates that the room the client is attempting to start does not have enough players.
+            With this response the server indicates that the room the client is
+            attempting to start does not have enough players.
         </td>
     </tr>
     <tr>
@@ -575,8 +618,24 @@ time: ...
 </td>
 
 <td>
-    This event indicates that the run has ended. Information necessary for the calculation of
-    the total score for the run is sent.
+    This event indicates that the run has ended. Information necessary for the
+    calculation of the total score for the run is sent.
+</td>
+
+</tr>
+<!-- this is one row -->
+
+<!-- this is one row -->
+<tr>
+    <td>
+        getRanking
+    </td>
+
+
+<td>-</td>
+
+<td>
+    With this event the client requests a sorted by total score list of runs.
 </td>
 
 </tr>
