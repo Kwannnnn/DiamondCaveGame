@@ -44,7 +44,6 @@ export default class Game extends Phaser.Scene {
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
-        console.log(this.gameState);
     }
 
     create() {

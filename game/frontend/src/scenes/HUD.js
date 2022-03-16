@@ -1,5 +1,7 @@
 import CollectDiamond from "../events/CollectDiamondEvent";
 import SelectHealingPerk from "../events/HealingPerkEvent";
+import InputText from 'phaser3-rex-plugins/plugins/inputtext.js';
+
 
 let numberOfSpectators=0;
 export default class HUD extends Phaser.Scene {
@@ -44,6 +46,13 @@ export default class HUD extends Phaser.Scene {
         //preloading assets for chat
         this.load.image('chat', "assets/comment-message.png");
         this.load.html('form', 'assets/pages/form.html');
+
+        // //preloading rexUI plugin
+        // this.load.scenePlugin({
+        //     key: 'rexuiplugin',
+        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+        //     sceneKey: 'rexUI'
+        // });
     }
 
     create() {
@@ -105,31 +114,56 @@ export default class HUD extends Phaser.Scene {
             .setInteractive();
         // chat input
         this.chatButton.on('pointerdown', () => {
-            // if chat box is off
+            // open chatbox
+            console.log('click');
             if (!this.chatOn) { 
                 this.chatOn = !this.chatOn;
-                this.chatInput = this.add.dom(150, 620).createFromCache('form').setOrigin(0.5);
+                this.chatInput = this.add.existing(new InputText(this, 150, 620, 270, 30, {
+                    id: 'chat',
+                    type: 'text',
+                    color: '#000000',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#000000'
+                }))
                 // TODO: add line wrapping and scrollbar for seeing previous messages 
-                this.chat = this.add.text(15, 150, "", {
-                    lineSpacing: 15,
-                    backgroundColor: "#dddddd",
-                    color: "#26924F",
-                    padding: 10,
-                    fontStyle: "bold",
-                    fixedWidth: 270,
-                    fixedHeight: 450,
-                    wordWrap: {
-                        width: 240,
-                        callback: null,
-                        callbackScope: null,
-                        useAdvancedWrap: false
+            
+                let chatTextArea = {
+                    width: 270,
+                    height: 450
+                }
+                // chatbox area
+                let chatArea = this.make.graphics();
+                this.chatBox = this.add.graphics(chatArea);
+
+                this.chatBox.fillStyle(0xdddddd);
+                this.chatBox.fillRect(15, 150, chatTextArea.width, chatTextArea.height);
+
+                // create geometry mask to hide pixels
+                let mask = new Phaser.Display.Masks.GeometryMask(this, this.chatBox);
+
+                this.chat = this.add.text(15, 150, this.chatMessages, { color: '#26924F', padding: 10, wordWrap: { width: 240 } }).setOrigin(0);
+
+                this.chat.setMask(mask); 
+
+                //  The rectangle they can 'drag' within
+                this.chatZone = this.add.zone(15, 150, 270, 450).setOrigin(0).setInteractive();
+
+                this.chatZone.on('pointermove', (pointer) => {
+
+                    if (pointer.isDown)
+                    {
+                        this.chat.y += (pointer.velocity.y / 10);
+
+                        this.chat.y = Phaser.Math.Clamp(this.chat.y, -400, 300);
                     }
-                })
+
+                });
             }
-            // if chat box is on
+            // close chatbox
             else {
+                this.chatBox.destroy();
                 this.chatInput.destroy();
-                this.chat.destroy();
+                this.chatZone.destroy();
                 this.chatOn = !this.chatOn;
             }
         });
@@ -141,11 +175,9 @@ export default class HUD extends Phaser.Scene {
 
         // send message to server on enter key
         this.enterKey.on('down', event => {
-            let chatbox = this.chatInput.getChildByName('chat');
-            chatbox.value;
-            if (chatbox.value != "") {
-                this.socket.emit('chatMessage', chatbox.value);
-                chatbox.value = "";
+            if (this.chatInput.text != "") {
+                this.socket.emit('chatMessage', this.chatInput.text);
+                this.chatInput.text = "";
             }
         });
 
@@ -154,11 +186,11 @@ export default class HUD extends Phaser.Scene {
             const { sender, message } = data;     
             let chatMessage = sender + ": " + message;
             this.chatMessages.push(chatMessage);
-            if (this.chatMessages.length > 15) {
-                this.chatMessages.shift();
-            }
             this.chat.setText(this.chatMessages);
         })
+
+        
+
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
@@ -232,4 +264,5 @@ export default class HUD extends Phaser.Scene {
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
     }
+
 }
