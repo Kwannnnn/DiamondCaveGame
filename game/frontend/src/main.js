@@ -6,7 +6,8 @@ import {
     JoinScene,
     MenuScene,
     ActiveGamesScene,
-    SpectatorJoinScene
+    SpectatorJoinScene,
+    RankingScene
 } from './scenes';
 
 const config = {
@@ -14,7 +15,16 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [LoadScene, MenuScene, GameScene, LobbyScene, JoinScene, ActiveGamesScene, SpectatorJoinScene],
+    scene: [
+        LoadScene,
+        MenuScene,
+        GameScene,
+        LobbyScene,
+        JoinScene,
+        ActiveGamesScene,
+        SpectatorJoinScene,
+        RankingScene
+    ],
     parent: "game",
     type: Phaser.AUTO,
     physics: {
