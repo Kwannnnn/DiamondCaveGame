@@ -1,6 +1,9 @@
 // This class manages everything related to in-game events
 const rooms = require('./model/rooms.js');
 
+const Run = require('./model/run.js');
+const runs = require('./model/runs.js');
+
 class GameManager {
     constructor(io){
         this.io = io;
@@ -51,6 +54,10 @@ class GameManager {
             player.socket.emit('roomNotFound', roomId);
         } 
         // console.log(newPosition);
+    }
+
+    handleGetRanking(player) {
+        player.socket.emit('rankList', runs.toArray());
     }
 
     handleCollectDiamond(player, diamond) {
@@ -157,6 +164,22 @@ class GameManager {
             }],
         };
         return gameState;
+    }
+
+    handleGameOver(data) {
+        const {roomId, gemsCollected, time} = data;
+
+        const room = rooms.get(roomId);
+        const playerUsernames = room.players.map(p => p.id);
+        //TODO: create an algorithm for calculating totalScore
+        const totalScore = gemsCollected;
+
+        const run = new Run(roomId, totalScore, time, playerUsernames);
+        runs.enqueue(run);
+
+        // remove room from rooms map since we dont need it anymore
+        // rooms.delete(roomId);
+        console.log(runs.toArray());
     }
 }
 
