@@ -17,9 +17,12 @@ export default class HUD extends Phaser.Scene {
     }
 
     init(data) {
+        this.chatOn = false;
+        this.chatMessages = [];
+
         this.world = data.world;
         this.stage = data.stage;
-
+        this.socket = data.socket;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
 
@@ -36,6 +39,10 @@ export default class HUD extends Phaser.Scene {
         this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
         this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
         this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
+        
+        //preloading assets for chat
+        this.load.image('chat', "assets/comment-message.png");
+        this.load.html('form', 'assets/pages/form.html');
     }
 
     create() {
@@ -58,6 +65,8 @@ export default class HUD extends Phaser.Scene {
         this.rightCap = this.add.image(this.healthBarX + this.middle.displayWidth, this.healthBarY, 'right-cap')
             .setOrigin(0, 0.5)
 
+        
+
         // Value given in percentage
         this.setHealth(this.currentHealth);
 
@@ -79,6 +88,70 @@ export default class HUD extends Phaser.Scene {
             fontSize: 40,
         });
 
+        // Create chat interface
+        // chat icon
+        this.chatButton = this.add.sprite(40, 680, 'chat')
+            .setDepth(1)
+            .setOrigin(0.5)
+            .setScale(1.5)
+            .setInteractive();
+        // chat input
+        this.chatButton.on('pointerdown', () => {
+            // if chat box is off
+            if (!this.chatOn) { 
+                this.chatOn = !this.chatOn;
+                this.chatInput = this.add.dom(150, 620).createFromCache('form').setOrigin(0.5);
+                // TODO: add line wrapping and scrollbar for seeing previous messages 
+                this.chat = this.add.text(15, 150, "", {
+                    lineSpacing: 15,
+                    backgroundColor: "#dddddd",
+                    color: "#26924F",
+                    padding: 10,
+                    fontStyle: "bold",
+                    fixedWidth: 270,
+                    fixedHeight: 450,
+                    wordWrap: {
+                        width: 240,
+                        callback: null,
+                        callbackScope: null,
+                        useAdvancedWrap: false
+                    }
+                })
+            }
+            // if chat box is on
+            else {
+                this.chatInput.destroy();
+                this.chat.destroy();
+                this.chatOn = !this.chatOn;
+            }
+        });
+        this.chatButton.on('pointerover', () => {this.chatButton.setTint(0x30839f);});
+        this.chatButton.on('pointerout', () => {this.chatButton.clearTint();});
+
+        // set enter key for sending message
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+        // send message to server on enter key
+        this.enterKey.on('down', event => {
+            let chatbox = this.chatInput.getChildByName('chat');
+            chatbox.value;
+            if (chatbox.value != "") {
+                this.socket.emit('chatMessage', chatbox.value);
+                chatbox.value = "";
+            }
+        });
+
+        // display the messages in chat box
+        this.socket.on('chatMessage', (data) => {
+            const { sender, message } = data;     
+            let chatMessage = sender + ": " + message;
+            this.chatMessages.push(chatMessage);
+            if (this.chatMessages.length > 15) {
+                this.chatMessages.shift();
+            }
+            this.chat.setText(this.chatMessages);
+        })
+
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
@@ -90,6 +163,17 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+    }
+
+    // The difference between setting and changing health is that changing is relative, while setting is absolute
+    // Setting to +20 makes the player's health 20%
+    // Changing to +20 makes the player's health equal to their current health + 20
+    changeHealth(difference) {
+        this.setHealth(this.middle.displayWidth + difference);
+    }
+
+    changeHealthAnimated(difference) {
+        this.setHealthAnimated(this.middle.displayWidth + difference);
     }
 
     setHealth(percentage) {
