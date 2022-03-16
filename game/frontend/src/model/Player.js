@@ -80,7 +80,14 @@ export default class Player extends ControlledUnit {
         }
 
         if (tile && tile.index == 3) {
-            // Damage player method
+            // Call damage player method
+            // Or call trap object
+            console.log('You walked on a trap');
+        }
+
+        if (tile && tile.index == 4) {
+            // Do smth else
+            console.log('You walked on tile with index 4');
         }
 
 
