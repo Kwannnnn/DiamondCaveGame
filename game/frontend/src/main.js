@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
+
 import {
     LobbyScene,
     GameScene,
     LoadScene,
     JoinScene,
     MenuScene,
+    PerksScene,
     ActiveGamesScene,
     SpectatorJoinScene,
     RankingScene
@@ -19,6 +21,7 @@ const config = {
         LoadScene,
         MenuScene,
         GameScene,
+        PerksScene,
         LobbyScene,
         JoinScene,
         ActiveGamesScene,

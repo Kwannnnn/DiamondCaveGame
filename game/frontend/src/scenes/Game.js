@@ -35,7 +35,7 @@ export default class Game extends Phaser.Scene {
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
-        this.load.tilemapCSV('map', 'assets/tileMap.csv');
+        // this.load.tilemapCSV('map', 'assets/tileMap.csv');
     }
 
     init(data) {
@@ -44,24 +44,28 @@ export default class Game extends Phaser.Scene {
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
+        this.perk = data.perk;
+
         console.log(this.gameState);
     }
 
     create() {
         // Create the tilemap with the specified tile dimensions
-        let map = this.make.tilemap({key: 'map', tileWidth: 32, tileHeight: 32});
+        let map = this.make.tilemap({data: this.gameState.tileMap, tileWidth: 32, tileHeight: 32});
         // Map the correct part of the tiles image to the tilemap
         let tileSet = map.addTilesetImage('tiles');
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
-        this.setupHUD();
+        // this.setupHUD();
         this.setupPlayers();
+        this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
+        this.placeExit(200, 200);
 
         // Adding overalap between player and diamonds (collecting diamonds)
         this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
@@ -94,12 +98,29 @@ export default class Game extends Phaser.Scene {
 
         // Having the player added to the game
         this.gameState.players.forEach(p => {
-            var player = new Player(this, p.x, p.y, p.playerId);
+            console.log("PERK TO BE ADDED TO PLAYERS: " + this.perk)
+            var player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
             var name = this.add.text(p.x-5, p.y-10, p.playerId);
             this.names.set(p.playerId, name);
             this.setNamePosition(name, player);
         });
+    }
+
+    setupPerks() {
+        switch (this.perk) {
+            case "Health":
+                this.changeHealth(10);
+                break;
+
+            case "AddDiamonds":
+                this.diamondPerk();
+                console.log("Collected diamonds after perk: " + this.collectedDiamonds);
+                break;
+
+            default:
+                console.log("No team perks!");
+        }
     }
 
     /**
@@ -283,16 +304,28 @@ export default class Game extends Phaser.Scene {
         // TODO: Do something meaningful when you collide
     }
 
+    /**
+     * Places exit on the map
+     * @param {coordinate x for exit to be place} x 
+     * @param {coordinate y for exit to be place} y 
+     */
     placeExit(x, y) {
         this.exit = this.physics.add.sprite(x, y, "exit");
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            this.exitScene();
-            this.exit.disableBody(false,false);
-        }, this.canExitScene, this);
+            console.log('collided');
+            if (this.canExitScene()) {
+                this.exitScene();
+                this.exit.disableBody(false,false);
+            }
+        });
     }
 
+    /**
+     * Checks if all dimonds were collected to exit the map
+     * @returns boolean
+     */
     canExitScene() {
-        if (this.collectedDiamonds == this.totalDiamonds){
+        if (this.collectedDiamonds >= this.gameState.gems.length){
             return true;
         } else {
             console.log("Not all diamonds have been collected!")
@@ -300,15 +333,11 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    exitScene() {
-        console.log("Exit! Logic neends to be implemented.")
-    }
-
     /**
-     * this is a perk for increasing the movement speed
+     * Sends message to server to transfer players to PerkScene
      */
-    increaseSpeed() {
-        this.delay = this.delay * 7 / 10;
+    exitScene(){
+        this.socket.emit('reachedEnd', this.lobbyID);
     }
 
     /**
@@ -341,7 +370,7 @@ export default class Game extends Phaser.Scene {
      * Handles player movement logic for a non-controlled player unit.
      * @param {Object} args the arguments sent from the server
      */
-     handlePlayerMoved(args) { 
+    handlePlayerMoved(args) { 
         console.log(args);
         let p = this.players.get(args.playerId);
         let name = this.names.get(args.playerId);
@@ -369,5 +398,16 @@ export default class Game extends Phaser.Scene {
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
+        this.socket.on('choosePerks', (perks) => {
+            this.scene.remove('hud');
+            this.scene.start(CST.SCENES.PERKS, {
+                perksNames: perks,
+                username: this.username,
+                socket: this.socket,
+                lobbyID: this.lobbyID,
+                // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
+                gameState: this.gameState
+            });
+        })
     }
 }
