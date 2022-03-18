@@ -302,7 +302,7 @@ export default class Game extends Phaser.Scene {
         console.log(`Hit enemy: ${enemy.id}`);
 
         const damage = 10;
-        // TODO: Do something meaningful when you collide
+        // Send message to the server
         this.socket.emit("hitByEnemy", {
             lobbyID: this.lobbyID,
             damage: damage
