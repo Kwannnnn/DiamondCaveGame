@@ -114,10 +114,12 @@ export default class Game extends Phaser.Scene {
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
             // this.physics.add.overlap(this.controlledUnit, this.enemies, this.collideEnemy, null, this);
-            this.physics.add.collider(
+            this.physics.add.overlap(
                 this.controlledUnit,
                 this.enemies,
-                this.collideEnemy.bind(this)
+                this.collideEnemy,
+                undefined,
+                this
             );
             this.controlledUnit.setSocket(this.socket);
         } else {
@@ -291,16 +293,18 @@ export default class Game extends Phaser.Scene {
     collideEnemy(player, enemy) {
         console.log(`Hit enemy: ${enemy.id}`);
 
+        // makes the player transparent for 1.5 seconds
+        // TODO: perhaps make him invicible as well
         this.controlledUnit.alpha = 0.5;
         this.time.addEvent({
             delay: 1500,
             callback: () => {
                 this.controlledUnit.alpha = 1;
-
             },
             loop: false
         })
 
+        // push back the player so he does not overlap with the enemy
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
