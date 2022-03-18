@@ -62,12 +62,16 @@ io.on('connection', (socket) => {
 
     // TODO Should be added to the protocol
     // This message is received every time player clicks on perk (choses perk)
-    socket.on("chosenPerk", (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
+    socket.on('chosenPerk', (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
 
     // TODO Should be added to the protocol
     // This message is received when the time for choosing perk is up
-    socket.on("finishedPerkChoosing", (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
-    
+    socket.on('finishedPerkChoosing', (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
+
+    // TODO Should be added to the protocol
+    // This message is received when a player gets hit byt the enemy
+    socket.on('hitByEnemy', (args) => gameManager.handleReduceHealth(args.lobbyID, args.damage));
+
     socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));

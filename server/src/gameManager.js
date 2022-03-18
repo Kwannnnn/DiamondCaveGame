@@ -239,7 +239,20 @@ class GameManager {
             }
         }
     }
-    
+
+    handleReduceHealth(roomId, damage) {
+        const room = rooms.get(roomId);
+
+        if (room) {
+            room.health -= damage;
+
+            room.players.forEach(player => {
+                // TODO add message to the protocol
+                player.socket.emit("reduceHealth", {damage});
+            });
+        }
+    }
+
     handleGameOver(roomId) {
         const room = rooms.get(roomId);
         const playerUsernames = room.players.map(p => p.id);
