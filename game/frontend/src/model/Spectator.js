@@ -3,7 +3,7 @@ import ControlledUnit from "./ControlledUnit";
 export default class Spectator extends ControlledUnit {
     constructor(scene, x, y) {
         // TODO: figure out how to display an invisible sprite
-        super(scene, x, y, 'player');
+        super(scene, x, y, 'gem');
         this.setScale(0);
 
         this.scene = scene;
