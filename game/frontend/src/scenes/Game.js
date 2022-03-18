@@ -92,16 +92,11 @@ export default class Game extends Phaser.Scene {
      * of the GameScene. 
      */
     setupPlayers() {
-        this.names = new Map();
-
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log("PERK TO BE ADDED TO PLAYERS: " + this.perk)
             var player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
-            var name = this.add.text(p.x-5, p.y-10, p.playerId);
-            this.names.set(p.playerId, name);
-            this.setNamePosition(name, player);
         });
     }
 
@@ -129,7 +124,6 @@ export default class Game extends Phaser.Scene {
         // Check if the username is in the list of players
         if (this.gameState.players.find(p => p.playerId === this.username)) {
             this.controlledUnit = this.players.get(this.username);
-            this.name = this.names.get(this.username);
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
@@ -372,26 +366,7 @@ export default class Game extends Phaser.Scene {
     handlePlayerMoved(args) { 
         console.log(args);
         let p = this.players.get(args.playerId);
-        let name = this.names.get(args.playerId);
-        p.x = args.x;
-        p.y = args.y;
-        p.orientation =  args.orientation;
-        this.setNamePosition(name, p);
-
-        switch (p.orientation){
-            case 0: 
-                p.anims.play('right', true);
-                break;
-            case 90:
-                p.anims.play('up', true);
-                break;
-            case 180:
-                p.anims.play('left', true);
-                break;
-            default:
-                p.anims.play('down', true);
-                break;
-        }
+        p.move(args.x, args.y, args.orientation);
     }
 
     handleSocketEvents() {
