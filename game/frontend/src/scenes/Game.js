@@ -58,7 +58,7 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
-        // this.setupHUD();
+        this.setupHUD();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
@@ -67,9 +67,6 @@ export default class Game extends Phaser.Scene {
         this.setupControlledUnit();
         this.setupCamera();
         this.placeExit(200, 200);
-
-        // Adding overalap between player and diamonds (collecting diamonds)
-        this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
 
         this.handleSocketEvents();
     }
@@ -129,25 +126,14 @@ export default class Game extends Phaser.Scene {
      * with the GameScene.
      */
     setupControlledUnit() {
-        console.log(this.gameState.players);
-        console.log(this.username);
-        console.log(this.gameState.players.find(p => p.playerId, this.username));
-        let isUserPlayer=false;
-        for(let i=0;i<this.gameState.players.length;i++){
-            if(this.gameState.players[i].playerId==this.username){
-                isUserPlayer=true;
-            }
-        }
-        if (isUserPlayer) {
-            console.log("Executed!");
+        // Check if the username is in the list of players
+        if (this.gameState.players.find(p => p.playerId === this.username)) {
             this.controlledUnit = this.players.get(this.username);
             this.name = this.names.get(this.username);
-            console.log("Username from method: "+this.username)
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
             this.physics.add.overlap(this.controlledUnit, this.enemies, this.collideEnemy, null, this);
-            console.log(this.controlledUnit);
             this.controlledUnit.setSocket(this.socket);
         } else {
             // if the game state does not contain the username of the client
