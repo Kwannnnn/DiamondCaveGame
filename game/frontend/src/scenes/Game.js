@@ -30,7 +30,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         this.load.image('enemy', 'assets/dirt.png'); // FIXME: Add an actual enemy sprite
         //this.load.image("exit", "assets/exit.png")
-        this.load.spritesheet('player', 'assets/player.png', {frameWidth: 154, frameHeight: 276});
+        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
@@ -127,7 +127,14 @@ export default class Game extends Phaser.Scene {
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
-            this.physics.add.overlap(this.controlledUnit, this.enemies, this.collideEnemy, null, this);
+            // this.physics.add.overlap(this.controlledUnit, this.enemies, this.collideEnemy, null, this);
+            this.physics.add.overlap(
+                this.controlledUnit,
+                this.enemies,
+                this.collideEnemy,
+                undefined,
+                this
+            );
             this.controlledUnit.setSocket(this.socket);
         } else {
             // if the game state does not contain the username of the client
@@ -195,7 +202,7 @@ export default class Game extends Phaser.Scene {
      * event on the web socket.
      * @param diamond the diamond that has been collected
      */
-    handleDiamondCollected(diamond){
+    handleDiamondCollected(diamond) {
         // Iterate through diamond physics group to remove matching diamond
         this.diamonds.children.each((child) => {
             if (child.id === diamond) {
@@ -203,7 +210,7 @@ export default class Game extends Phaser.Scene {
                 this.updateCollectedDiamondsCount();
             }
         });
-                
+
     }
 
     /**
@@ -216,7 +223,7 @@ export default class Game extends Phaser.Scene {
         this.gameState.gems.forEach(g => {
             let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
             this.diamonds.add(sprite);
-        });    
+        });
 
         let id = 1;
         // Scope each diamond
@@ -260,19 +267,19 @@ export default class Game extends Phaser.Scene {
     updateEnemyPositions() {
         this.enemies.children.each(e => {
             if (this.enemyData.get(e.id).path.length > 0) {
-                const {id, x, y} = e;
-                const {velocity} = e.body;
+                const { id, x, y } = e;
+                const { velocity } = e.body;
 
                 const data = this.enemyData.get(id);
                 let targetLocation = data.path[data.target];
 
                 if (velocity.x === 0 && velocity.y === 0) {
-                    const {velocityX, velocityY} = determineVelocity({x, y}, targetLocation);
+                    const { velocityX, velocityY } = determineVelocity({ x, y }, targetLocation);
                     e.body.setVelocity(velocityX, velocityY);
                 }
 
                 // Check if we are at, or have passed our current target position.
-                if (isAtOrPastTarget({x, y}, targetLocation, velocity)) {
+                if (isAtOrPastTarget({ x, y }, targetLocation, velocity)) {
                     e.body.setVelocity(0, 0);
                     // Set the enemy to the actual target position to handle moving too far
                     e.x = targetLocation.x;
@@ -288,11 +295,32 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+    // Restore health to the player
+    // This could be any sort of healing, just pass the health change in percentage
+    changeHealth(healthChange) {
+        HUD.changeHealth(healthChange);
+    }
+
     /**
      * Handle colliding with an enemy
      */
     collideEnemy(player, enemy) {
         console.log(`Hit enemy: ${enemy.id}`);
+
+        // makes the player transparent for 1.5 seconds
+        // TODO: perhaps make him invicible as well
+        this.controlledUnit.alpha = 0.5;
+        this.time.addEvent({
+            delay: 1500,
+            callback: () => {
+                this.controlledUnit.alpha = 1;
+            },
+            loop: false
+        })
+
+        // push back the player so he does not overlap with the enemy
+        this.controlledUnit.x -= 32;
+        this.controlledUnit.y -= 32;
 
         // TODO: Do something meaningful when you collide
     }
@@ -344,19 +372,13 @@ export default class Game extends Phaser.Scene {
      * this perk for reducing 10 seconds for the team
      */
     timePerk() {
-        if (HUD.second<10){
+        if (HUD.second < 10) {
             HUD.minute--;
-            HUD.second+=60;
-            HUD.second-=10;
-        }else{
-            HUD.second-=10;
+            HUD.second += 60;
+            HUD.second -= 10;
+        } else {
+            HUD.second -= 10;
         }
-    }
-
-    // Restore health to the player
-    // This could be any sort of healing, just pass the health change in percentage
-    changeHealth(healthChange) {
-        HUD.changeHealth(healthChange);
     }
 
     /**
