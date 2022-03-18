@@ -149,6 +149,8 @@ export default class HUD extends Phaser.Scene {
     // Changing to +20 makes the player's health equal to their current health + 20
     changeHealth(difference) {
         this.setHealth(this.middle.displayWidth + difference);
+        this.updateHealth(difference);
+        console.log("Teams health is: " + this.currentHealth);
     }
 
     changeHealthAnimated(difference) {
