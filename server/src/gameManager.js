@@ -33,19 +33,22 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
-            for (let i = 0; i < rooms.get(roomId).gameState.players.length; i++) {
-                if (rooms.get(roomId).gameState.players[i].playerId == player.id) {
-                    rooms.get(roomId).gameState.players[i] = {
-                        playerId: player.id,
-                        x: newPosition.x,
-                        y: newPosition.y,
-                        orientation: newPosition.orientation
-                    }
-                }
-            }
+            var playerToUpdate = room.players.find(p => p.playerId === player.id);
+            player.x = newPosition.x;
+            player.y = newPosition.y;
+            player.orientation = newPosition.orientation;
 
             // TODO: send back the whole gamestate instead
             // Notify all teammates about the movement
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('teammateMoved', {
+                    playerId: player.id,
+                    x: newPosition.x,
+                    y: newPosition.y,
+                    orientation: newPosition.orientation
+                });
+            });
+
             player.socket.to(roomId).emit('teammateMoved', {
                 playerId: player.id,
                 x: newPosition.x,
@@ -68,6 +71,8 @@ class GameManager {
         const gems = rooms.get(roomId).gameState.gems;
         if (room) {
             // Update the game state of the room
+            // TODO: Change the status of the gem, instead of
+            // deleting it completely
             for (let i = 0; i < gems.length; i++) {
                 if (gems[i].gemId == diamond.gemId) {
                     gems.splice(i, 1);
@@ -76,6 +81,10 @@ class GameManager {
             }
             // Notify teammate about collected diamond
             player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('gemCollected', diamond.gemId);
+            });
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
