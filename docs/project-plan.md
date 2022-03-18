@@ -154,6 +154,11 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 12
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | The players are placed in a random map layout after completing current map | M | 5 | - |
+| BI-02 | After completing a world, the players move to the next one | M | 6 | - |
+
 ### US 13
 
 Backlog item | Definition | Priority | Weight | Depends on |
@@ -166,6 +171,12 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-06 | Create a pressure pad trap | M | 7 | - |
 
 ### US 14
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | World 1 maps are fully implemented | M | 6 | - |
+| BI-02 | Design 2 puzzles that can be added to maps | M | 3 | - |
+| BI-03 | Puzzles are implemented in maps | M | 5 | - |
 
 ### US 15
 

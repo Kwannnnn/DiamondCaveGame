@@ -1,7 +1,7 @@
 import ControlledUnit from "./ControlledUnit";
 
 export default class Player extends ControlledUnit {
-    constructor(scene, x, y, username) {
+    constructor(scene, x, y, username, perk) {
         super(scene, x, y, 'player');
         this.setScale(0.14);
 
@@ -9,9 +9,26 @@ export default class Player extends ControlledUnit {
         this.username = username;
         this.setupPlayerMovement();
         this.setupAnimations();
+        this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
+        this.setNamePosition();
 
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
+
+        // Check if perk is applied to the room
+        if (perk) {
+            console.log(perk + " IS USED")
+            // Check which perk is applied
+            switch (perk) {
+                case "MovementSpeed":
+                    this.increaseSpeed();
+                    break;
+
+                default:
+                    console.log("no perks for player " + username);
+
+            }
+        }
         // TODO: ???
         this.depth = 100;
     }
@@ -35,12 +52,41 @@ export default class Player extends ControlledUnit {
 
     setupAnimations() {
         const animationKeys = ['up', 'down', 'right', 'left'];
-        for (const index in animationKeys) {
+        for (const [index, key] of animationKeys.entries()) {
+            console.log('index: ' + index);
+            console.log('key: ' + key);
             this.scene.anims.create({
-                key: animationKeys[index],
+                key: key,
                 frames: [ { key: 'player', frame: index } ],
                 frameRate: 20
             });
+        }
+    }
+
+    setNamePosition() {
+        this.nameLabel.x = this.x - 20;
+        this.nameLabel.y = this.y - 40;
+    }
+
+    move(x, y, orientation) {
+        this.x = x;
+        this.y = y;
+        this.orientation = orientation;
+        this.setNamePosition();
+
+        switch (this.orientation){
+            case 0: 
+                this.anims.play('right', true);
+                break;
+            case 90:
+                this.anims.play('up', true);
+                break;
+            case 180:
+                this.anims.play('left', true);
+                break;
+            default:
+                this.anims.play('down', true);
+                break;
         }
     }
 
@@ -76,7 +122,7 @@ export default class Player extends ControlledUnit {
         if (tile && tile.index !== 2) {
             this.x += movementX;
             this.y += movementY;
-            // this.setNamePosition(this.name, this.player);
+            this.setNamePosition();
         }
 
         if (movementX !== 0 || movementY !== 0) {
@@ -97,6 +143,13 @@ export default class Player extends ControlledUnit {
                 orientation: this.orientation
             });
         }
+    }
+
+    /**
+    * this is a perk for increasing the movement speed
+    */
+    increaseSpeed() {
+        this.delay = this.delay * 7 / 10;
     }
 
     setSocket(socket) {

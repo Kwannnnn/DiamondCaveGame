@@ -1,5 +1,7 @@
 // This class manages everything related to in-game events
 const rooms = require('./model/rooms.js');
+const perks = ["Movement Speed", "Health", "Add Diamonds"];
+
 
 const Run = require('./model/run.js');
 const runs = require('./model/runs.js');
@@ -28,24 +30,25 @@ class GameManager {
     handlePlayerMove(newPosition, player) {
         const roomId = newPosition.roomId;
         const room = rooms.get(roomId);
-
-        console.log(player.id);
-
+        
         if (room) {
             // Update the game state of room
-            for (let i = 0; i < rooms.get(roomId).gameState.players.length; i++) {
-                if (rooms.get(roomId).gameState.players[i].playerId == player.id) {
-                    rooms.get(roomId).gameState.players[i] = {
-                        playerId: player.id,
-                        x: newPosition.x,
-                        y: newPosition.y,
-                        orientation: newPosition.orientation
-                    }
-                }
-            }
+            var playerToUpdate = room.players.find(p => p.playerId === player.id);
+            player.x = newPosition.x;
+            player.y = newPosition.y;
+            player.orientation = newPosition.orientation;
 
             // TODO: send back the whole gamestate instead
             // Notify all teammates about the movement
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('teammateMoved', {
+                    playerId: player.id,
+                    x: newPosition.x,
+                    y: newPosition.y,
+                    orientation: newPosition.orientation
+                });
+            });
+
             player.socket.to(roomId).emit('teammateMoved', {
                 playerId: player.id,
                 x: newPosition.x,
@@ -68,6 +71,8 @@ class GameManager {
         const gems = rooms.get(roomId).gameState.gems;
         if (room) {
             // Update the game state of the room
+            // TODO: Change the status of the gem, instead of
+            // deleting it completely
             for (let i = 0; i < gems.length; i++) {
                 if (gems[i].gemId == diamond.gemId) {
                     gems.splice(i, 1);
@@ -76,6 +81,10 @@ class GameManager {
             }
             // Notify teammate about collected diamond
             player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('gemCollected', diamond.gemId);
+            });
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
@@ -173,6 +182,73 @@ class GameManager {
         return gameState;
     }
 
+    handleReachingMapEnd(roomID) {
+        const room = rooms.get(roomID);
+    
+        if (room) {
+            room.players.forEach(player => {
+                player.socket.emit('choosePerks', perks);
+            });
+        } else {
+            console.log(rooms);
+            console.log("Room id for exit has not been found");
+        }
+    }
+
+    handlePerkChoice(chosenPerk) {
+        const room = rooms.get(chosenPerk.lobbyID);
+
+        // TODO add choices to room object
+
+        if (room) {
+            room.players.forEach(player => {
+                // If the iterable object is not the player who chose the perk, notify teammate
+                // If it is the player, assign the chosen perk to the object
+                if (player.id !== chosenPerk.username) {
+                    console.log(chosenPerk.username + " chose " + perks[chosenPerk.perkId]);
+                    
+                    // TODO Should be added to the protocol
+                    player.socket.emit("teammatePerkChoice", {teammatePerk: perks[chosenPerk.perkId]});
+                } else if (!player.perkChoice || player.perkChoice !== perks[chosenPerk.perkId]) {
+                    
+                    // To keep track of the choices players make, new property of the object is created
+                    player.perkChoice = perks[chosenPerk.perkId];
+                }
+            });
+
+            if (room.players[0].perkChoice === room.players[1].perkChoice) {
+                console.log("THE SAME PERK HAS BEEN CHOSEN");
+
+                this.handleFinalPerkDecision(chosenPerk.lobbyID);
+                room.players[0].perkChoice = null;
+                room.players[1].perkChoice = null;
+            }
+        }
+
+    }
+
+    /**
+     * This method sends all player the final perk that is going to be applied
+     * @param {id of the lobby} lobbyID
+     */
+    handleFinalPerkDecision(lobbyID) {
+        console.log("FINISHED PERK CHOOSING");
+        const room = rooms.get(lobbyID);
+
+        if (room) {
+            // if the choices are the same, apply perk
+            if (room.players[0].perkChoice === room.players[1].perkChoice) {
+                const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
+                console.log("Perk name without spaces: " + perkNameWithoutSpace);
+
+                // TODO add message to the protocol
+                room.players.forEach(player => {
+                    player.socket.emit("perkForNextGame", perkNameWithoutSpace);
+                });
+            }
+        }
+    }
+    
     handleGameOver(roomId) {
         const room = rooms.get(roomId);
         const playerUsernames = room.players.map(p => p.id);
