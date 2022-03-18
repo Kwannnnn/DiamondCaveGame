@@ -18,7 +18,7 @@ export default class Player extends ControlledUnit {
             console.log(perk + " IS USED")
             // Check which perk is applied
             switch (perk) {
-                case "useMovementSpeed":
+                case "MovementSpeed":
                     this.increaseSpeed();
                     break;
 
@@ -118,7 +118,7 @@ export default class Player extends ControlledUnit {
     * this is a perk for increasing the movement speed
     */
     increaseSpeed() {
-        this.delay = this.delay * 3 / 10;
+        this.delay = this.delay * 7 / 10;
     }
 
     setSocket(socket) {

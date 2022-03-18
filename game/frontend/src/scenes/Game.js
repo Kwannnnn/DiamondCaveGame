@@ -44,12 +44,8 @@ export default class Game extends Phaser.Scene {
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
+        this.perk = data.perk;
 
-        // Check if perk is added to the game
-        if (data.perk) {
-            this.perk = data.perk;
-        }
-        
         console.log(this.gameState);
     }
 
@@ -63,6 +59,7 @@ export default class Game extends Phaser.Scene {
 
         // this.setupHUD();
         this.setupPlayers();
+        this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
         // this.placeExit(200, 300);
@@ -87,7 +84,8 @@ export default class Game extends Phaser.Scene {
         this.scene.add('hud', HUD, true, {
             world: 1,
             stage: 1,
-            totalDiamonds: this.gameState.gems.length
+            totalDiamonds: this.gameState.gems.length,
+            socket: this.socket
         });
     }
 
@@ -107,6 +105,22 @@ export default class Game extends Phaser.Scene {
             this.names.set(p.playerId, name);
             this.setNamePosition(name, player);
         });
+    }
+
+    setupPerks() {
+        switch (this.perk) {
+            case "Health":
+                this.changeHealth(10);
+                break;
+
+            case "AddDiamonds":
+                this.diamondPerk();
+                console.log("Collected diamonds after perk: " + this.collectedDiamonds);
+                break;
+
+            default:
+                console.log("No team perks!");
+        }
     }
 
     /**
@@ -311,7 +325,7 @@ export default class Game extends Phaser.Scene {
      * @returns boolean
      */
     canExitScene() {
-        if (this.collectedDiamonds == this.gameState.gems.length){
+        if (this.collectedDiamonds >= this.gameState.gems.length){
             return true;
         } else {
             console.log("Not all diamonds have been collected!")
@@ -356,7 +370,7 @@ export default class Game extends Phaser.Scene {
      * Handles player movement logic for a non-controlled player unit.
      * @param {Object} args the arguments sent from the server
      */
-     handlePlayerMoved(args) { 
+    handlePlayerMoved(args) { 
         console.log(args);
         let p = this.players.get(args.playerId);
         let name = this.names.get(args.playerId);

@@ -7,6 +7,12 @@ export const CST = {
         GAME: "GAME",
         PERKS: "PERKS",
         ACTIVEGAMES: "ACTIVEGAMES",
-        SPECTATORJOIN: "SPECTATORJOIN"
+        SPECTATORJOIN: "SPECTATORJOIN",
+        RANKING: "RANKING"
+    },
+    COLORS: {
+        RANKLIST_PRIMARY: 0x4e342e,
+        RANKLIST_SECONDARY: 0x260e04,
+        RANKLIST_TERNARY: 0x7b5e57
     }
 }
