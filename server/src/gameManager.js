@@ -3,16 +3,25 @@ const rooms = require('./model/rooms.js');
 const perks = ["Movement Speed", "Health", "Add Diamonds"];
 
 
+const Run = require('./model/run.js');
+const runs = require('./model/runs.js');
+
 class GameManager {
-    constructor(io){
+    constructor(io) {
         this.io = io;
     }
 
     handleGameStart(player, roomId) {
         const room = rooms.get(roomId);
-    
+
         if (room) {
+            if (room.players.length !== 2) {
+                player.socket.emit('roomNotReady');
+                return;
+            }
             const initialGameState = this.generateInitialGameState(room);
+            rooms.get(roomId).gameState = initialGameState;
+            console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             this.io.to(roomId).emit('initialGameState', initialGameState);
         } else player.socket.emit('roomNotFound', roomId);
@@ -23,6 +32,19 @@ class GameManager {
         const room = rooms.get(roomId);
         
         if (room) {
+            // Update the game state of room
+            for (let i = 0; i < rooms.get(roomId).gameState.players.length; i++) {
+                if (rooms.get(roomId).gameState.players[i].playerId == player.id) {
+                    rooms.get(roomId).gameState.players[i] = {
+                        playerId: player.id,
+                        x: newPosition.x,
+                        y: newPosition.y,
+                        orientation: newPosition.orientation
+                    }
+                }
+            }
+
+            // TODO: send back the whole gamestate instead
             // Notify all teammates about the movement
             player.socket.to(roomId).emit('teammateMoved', {
                 playerId: player.id,
@@ -32,15 +54,26 @@ class GameManager {
             });
         } else {
             player.socket.emit('roomNotFound', roomId);
-        } 
+        }
         // console.log(newPosition);
+    }
+
+    handleGetRanking(player) {
+        player.socket.emit('rankList', runs.toArray());
     }
 
     handleCollectDiamond(player, diamond) {
         const roomId = diamond.roomId;
         const room = rooms.get(roomId);
-    
+        const gems = rooms.get(roomId).gameState.gems;
         if (room) {
+            // Update the game state of the room
+            for (let i = 0; i < gems.length; i++) {
+                if (gems[i].gemId == diamond.gemId) {
+                    gems.splice(i, 1);
+                    room.gemsCollected++;
+                }
+            }
             // Notify teammate about collected diamond
             player.socket.to(roomId).emit('gemCollected', diamond.gemId);
         } else {
@@ -51,7 +84,7 @@ class GameManager {
     generateInitialGameState(room) {
         const player1 = room.players[0];
         const player2 = room.players[1];
-    
+
         let gameState = {
             'tileMap': [
                 [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
@@ -85,6 +118,9 @@ class GameManager {
                 'y': 64 + 16, // player 2 spawn y position
                 'orientation': 0
             }],
+
+            'gemsCollected' : 0,
+
             'gems': [{
                 'gemId': 1,
                 'x': 112, // gem spawn x position
@@ -202,6 +238,21 @@ class GameManager {
                 });
             }
         }
+    }
+    
+    handleGameOver(roomId) {
+        const room = rooms.get(roomId);
+        const playerUsernames = room.players.map(p => p.id);
+        //TODO: create an algorithm for calculating totalScore
+        const totalScore = room.gameState.gemsCollected;
+        const time = 6969;
+
+        const run = new Run(roomId, totalScore, time, playerUsernames);
+        runs.enqueue(run);
+
+        // remove room from rooms map since we dont need it anymore
+        // rooms.delete(roomId);
+        console.log(runs.toArray());
     }
 }
 

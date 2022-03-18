@@ -47,8 +47,6 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         //         initialGameState: payload
         //     });
         // });
-
-        
     }
 
     connect(){

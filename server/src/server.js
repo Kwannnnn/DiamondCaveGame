@@ -67,6 +67,10 @@ io.on('connection', (socket) => {
     // TODO Should be added to the protocol
     // This message is received when the time for choosing perk is up
     socket.on("finishedPerkChoosing", (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
+    
+    socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
+    
+    socket.on('getRanking', () => gameManager.handleGetRanking(player));
 });
 
 function handleConnect(player) {
