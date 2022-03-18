@@ -25,7 +25,7 @@ export default class ChatScene extends Phaser.Scene {
             type: 'text',
             color: '#000000',
             backgroundColor: '#ffffff', 
-            borderColor: '#000000'
+            borderColor: '#000000'  
         }))
         // TODO: add line wrapping
     
@@ -43,7 +43,7 @@ export default class ChatScene extends Phaser.Scene {
         // create geometry mask to hide pixels
         let mask = new Phaser.Display.Masks.GeometryMask(this, this.chatBox);
 
-        this.chat = this.add.text(15, 150, this.chatMessages, { color: '#26924F', padding: 10, wordWrap: { width: 240 } }).setOrigin(0);
+        this.chat = this.add.text(15, 150, this.chatMessages, { color: '#26924F', padding: 10, wordWrap: { width: 240, useAdvancedWrap: true } }).setOrigin(0);
 
         this.chat.setMask(mask); 
 
@@ -56,7 +56,7 @@ export default class ChatScene extends Phaser.Scene {
             {
                 this.chat.y += (pointer.velocity.y / 10);
 
-                this.chat.y = Phaser.Math.Clamp(this.chat.y, 100, 300);
+                this.chat.y = Phaser.Math.Clamp(this.chat.y, -400, 99999);
             }
 
         });
@@ -72,15 +72,12 @@ export default class ChatScene extends Phaser.Scene {
             }
         });
 
-        this.chatInput.on('focus', () => {
-            this.input.keyboard.enabled = true;
-        })
-
         // display the messages in chat box
         this.socket.on('chatMessage', (data) => {
             const { sender, message } = data;     
             let chatMessage = sender + ": " + message;
             this.chatMessages.push(chatMessage);
+            this.chatMessages.push('\n');
             this.chat.setText(this.chatMessages);
         })
             

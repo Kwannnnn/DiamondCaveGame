@@ -18,9 +18,7 @@ export default class Player extends ControlledUnit {
     }
 
     update() {
-        if (!this.scene.scene.isActive(CST.SCENES.CHAT)) {
-            this.handlePlayerMovement();
-        }
+        this.handlePlayerMovement();
     }
 
     /**
@@ -33,7 +31,7 @@ export default class Player extends ControlledUnit {
             down: Phaser.Input.Keyboard.KeyCodes.S,
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
-        }, true, true);
+        }, false, true);
     }
 
     setupAnimations() {

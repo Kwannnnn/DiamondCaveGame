@@ -71,7 +71,14 @@ export default class Game extends Phaser.Scene {
     }
 
     update() {
-        this.controlledUnit.update();
+        if (this.scene.isActive(CST.SCENES.CHAT)) {
+            this.input.keyboard.enabled = false;
+           
+        } else {
+            this.input.keyboard.enabled = true;
+            this.controlledUnit.update();
+        }
+    
     }
 
     /**
