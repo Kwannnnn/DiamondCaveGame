@@ -8,11 +8,17 @@ For the sake of transparency and to make certain that all parties involved are a
 what is to be delivered, here is the full list of deliverables for Sprint 2:
 
 • Five fully functioning maps (one full world)
+
 • Perk set and its functionality
+
 • Traps and static enemies
+
 • Chat functionality within the lobby
+
 • Spectator role
+
 • Ranking based on number of collected diamonds
+
 • Admin functionalities (admin can influence the game, for instance kick the player, etc)
 
 Glossary of terms:
