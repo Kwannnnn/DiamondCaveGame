@@ -63,11 +63,37 @@ For connecting the frontend and backend applications, we chose to go with Socket
 
 To transmit game state data, we defined a set of JSON structures that encode the necessary data for sending via Socket.io. These definitions can be found in the Game State Protocol file, within this documentation package.
 
-### 3.4 Development packages
+## 4 Dependencies
+
+### 4.1 Production dependencies
+
+There are several packages we take advantage of in our server to deliver certain critical functionality.
+
+#### **dotenv**
+
+The dotenv package is used to provide an easy way to set global configuration variables. It was chosen for its ease of implementation and lack of additional dependencies. Currently it is used to set the server port and maximum room size.
+
+#### **express**
+
+Express is used to provide webserver functionality necessary for both `socket.io` as well as the debug webpage used for development. It was chosen out of our familiarity with the library and based on a recomendation by the `socket.io` developers.
+
+#### **Nano ID**
+
+The `nanoid` package was chosen to provide random identifiers for game room codes for it's speed and size, as well as a lack of external dependencies. For this project, it uses a reduced character set to make it easier to remember and type the code.
+
+#### **priority-queue**
+
+`priority-queue` is used by the server to sort/rank all completed games by their score. It was chosen for its ease of implementation into a data structure.
+
+### 4.2 Development dependencies
 
 During development we use several packages to help us quickly test both the frontend and backend applications.
 
+#### **Parcel**
+
 For frontend development, we use the Parcel web bundler as it offers a comprehensive set of development and deployment features, like hot-reloading and error diagnostics, as well compatibility with Phaser.
+
+#### **Nodemon**
 
 For backend development, we use the Nodemon package to offer us a similar set of development features to Parcel when running a Node.js application.
 
@@ -75,9 +101,7 @@ For backend development, we use the Nodemon package to offer us a similar set of
 
 For managing our work flow we are going to use git lab. The reason is that GitLab is **a web-based Git repository** that provides free open and private repositories, issue-following capabilities, and wikis.
 
-The way our git flow is going to be managed is that we are going to have two main remote repositories: one for testing, another one for already-tested code.
-
-Each time someone will be assigned an issue, he will create a separate remote branch out of main branch (which is with already-tested code) and start working on his issue. Whenever he will be finished, the participant will need to wait for at least 3 approvals of his work from other members and after that he will merge the code with testing main branch. Then, at the end of each week testing main branch will be checked on any kind of functionality/bug and then the tested code will be pushed into second main branch.
+For information on our conduct when working with the GIT repository, see the **GIT conduct** chapeter in the **Code of conduct** document.
 
 ## 5 Diagrams
 
