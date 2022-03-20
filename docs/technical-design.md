@@ -120,3 +120,7 @@ There are several scenes the game goes through to display the previously mention
 ### 5.2 Class diagram (frontend)
 
 ![image](diagrams/Frontend-class-diagram.png)
+
+### 5.3 Class diagram (backend)
+
+![image](diagrams/serverClassDiagram.png)
