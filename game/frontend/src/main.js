@@ -9,7 +9,8 @@ import {
     PerksScene,
     ActiveGamesScene,
     SpectatorJoinScene,
-    RankingScene
+    RankingScene,
+    ChatScene
 } from './scenes';
 
 const config = {
@@ -26,7 +27,8 @@ const config = {
         JoinScene,
         ActiveGamesScene,
         SpectatorJoinScene,
-        RankingScene
+        RankingScene,
+        ChatScene
     ],
     parent: "game",
     type: Phaser.AUTO,

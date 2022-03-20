@@ -1,4 +1,5 @@
 import ControlledUnit from "./ControlledUnit";
+import { CST } from "../utils/CST"
 
 export default class Player extends ControlledUnit {
     constructor(scene, x, y, username, perk) {
@@ -47,7 +48,7 @@ export default class Player extends ControlledUnit {
             down: Phaser.Input.Keyboard.KeyCodes.S,
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
-        }, true, true);
+        }, false, true);
     }
 
     setupAnimations() {

@@ -5,6 +5,7 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
 
 export default class Game extends Phaser.Scene {
     // A physics group representing the diamond sprites
@@ -69,10 +70,18 @@ export default class Game extends Phaser.Scene {
         this.placeExit(200, 200);
 
         this.handleSocketEvents();
+
     }
 
     update() {
-        this.controlledUnit.update();
+        if (this.scene.isActive(CST.SCENES.CHAT)) {
+            this.input.keyboard.enabled = false;
+           
+        } else {
+            this.input.keyboard.enabled = true;
+            this.controlledUnit.update();
+        }
+    
     }
 
     /**
