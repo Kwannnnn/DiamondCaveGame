@@ -241,7 +241,6 @@ class GameManager {
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
                 console.log("Perk name without spaces: " + perkNameWithoutSpace);
 
-                // TODO add message to the protocol
                 room.players.forEach(player => {
                     player.socket.emit("perkForNextGame", perkNameWithoutSpace);
                 });
