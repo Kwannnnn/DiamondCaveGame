@@ -5,6 +5,7 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
 
 export default class Game extends Phaser.Scene {
     // A physics group representing the diamond sprites
@@ -69,10 +70,18 @@ export default class Game extends Phaser.Scene {
         this.placeExit(200, 200);
 
         this.handleSocketEvents();
+
     }
 
     update() {
-        this.controlledUnit.update();
+        if (this.scene.isActive(CST.SCENES.CHAT)) {
+            this.input.keyboard.enabled = false;
+           
+        } else {
+            this.input.keyboard.enabled = true;
+            this.controlledUnit.update();
+        }
+    
     }
 
     /**
@@ -322,7 +331,13 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
-        // TODO: Do something meaningful when you collide
+        const damage = 10;
+        // Send message to the server
+        this.socket.emit("hitByEnemy", {
+            lobbyID: this.lobbyID,
+            damage: damage
+        });
+
     }
 
     /**
@@ -404,6 +419,12 @@ export default class Game extends Phaser.Scene {
                 // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
                 gameState: this.gameState
             });
+        });
+        this.socket.on('reduceHealth', (damage) => {
+            // Change the health on hud
+            // HUD.changeHealth(damage);
+
+            console.log("Team got damage " + damage.damage + " health points");
         })
     }
 }

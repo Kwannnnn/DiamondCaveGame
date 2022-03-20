@@ -91,4 +91,8 @@ A lobby has to be created to start playing the game, and a second player has to 
 
 #### 5.1.2 Scenes
 
-There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where there are several options for a player. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene. For checking the scoreboard of the game, the player is redirected to RankingScene, where shows the 10 highest scoring team. 
+There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where there are several options for a player. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
+
+### 5.2 Class diagram (frontend)
+
+![image](diagrams/Frontend-class-diagram.png)

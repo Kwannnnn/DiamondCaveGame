@@ -104,7 +104,7 @@ class GameManager {
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                [2, 2, 2, 2, 2, 2, 3, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -247,7 +247,26 @@ class GameManager {
             }
         }
     }
-    
+
+    /**
+     * This method handles reducing the health for team
+     * @param {roomId} id of the room that has to reduce health 
+     * @param {damage} damage that has been caused to the team
+     */
+    handleReduceHealth(roomId, damage) {
+        const room = rooms.get(roomId);
+
+        if (room) {
+            room.health -= damage;
+
+            room.players.forEach(player => {
+                // TODO add message to the protocol
+                // Message is sent to all players in room to indicate health loss
+                player.socket.emit("reduceHealth", {damage});
+            });
+        }
+    }
+
     handleGameOver(roomId) {
         const room = rooms.get(roomId);
         const playerUsernames = room.players.map(p => p.id);
