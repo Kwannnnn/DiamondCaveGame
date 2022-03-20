@@ -9,5 +9,15 @@ stages:
 - test
 sast:
   stage: test
+eslint:
+  image: node:lts-alpine3.14
+  stage: test
+  script:
+    - cd server
+    - npm install
+    - npm run eslint
+    - cd ../game/frontend
+    - npm install
+    - npm run eslint
 include:
 - template: Security/SAST.gitlab-ci.yml

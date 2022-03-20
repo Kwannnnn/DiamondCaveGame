@@ -1,6 +1,6 @@
 // This class manages everything related to in-game events
 const rooms = require('./model/rooms.js');
-const perks = ["Movement Speed", "Health", "Add Diamonds"];
+const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
 
 
 const Run = require('./model/run.js');
@@ -33,7 +33,6 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
-            var playerToUpdate = room.players.find(p => p.playerId === player.id);
             player.x = newPosition.x;
             player.y = newPosition.y;
             player.orientation = newPosition.orientation;
@@ -104,7 +103,7 @@ class GameManager {
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                [2, 2, 2, 2, 2, 2, 3, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -191,7 +190,7 @@ class GameManager {
             });
         } else {
             console.log(rooms);
-            console.log("Room id for exit has not been found");
+            console.log('Room id for exit has not been found');
         }
     }
 
@@ -205,10 +204,10 @@ class GameManager {
                 // If the iterable object is not the player who chose the perk, notify teammate
                 // If it is the player, assign the chosen perk to the object
                 if (player.id !== chosenPerk.username) {
-                    console.log(chosenPerk.username + " chose " + perks[chosenPerk.perkId]);
+                    console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
-                    player.socket.emit("teammatePerkChoice", {teammatePerk: perks[chosenPerk.perkId]});
+                    player.socket.emit('teammatePerkChoice', { teammatePerk: perks[chosenPerk.perkId] });
                 } else if (!player.perkChoice || player.perkChoice !== perks[chosenPerk.perkId]) {
                     
                     // To keep track of the choices players make, new property of the object is created
@@ -217,7 +216,7 @@ class GameManager {
             });
 
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
-                console.log("THE SAME PERK HAS BEEN CHOSEN");
+                console.log('THE SAME PERK HAS BEEN CHOSEN');
 
                 this.handleFinalPerkDecision(chosenPerk.lobbyID);
                 room.players[0].perkChoice = null;
@@ -232,18 +231,18 @@ class GameManager {
      * @param {id of the lobby} lobbyID
      */
     handleFinalPerkDecision(lobbyID) {
-        console.log("FINISHED PERK CHOOSING");
+        console.log('FINISHED PERK CHOOSING');
         const room = rooms.get(lobbyID);
 
         if (room) {
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
-                console.log("Perk name without spaces: " + perkNameWithoutSpace);
+                console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 // TODO add message to the protocol
                 room.players.forEach(player => {
-                    player.socket.emit("perkForNextGame", perkNameWithoutSpace);
+                    player.socket.emit('perkForNextGame', perkNameWithoutSpace);
                 });
             }
         }
@@ -263,7 +262,7 @@ class GameManager {
             room.players.forEach(player => {
                 // TODO add message to the protocol
                 // Message is sent to all players in room to indicate health loss
-                player.socket.emit("reduceHealth", {damage});
+                player.socket.emit('reduceHealth', { damage });
             });
         }
     }

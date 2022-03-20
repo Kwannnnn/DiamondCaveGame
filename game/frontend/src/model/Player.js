@@ -1,4 +1,4 @@
-import ControlledUnit from "./ControlledUnit";
+import ControlledUnit from './ControlledUnit';
 
 export default class Player extends ControlledUnit {
     constructor(scene, x, y, username, perk) {
@@ -17,15 +17,15 @@ export default class Player extends ControlledUnit {
 
         // Check if perk is applied to the room
         if (perk) {
-            console.log(perk + " IS USED")
+            console.log(perk + ' IS USED')
             // Check which perk is applied
             switch (perk) {
-                case "MovementSpeed":
-                    this.increaseSpeed();
-                    break;
+            case 'MovementSpeed':
+                this.increaseSpeed();
+                break;
 
-                default:
-                    console.log("no perks for player " + username);
+            default:
+                console.log('no perks for player ' + username);
 
             }
         }
@@ -47,7 +47,7 @@ export default class Player extends ControlledUnit {
             down: Phaser.Input.Keyboard.KeyCodes.S,
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
-        }, true, true);
+        }, false, true);
     }
 
     setupAnimations() {
@@ -74,19 +74,19 @@ export default class Player extends ControlledUnit {
         this.orientation = orientation;
         this.setNamePosition();
 
-        switch (this.orientation){
-            case 0: 
-                this.anims.play('right', true);
-                break;
-            case 90:
-                this.anims.play('up', true);
-                break;
-            case 180:
-                this.anims.play('left', true);
-                break;
-            default:
-                this.anims.play('down', true);
-                break;
+        switch (this.orientation) {
+        case 0: 
+            this.anims.play('right', true);
+            break;
+        case 90:
+            this.anims.play('up', true);
+            break;
+        case 180:
+            this.anims.play('left', true);
+            break;
+        default:
+            this.anims.play('down', true);
+            break;
         }
     }
 
@@ -124,6 +124,18 @@ export default class Player extends ControlledUnit {
             this.y += movementY;
             this.setNamePosition();
         }
+
+        if (tile && tile.index == 3) {
+            // Call damage player method
+            // Or call trap object
+            console.log('You walked on a trap');
+        }
+
+        if (tile && tile.index == 4) {
+            // Do smth else
+            console.log('You walked on tile with index 4');
+        }
+
 
         if (movementX !== 0 || movementY !== 0) {
             this.handlePlayerMoved();

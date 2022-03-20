@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 const CollectDiamond = new Phaser.Events.EventEmitter();
 

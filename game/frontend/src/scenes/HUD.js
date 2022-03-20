@@ -1,11 +1,13 @@
-import CollectDiamond from "../events/CollectDiamondEvent";
-import SelectHealingPerk from "../events/HealingPerkEvent";
+import CollectDiamond from '../events/CollectDiamondEvent';
+import SelectHealingPerk from '../events/HealingPerkEvent';
+import { CST } from '../utils/CST';
+import ChatScene from './ChatScene';
 
-let numberOfSpectators=0;
+let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
-            key: "hud"
+            key: 'hud'
         });
 
         this.fullWidth = 200;
@@ -42,8 +44,15 @@ export default class HUD extends Phaser.Scene {
         this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
         
         //preloading assets for chat
-        this.load.image('chat', "assets/comment-message.png");
+        this.load.image('chat', 'assets/comment-message.png');
         this.load.html('form', 'assets/pages/form.html');
+
+        // //preloading rexUI plugin
+        // this.load.scenePlugin({
+        //     key: 'rexuiplugin',
+        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+        //     sceneKey: 'rexUI'
+        // });
     }
 
     create() {
@@ -73,26 +82,28 @@ export default class HUD extends Phaser.Scene {
 
         // Create the world and stage text
         this.gamestage = this.add.text(1000, 25, `World: ${this.world}-${this.stage}`, {
-            color: "#FFFFFF",
+            color: '#FFFFFF',
             fontSize: 40,
         });
 
         // Create the numberOfSpectstors and stage text
         this.numberOfSpectators = this.add.text(35, 80, ` Number of spectators: ${numberOfSpectators}`, {
-            color: "#FFFFFF",
+            color: '#FFFFFF',
             fontSize: 40,
         });
-        this.socket.on('newSpectatorJoined',()=>{numberOfSpectators+=1; console.log("Success "+numberOfSpectators);this.updateNumberOfSpectators(numberOfSpectators);})
+        this.socket.on('newSpectatorJoined', ()=>{
+            numberOfSpectators += 1; console.log('Success ' + numberOfSpectators); this.updateNumberOfSpectators(numberOfSpectators);
+        })
 
         // Create the Diamond counter
         this.diamondCounter = this.add.text(600, 25, `Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`, {
-            color: "#FFFFFF",
+            color: '#FFFFFF',
             fontSize: 40,
         });
 
         // Create the clock
         this.clock = this.add.text(300, 25, `Time: ${this.seconds}:${this.minutes}`, {
-            color: "#FFFFFF",
+            color: '#FFFFFF',
             fontSize: 40,
         });
 
@@ -105,60 +116,22 @@ export default class HUD extends Phaser.Scene {
             .setInteractive();
         // chat input
         this.chatButton.on('pointerdown', () => {
-            // if chat box is off
+            // open chatbox
             if (!this.chatOn) { 
+                this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
                 this.chatOn = !this.chatOn;
-                this.chatInput = this.add.dom(150, 620).createFromCache('form').setOrigin(0.5);
-                // TODO: add line wrapping and scrollbar for seeing previous messages 
-                this.chat = this.add.text(15, 150, "", {
-                    lineSpacing: 15,
-                    backgroundColor: "#dddddd",
-                    color: "#26924F",
-                    padding: 10,
-                    fontStyle: "bold",
-                    fixedWidth: 270,
-                    fixedHeight: 450,
-                    wordWrap: {
-                        width: 240,
-                        callback: null,
-                        callbackScope: null,
-                        useAdvancedWrap: false
-                    }
-                })
-            }
-            // if chat box is on
-            else {
-                this.chatInput.destroy();
-                this.chat.destroy();
+            } else {
+                // close chatbox
+                this.scene.remove(CST.SCENES.CHAT);
                 this.chatOn = !this.chatOn;
             }
         });
-        this.chatButton.on('pointerover', () => {this.chatButton.setTint(0x30839f);});
-        this.chatButton.on('pointerout', () => {this.chatButton.clearTint();});
-
-        // set enter key for sending message
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
-        // send message to server on enter key
-        this.enterKey.on('down', event => {
-            let chatbox = this.chatInput.getChildByName('chat');
-            chatbox.value;
-            if (chatbox.value != "") {
-                this.socket.emit('chatMessage', chatbox.value);
-                chatbox.value = "";
-            }
+        this.chatButton.on('pointerover', () => {
+            this.chatButton.setTint(0x30839f);
         });
-
-        // display the messages in chat box
-        this.socket.on('chatMessage', (data) => {
-            const { sender, message } = data;     
-            let chatMessage = sender + ": " + message;
-            this.chatMessages.push(chatMessage);
-            if (this.chatMessages.length > 15) {
-                this.chatMessages.shift();
-            }
-            this.chat.setText(this.chatMessages);
-        })
+        this.chatButton.on('pointerout', () => {
+            this.chatButton.clearTint();
+        });
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
@@ -179,7 +152,7 @@ export default class HUD extends Phaser.Scene {
     changeHealth(difference) {
         this.setHealth(this.middle.displayWidth + difference);
         this.updateHealth(difference);
-        console.log("Teams health is: " + this.currentHealth);
+        console.log('Teams health is: ' + this.currentHealth);
     }
 
     changeHealthAnimated(difference) {
@@ -207,7 +180,7 @@ export default class HUD extends Phaser.Scene {
     }
 
     // Update time and clock
-    updateClock () {
+    updateClock() {
         this.seconds++;
         if (this.seconds === 60) {
             this.minutes++;
@@ -221,7 +194,7 @@ export default class HUD extends Phaser.Scene {
         this.collectedDiamonds = count;
 
         if (this.collectedDiamonds === this.totalDiamonds) {
-            this.diamondCounter.setText(`Go to next map!`);
+            this.diamondCounter.setText('Go to next map!');
         } else {
             this.diamondCounter.setText(`Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`);
         }        
@@ -234,4 +207,5 @@ export default class HUD extends Phaser.Scene {
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
     }
+
 }

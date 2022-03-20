@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
 
     handleConnect(player);
 
-    socket.on('currentPlays',()=> lobbyManager.handleCurrentGames(player));
+    socket.on('currentPlays', ()=> lobbyManager.handleCurrentGames(player));
 
     socket.on('createRoom', () => lobbyManager.handleCreateRoom(player));
 
@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => handleDisconnect(player));
 
-    socket.on('gameStart', (roomId) => gameManager.handleGameStart(player,roomId));
+    socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
     socket.on('chatMessage', (message) => chatManager.handleChatMessage(player, message));
 
@@ -78,7 +78,7 @@ io.on('connection', (socket) => {
 });
 
 function handleConnect(player) {
-    players.set(player.id,player);
+    players.set(player.id, player);
     console.log(`Established connection with player ${player.id}`);
 }
 
