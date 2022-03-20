@@ -1,12 +1,16 @@
 import Phaser from 'phaser';
+
 import {
     LobbyScene,
     GameScene,
     LoadScene,
     JoinScene,
     MenuScene,
+    PerksScene,
     ActiveGamesScene,
-    SpectatorJoinScene
+    SpectatorJoinScene,
+    RankingScene,
+    ChatScene
 } from './scenes';
 
 const config = {
@@ -14,13 +18,24 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
-    scene: [LoadScene, MenuScene, GameScene, LobbyScene, JoinScene, ActiveGamesScene, SpectatorJoinScene],
-    parent: "game",
+    scene: [
+        LoadScene,
+        MenuScene,
+        GameScene,
+        PerksScene,
+        LobbyScene,
+        JoinScene,
+        ActiveGamesScene,
+        SpectatorJoinScene,
+        RankingScene,
+        ChatScene
+    ],
+    parent: 'game',
     type: Phaser.AUTO,
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 0}
+            gravity: { y: 0 }
         }
     },
     dom: {

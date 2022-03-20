@@ -25,6 +25,9 @@ Upon publication of this document, all team members have twenty-four (24) hours 
 
 ## GIT conduct
 
+For a detailed guidelines regarding GitLab usage please consult the
+[Git Guidelines](git-guidelines.md) document.
+
  1. After the last meeting of every week, the designated GIT contact is responsible for creating a weekly build branch based on the latest state of the main branch.
  2. When beginning work on an assigned Issue, the appointed team member must create a dedicated branch for that issue from the latest state of the current weekly build branch.
  3. While working, the assigned team should commit whenever any new functionality is added, and the entire codebase is functional. Team members should use the message styling rules defined in [**Conventional Commits**](https://www.conventionalcommits.org/en/v1.0.0/).

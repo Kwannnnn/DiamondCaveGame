@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { CST } from "../utils/CST";
+import { CST } from '../utils/CST';
+import { MenuButton } from '../components';
 
 export default class MenuScene extends Phaser.Scene {
     constructor() {
@@ -8,35 +9,18 @@ export default class MenuScene extends Phaser.Scene {
         })
     }
 
-    init(data) {
-        
-    }
-
     preload() {
-        this.load.image("back", "assets/arrow-left.png");
-
+        this.load.image('back', 'assets/arrow-left.png');
     }
 
     create() {
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, "logo").setDepth(1);
-        this.add.image(0,0, "title_bg").setOrigin(0).setDepth(0)
-        this.lobby = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 350, "play_button").setDepth(1).setInteractive();
-        this.join = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 250, "join_button").setDepth(1).setInteractive();
-        this.options = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 150, "options_button").setDepth(1).setInteractive();
-        this.activeGames = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 50, "activeGames_button").setDepth(1).setInteractive();
-
-        this.join.on('pointerdown', () => {this.scene.start(CST.SCENES.JOIN)});
-        this.join.on('pointerover', () => {this.join.setTint(0x30839f)});
-        this.join.on('pointerout', () => {this.join.clearTint()});
-
-        this.lobby.on('pointerdown', () => {this.scene.start(CST.SCENES.LOBBY)});
-        this.lobby.on('pointerover', () => {this.lobby.setTint(0x30839f)});
-        this.lobby.on('pointerout', () => {this.lobby.clearTint()});
-
-        this.activeGames.on('pointerdown', () => {this.scene.start(CST.SCENES.SPECTATORJOIN)});
-        this.activeGames.on('pointerover', () => {this.activeGames.setTint(0x30839f)});
-        this.activeGames.on('pointerout', () => {this.activeGames.clearTint()});
-
-
+        const MARGIN_Y = 70;
+        const START_Y = this.game.renderer.height - 320;
+        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
+        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.createNewRoomButton = new MenuButton(this, this.game.renderer.width / 2, START_Y, 'play_button', CST.SCENES.LOBBY);
+        this.joinRoomButton = new MenuButton(this, this.game.renderer.width / 2, START_Y + MARGIN_Y, 'join_button', CST.SCENES.JOIN);
+        this.rankingButton = new MenuButton(this, this.game.renderer.width / 2, START_Y + 2 * MARGIN_Y, 'scoreboard_button', CST.SCENES.RANKING);
+        this.spectateButton = new MenuButton(this, this.game.renderer.width / 2, START_Y + 3 * MARGIN_Y, 'activeGames_button', CST.SCENES.SPECTATORJOIN);
     }
 }

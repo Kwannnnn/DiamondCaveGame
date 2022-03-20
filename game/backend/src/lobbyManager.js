@@ -9,7 +9,6 @@ class LobbyManager {
     }
 
     handleGetCurrentGames(player) {
-        // TODO: change this, this is only place holder code
         //get all active games
         const games = []
         for (let room of rooms.values()) {
@@ -37,7 +36,6 @@ class LobbyManager {
 
         // add it to rooms map
         rooms.set(roomId, room);
-        // games[games.length]= game;
 
         //add player to the room
         this.joinRoom(room, player, false);
@@ -46,12 +44,6 @@ class LobbyManager {
             playerIDs.push(player.id);
         }
 
-        // commented since I'm not sure what this does
-        // for (let i = 0; i < rooms.size; i++) {
-        //     if (roomId === games[i].id) {
-        //         games[i].players.push(player.id);
-        //     }
-        // }
         //send message back to player with room id and list of playerIDs
         player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
     }
@@ -70,13 +62,6 @@ class LobbyManager {
         roomId = roomId.toUpperCase();
         const room = rooms.get(roomId);
 
-        // commented since I'm not sure what this does
-        // for (let i = 0; i < games.length; i++) {
-        //     if (roomId === games[i].id) {
-        //         games[i].players.push(player.id);
-        //     }
-        // }
-        // TODO: maybe the following code could be better written
         if (room) {
             // if player is already in the room
             if (room.players.includes(player)) {
@@ -123,8 +108,10 @@ class LobbyManager {
         if (room) {
             room.spectators.push(player);
 
+
             // TODO: handle on client
-            player.socket.to(room.id).emit('newSpectatorJoined', player.id)
+            player.socket.to(room.id).emit('newSpectatorJoined', player.id);
+            player.socket.emit('runGameScene', roomId, room.gameState)
             console.log('Spectator ' + player.id + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);

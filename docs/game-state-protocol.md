@@ -22,8 +22,12 @@ the logic of the game in a correct manner.
 <p>
 
 ```javascript
-// The id of the created room as a string
-roomId;
+{
+    // The id of the created room as a string
+    roomId: ...,
+    // An array of connected player usernames as strings
+    playerIDs: [...]
+}
 ```
 
 </p>
@@ -99,6 +103,9 @@ playerId;
             orientation: ...
         }, ...
     ],
+    
+    gemsCollected:...,
+
     gems: [
         {
             // a unique identifier for a gem
@@ -122,7 +129,7 @@ playerId;
                 y: 336,
             },
             
-            // The path the enenmy will travel
+            // The path the enemy will travel
             // path: {
             //     x: 496,
             //     y: 336,
@@ -143,10 +150,33 @@ playerId;
             <i>Players</i> are sent as an array of player objects, containing
             the spawn coordinates and facing directions of each player.<br>
             Lastly, <i>gems</i> are in the format of an array of gem objects,
-            containing the spawn coordinates of each gem.<br> <i>enemies</i> contain enemy objects that define a start position and a path they will traverse.
+            containing the spawn coordinates of each gem.<br> <i>enemies</i>
+            contain enemy objects that define a start position and a path they
+            will traverse.
         </td>
     </tr>
-    <tr>
+
+<tr>
+        <td>runGameScene</td>
+<td>
+<p>
+
+```javascript
+{
+    // the id of the room the client is joining
+    roomId: ...,
+    // the current game state as an object (for structure see "initialGameState")
+    gameState: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server transmits the current game state to a spectating client.
+        </td>
+    </tr>
+<!-- <tr>
         <td>gameOver</td>
 <td>
 <p>
@@ -166,9 +196,10 @@ playerId;
         <td>
             With this event the server indicates the  end of a new game.
         </td>
-    </tr>
-    <tr>
-        <td>teammateMoved</td>
+</tr> -->
+
+<tr>
+    <td>teammateMoved</td>
 <td>
 <p>
 
@@ -215,6 +246,56 @@ gemId;
         </td>
     </tr>
     <tr>
+        <td>choosePerks</td>
+<td>
+<p>
+
+```javascript
+// a list of perks as array
+perks:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server transmits a list of available perks to all clients in the room.
+        </td>
+    </tr>
+    <tr>
+        <td>teammatePerkChoice</td>
+<td>
+<p>
+
+```javascript
+// the perk chosen by a teammate
+teammatePerk:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room that
+            a perk has been chosen by a player.
+        </td>
+    </tr>
+    <tr>
+        <td>perkForNextGame</td>
+<td>
+<p>
+
+```javascript
+// the name of the chosen perk as a string
+perk:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room about
+            the perk chosen for the next game.
+        </td>
+    </tr>
+    <tr>
         <td>chatMessage</td>
 <td>
 <p>
@@ -227,8 +308,9 @@ gemId;
     message: ...,
 }
 ```
+
 </p>
-        
+
 <td>
     With this event the server forwards a message sent by another player
 </td>
@@ -237,7 +319,6 @@ gemId;
     <td>
         spectatorJoined
     </td>
-
 
 <td>
 
@@ -261,7 +342,6 @@ playerId: ...,
         currentGames
     </td>
 
-
 <td>
 
 ```javascript
@@ -282,11 +362,123 @@ playerId: ...,
 </td>
 
 <td>
-    A response to the <b>getCurrentGames</b> request from the client, which contains a list of active game objects
+    A response to the <b>getCurrentGames</b> request from the client, which
+    contains a list of active game objects
 </td>
 
 </tr>
 <!-- this is one row -->
+<tr>
+    <td>
+        rankList
+    </td>
+<td>
+
+```javascript
+[
+    {
+        // the id of run (the lobby code)
+        runId: ...,
+
+        // the total score of the team
+        totalScore: ...,
+
+        // the time the team spent to complete the run
+        totalScore: ...,
+
+        // the time the team spent to complete the run
+        playerUsernames: [..., ...]
+    },
+
+    // other rooms
+    ...
+]
+```
+
+</td>
+
+<td>
+    A response to the <b>getRanking</b> request from the client, which contains
+    a sorted by total score array of the completed game runs.
+</td>
+
+</tr>
+<!-- this is one row -->
+
+<tr>
+
+<td>
+    choosePerks
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        perks: [..., ...]
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the client the list of all available perks from the server. Client has it's implementation
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    teammatePerkChoice
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        teammatePerkChoice: perk
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends a client the name of the perk that another player has chosen. 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    perkForNextGame
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        perkName: perk
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends both players the name of the perk that will be used next game. 
+</td>
+
+</tr>
 
 </table>
 
@@ -311,8 +503,15 @@ roomId;
 </p>
 </td>
         <td>
-            With this response the server indicates that there is no room with the
-            specified roomId of a previous client message.
+            With this response the server indicates that there is no room with
+            the specified roomId of a previous client message.
+        </td>
+    </tr>
+    <tr>
+        <td>roomNotReady</td>
+        <td>-</td>
+        <td>
+            With this response the server indicates that the room the client is attempting to start does not have enough players.
         </td>
     </tr>
     <tr>
@@ -418,7 +617,6 @@ roomId;
         joinRoomAsSpectator
     </td>
 
-
 <td>
 
 ```javascript
@@ -434,7 +632,6 @@ roomId:;
 
 </tr>
 <!-- this is one row -->
-
 
 <tr>
         <td>gameStart</td>
@@ -504,6 +701,60 @@ roomId;
         </td>
     </tr>
     <tr>
+        <td>reachedEnd</td>
+<td>
+<p>
+
+```javascript
+// The id of the game room
+roomId:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that they have completed the map.
+        </td>
+    </tr>
+    <tr>
+        <td>finishedPerkChoosing</td>
+<td>
+<p>
+
+```javascript
+// The id of the game room
+lobbyID:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that the perk choice timer has run out.
+        </td>
+    </tr>
+    <tr>
+        <td>chosenPerk</td>
+<td>
+<p>
+
+```javascript
+{
+    // Username of the current player as a string 
+    username: ...,
+    // The id of the perk chosen
+    perkId: ...,
+    // The id of the game room
+    roomId: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that they have completed the map.
+        </td>
+    </tr>
+    <tr>
         <td>chatMessage</td>
 <td>
 <p>
@@ -526,7 +777,6 @@ message:
         getCurrentGames
     </td>
 
-
 <td>-</td>
 
 <td>
@@ -535,4 +785,128 @@ message:
 
 </tr>
 <!-- this is one row -->
+
+<tr>
+    <td>
+        gameOver
+    </td>
+
+<td>
+
+```javascript
+// the id of the room as a string
+roomId:...
+```
+
+</td>
+
+<td>
+    This event indicates that the run has ended.
+</td>
+
+</tr>
+<!-- this is one row -->
+
+<tr>
+
+<td>
+    reachedEnd
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that one of the players has reached the end of the map 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    chosenPerk
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of chosen perk names
+        chosenPerk: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the perk choice of the player to the server. Every time player chooses a perk from the list, this even is triggered, and message is sent  
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    finishedPerkChoosing
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that the time for choosing the perks is up  
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    hitByEnemy
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...,
+
+        // integer of damage
+        damage: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that player hit the enemy and sends all information to reduce health of the team 
+</td>
+
+</tr>
 </table>

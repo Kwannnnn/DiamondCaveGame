@@ -49,6 +49,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 
 ### 17. As a player I want to see my global run ranking (we rank based on collected diamonds team run, run finishes when you die)
 
+    a. The ranking screen can display all of the stats sent by the server using either pagination or scrolling
+
 ### 18. As an admin I want to be able to influence the game
 
 ### 19. As a developer I want to have developer console (you can skip some)
@@ -152,6 +154,11 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 12
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | The players are placed in a random map layout after completing current map | M | 5 | - |
+| BI-02 | After completing a world, the players move to the next one | M | 6 | - |
+
 ### US 13
 
 Backlog item | Definition | Priority | Weight | Depends on |
@@ -165,6 +172,12 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 14
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | World 1 maps are fully implemented | M | 6 | - |
+| BI-02 | Design 2 puzzles that can be added to maps | M | 3 | - |
+| BI-03 | Puzzles are implemented in maps | M | 5 | - |
+
 ### US 15
 
 Backlog item | Definition | Priority | Weight | Depends on |
@@ -173,6 +186,7 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-02 | Define the spectator model and enable spectators to join lobbies | M | 4 | - |
 | BI-03 | Create a spectator game scene that only receives game data and have a player scene extend it with player functionality | M | 7 | - |
 | BI-04 | Enable spectators to move the camera and show number of spectators to everyone | M | 4 | US15-BI04 |
+| BI-05 | Display the game scene for spectators | M | 3 | - |
 
 ### US 16
 
@@ -183,6 +197,25 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 17
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Transmit run stats to server on game over and rank them on the server | M | 5 | - |
+| BI-02 | Create the ranking display scene and have the server transmit data to a client | M | 6 | - |
+
 ### US 18
 
 ### US 19
+
+---
+
+## Known problems
+
+Problem ID | Description | Priority (High/Normal) | Weight | Status |
+| - | - | - | - | - |
+| PB-01 | The name of the current player doesn't follow character, not seen by other player | N | 3 | In progress |
+| PB-02 | The server does not record the game state, which allows arbitrary data to be sent by clients without any integrity verification | H | 8 | Done |
+| PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | In progress |
+| PB-04 | The game can be started with one player, causing a server crash | H | 4 | Done |
+| PB-05 | WASD cannot by typed in chat | H | 5 | In progress |
+| PB-06 | Spectator list can overflow, obscuring entries | H | 5 | In progress |
+| PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
