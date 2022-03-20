@@ -341,6 +341,81 @@ playerId: ...,
 </tr>
 <!-- this is one row -->
 
+<tr>
+
+<td>
+    choosePerks
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        perks: [..., ...]
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the client the list of all available perks from the server. Client has it's implementation
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    teammatePerkChoice
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        teammatePerkChoice: perk
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends a client the name of the perk that another player has chosen. 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    perkForNextGame
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of perks names
+        perkName: perk
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends both players the name of the perk that will be used next game. 
+</td>
+
+</tr>
+
 </table>
 
 ### Possible errors
@@ -627,4 +702,107 @@ roomId:...
 
 </tr>
 <!-- this is one row -->
+
+<tr>
+
+<td>
+    reachedEnd
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that one of the players has reached the end of the map 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    chosenPerk
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // strings of chosen perk names
+        chosenPerk: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the perk choice of the player to the server. Every time player chooses a perk from the list, this even is triggered, and message is sent  
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    finishedPerkChoosing
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that the time for choosing the perks is up  
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    hitByEnemy
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // room id
+        roomID: ...,
+
+        // integer of damage
+        damage: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Indicates that player hit the enemy and sends all information to reduce health of the team 
+</td>
+
+</tr>
 </table>
