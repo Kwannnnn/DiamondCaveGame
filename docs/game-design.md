@@ -214,3 +214,22 @@ If you press the "Quit" button, you get to see your score, and it gives you two 
 ![image](wireframes/game-design/death-screen.png)
 
 If you die, you get to see a quite similar screen to the quit menu screen, but there is a text saying that you died this time.
+
+### Game worlds 
+
+#### World 1 Nature theme
+
+![image](sprites/worlds/nature.png)
+
+
+#### World 2 Ice theme
+![image](sprites/worlds/ice.png)
+
+#### World 3 Fire theme
+
+![image](sprites/worlds/fire.png)
+
+
+#### World 4 Dungeon theme
+
+![image](sprites/worlds/dungeon.png)
