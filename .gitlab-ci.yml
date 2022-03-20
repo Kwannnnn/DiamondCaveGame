@@ -13,10 +13,10 @@ eslint:
   image: node:lts-alpine3.14
   stage: test
   script:
-    - cd server
+    - cd game/backend
     - npm install
     - npm run eslint
-    - cd ../game/frontend
+    - cd ../frontend
     - npm install
     - npm run eslint
 include:
