@@ -15,8 +15,9 @@ export default class Game extends Phaser.Scene {
 
     preload() {
         this.load.image('gem', 'assets/gem.png');
-        this.load.image('enemy', 'assets/dirt.png'); // FIXME: Add an actual enemy sprite
-        //this.load.image("exit", "assets/exit.png")
+        // FIXME: Add an actual enemy sprite
+        this.load.image('enemy', 'assets/dirt.png');
+        // this.load.image("exit", "assets/exit.png")
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
@@ -87,6 +88,7 @@ export default class Game extends Phaser.Scene {
      * of the GameScene. 
      */
     setupPlayers() {
+        this.players = new Map();
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
