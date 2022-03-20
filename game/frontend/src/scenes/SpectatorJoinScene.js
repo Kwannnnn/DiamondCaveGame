@@ -13,7 +13,9 @@ export default class SpectatorJoinScene extends Phaser.Scene {
     }
 
     init() {
-
+        this.events.on('shutdown', () => {
+            if (this.socket !== undefined) this.socket.removeAllListeners();
+        });
     }
 
     create() {
@@ -22,9 +24,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
 
-        this.backButton.on('pointerdown', () => {
-            this.scene.start(CST.SCENES.MENU);
-        });
+        this.backButton.on('pointerdown', () => this.goBack());
         this.backButton.on('pointerover', () => {
             this.backButton.setTint(0x30839f);
         });
@@ -169,5 +169,9 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         }
     }
 
+    goBack() {
+        if (this.socket !== undefined) this.socket.disconnect();
+        this.scene.start(CST.SCENES.MENU);
+    }
 
 }
