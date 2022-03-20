@@ -92,7 +92,7 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            var player = new Player(this, p.x, p.y, p.playerId, this.perk);
+            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
         });
     }
@@ -389,7 +389,6 @@ export default class Game extends Phaser.Scene {
      * @param {Object} args the arguments sent from the server
      */
     handlePlayerMoved(args) { 
-        console.log(args);
         let p = this.players.get(args.playerId);
         p.move(args.x, args.y, args.orientation);
     }
@@ -407,6 +406,7 @@ export default class Game extends Phaser.Scene {
                 // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
                 gameState: this.gameState
             });
+            this.socket.removeAllListeners();
         });
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud

@@ -139,7 +139,8 @@ export default class HUD extends Phaser.Scene {
         // Diamond collection
         CollectDiamond.on('update-count', this.updateDiamondCount, this);
 
-        this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+        this.events.on(Phaser.Scenes.Events.DESTROY, () => {
+            console.log('Event listener is disconnected');
             CollectDiamond.off('update-count', this.updateDiamondCount, this);
         });
 
@@ -196,6 +197,7 @@ export default class HUD extends Phaser.Scene {
         if (this.collectedDiamonds === this.totalDiamonds) {
             this.diamondCounter.setText('Go to next map!');
         } else {
+            // console.log(this.collectedDiamonds);
             this.diamondCounter.setText(`Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`);
         }        
     }

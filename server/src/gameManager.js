@@ -216,6 +216,7 @@ class GameManager {
             });
 
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
+                console.log(room.players[0].perkChoice);
                 console.log('THE SAME PERK HAS BEEN CHOSEN');
 
                 this.handleFinalPerkDecision(chosenPerk.lobbyID);
@@ -237,12 +238,15 @@ class GameManager {
         if (room) {
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
+                console.log(room.players[0].perkChoice);
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 // TODO add message to the protocol
+                
                 room.players.forEach(player => {
-                    player.socket.emit('perkForNextGame', perkNameWithoutSpace);
+                    console.log(player.id);
+                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room) });
                 });
             }
         }

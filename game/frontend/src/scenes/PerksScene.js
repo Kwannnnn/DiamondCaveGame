@@ -40,24 +40,24 @@ export default class PerkMenu extends Phaser.Scene {
             fontStyle:'bold',
         });
 
-        this.countDownTimer = this.time.addEvent({
-            callback:()=>{
-                if (this.timer > 0) {
-                    this.timer--;
-                    this.countDown.setText(this.timer);
-                    if (this.timer < 1) {
-                        console.log('timer hit 0.');
-                        // TODO add message to protocol
-                        // Sends message indicating that the time
-                        this.socket.emit('finishedPerkChoosing', this.lobbyID);
-                        this.countDownTimer.remove();
-                    }
-                }
-            },
-            callbackScope:this,
-            delay:1000,
-            loop:true
-        })
+        // this.countDownTimer = this.time.addEvent({
+        //     callback:()=>{
+        //         if (this.timer > 0) {
+        //             this.timer--;
+        //             this.countDown.setText(this.timer);
+        //             if (this.timer < 1) {
+        //                 console.log('timer hit 0.');
+        //                 // TODO add message to protocol
+        //                 // Sends message indicating that the time
+        //                 // this.socket.emit('finishedPerkChoosing', this.lobbyID);
+        //                 this.countDownTimer.remove();
+        //             }
+        //         }
+        //     },
+        //     callbackScope:this,
+        //     delay:1000,
+        //     loop:true
+        // })
 
         // Create perk text objects from the list received from server
         this.perks = [];
@@ -69,7 +69,7 @@ export default class PerkMenu extends Phaser.Scene {
                     fontSize:40
                 }).setDepth(1).setInteractive());
 
-            // Assing event to the click on the corresponding perk text
+            // Ass event to the click on the corresponding perk text
             this.perks[i].on('pointerdown', () => {
                 this.selectPerk(i);
             });
@@ -81,17 +81,15 @@ export default class PerkMenu extends Phaser.Scene {
         this.displayTeammatePerk();
 
         // Wait for final perk to be sent from server (now it only listens to movement perk)
-        this.socket.on('perkForNextGame', (perk) => {
-
+        this.socket.on('perkForNextGame', (args) => {
+            this.scene.stop(this);
             this.scene.start(CST.SCENES.GAME, {
                 username: this.username,
-                initialGameState: this.gameState,
+                initialGameState: args.gameState,
                 lobbyID: this.lobbyID,
                 socket: this.socket,
-                perk: perk
+                perk: args.perk
             });
-
-            this.scene.stop(this);
         })
     }
 
@@ -103,7 +101,7 @@ export default class PerkMenu extends Phaser.Scene {
 
         // TODO Add message to the protocol
         // Send chosenPerk message to server 
-        this.socket.emit('chosenPerk', { username: this.username, perkId, lobbyID: this.lobbyID });
+        this.socket.emit('chosenPerk', { username: this.username, perkId: perkId, lobbyID: this.lobbyID });
         this.perks[perkId].setColor('green');
     }
 
