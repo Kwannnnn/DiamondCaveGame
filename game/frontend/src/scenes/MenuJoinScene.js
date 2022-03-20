@@ -13,7 +13,7 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     preload() {
-            
+
     }
 
     create() {
@@ -57,7 +57,7 @@ export default class JoinScene extends Phaser.Scene {
     join() {
         let lobby = this.lobbyCodeInput.getChildByName('lobby').value;
         this.username = this.usernameForm.getChildByName('usernameForm').value;
-        if (lobby === ''){
+        if (lobby === '') {
             this.message.setText('Please enter the lobby code');
             return;
         }
