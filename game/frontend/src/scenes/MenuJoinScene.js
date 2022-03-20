@@ -3,7 +3,7 @@ import { CST } from '../utils/CST';
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 const lobbyCodeForm = '<input type="text" name="lobby" placeholder="Enter lobby code"/>';
-const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
+const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';
 
 export default class JoinScene extends Phaser.Scene {
     constructor() {
@@ -33,7 +33,7 @@ export default class JoinScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 300).createFromHTML(lobbyCodeForm);
-        this.username = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
+        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
 
         this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 150,'join_button')
             .setInteractive()
@@ -44,7 +44,7 @@ export default class JoinScene extends Phaser.Scene {
 
     join(){
         let lobby = this.lobbyCodeInput.getChildByName('lobby').value;
-        this.username = this.username.getChildByName('username').value;
+        this.username = this.usernameForm.getChildByName('usernameForm').value;
         if (lobby === ''){
             this.message.setText('Please enter the lobby code');
             return;
