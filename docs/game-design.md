@@ -79,7 +79,26 @@ Each team has a shared life pool. Once the team loses its last life, the game en
 Teams are ranked based on the run time, the diamonds collected, and the remaining lives. Each world has its rank list, and there is a global ranking for teams that have completed the whole run. The formula for determining the final score is:
 > TBD
 
-## 3. Objects
+## 3. Game worlds 
+
+### 3.1. World 1 Nature theme
+
+![image](sprites/worlds/nature.png)
+
+
+### 3.2. World 2 Ice theme
+![image](sprites/worlds/ice.png)
+
+### 3.3. World 3 Fire theme
+
+![image](sprites/worlds/fire.png)
+
+
+### 3.4. World 4 Dungeon theme
+
+![image](sprites/worlds/dungeon.png)
+
+## 4. Objects
 
 <table>
     <tr>
@@ -159,77 +178,58 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
 </table>
 
-## 4. Wireframes
+## 5. Wireframes
 
 To provide a better idea of what our game will encapsulate, several mockup wireframes are included below detailing some main functionalities and how specific components will look/behave.
 
-### 4.1. Menus
+### 5.1. Menus
 
-### 4.1.1. Main menu
+### 5.1.1. Main menu
 
 ![image](wireframes/game-design/main-menu.png)
 
 This wireframe shows the main menu. Here, you have the option to go to "Play Game," "Leaderboard," and "Exit." "Play game" will lead to further instructions. The leaderboard button will lead you to a window that shows the score of different teams. "Exit" will close the game.
 
-### 4.1.2. Leaderboard
+### 5.1.2. Leaderboard
 
 ![image](wireframes/game-design/leaderboard.png)
 
 This wireframe shows the leaderboard. You will see your (and others) name and what score they achieved.
 
-### 4.1.3. Play Game menu
+### 5.1.3. Play Game menu
 
 ![image](wireframes/game-design/play-game-menu.png)
 
 This wireframe Shows the menu after you press "Play Game." You have the choice to either create a Team or join a Team. You also have the option to go back to the main menu.
 
-### 4.1.4. Create Team menu
+### 5.1.4. Create Team menu
 
 ![image](wireframes/game-design/create-team-menu.png)
 
 This wireframe shows what you see if you press "Create Team." On the top, you see the randomly generated Teamcode, which is needed for others to join. Under that, you can see how many players are in your team currently. And you have the option to press start game which will lead to the actual game. And there is an option to go back to the previous window.
 
-### 4.1.5. Join Team menu
+### 5.1.5. Join Team menu
 
 ![image](wireframes/game-design/join-team-menu.png)
 
 This wireframe shows the menu after you press "Join a Team." You can enter the team code from the team you want to join on the top. Then if you press Join a team, you will get led to the window of Create Team.
 
-## 4.2. Gameplay
+## 5.2. Gameplay
 
-### 4.2.1. Map
+### 5.2.1. Map
 
 ![image](wireframes/game-design/map-1.png)
 
 After creating your team, you will go to the first level of the first world. This simple wireframe shows a few assets of the game to give you an idea. A level has brown dirt blocks that the player can mine. The grey stones are one of the Objects that the player cannot mine. The diamonds need to be collected by the player, but the rocks can fall if you tunnel under them. You can see which level and world you're in on the top of the screen. And on the top right, you see the quit button, which will bring you back to the main menu.
 
-### 4.2.2. In-game Quit menu
+### 5.2.2. In-game Quit menu
 
 ![image](wireframes/game-design/quit-menu.png)
 
 If you press the "Quit" button, you get to see your score, and it gives you two options. You can either play again or go back to the main menu.
 
-### 4.2.3. Game over
+### 5.2.3. Game over
 
 ![image](wireframes/game-design/death-screen.png)
 
 If you die, you get to see a quite similar screen to the quit menu screen, but there is a text saying that you died this time.
-
-### Game worlds 
-
-#### World 1 Nature theme
-
-![image](sprites/worlds/nature.png)
-
-
-#### World 2 Ice theme
-![image](sprites/worlds/ice.png)
-
-#### World 3 Fire theme
-
-![image](sprites/worlds/fire.png)
-
-
-#### World 4 Dungeon theme
-
-![image](sprites/worlds/dungeon.png)
