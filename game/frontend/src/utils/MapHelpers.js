@@ -1,7 +1,7 @@
 export default {
-    SetCollisions : function(scene, staticObjects, dynamicObjects){
+    SetCollisions : function (scene, staticObjects, dynamicObjects) {
         staticObjects.forEach(obj => {
-            scene.physics.add.existing(obj,true)
+            scene.physics.add.existing(obj, true)
         })
         dynamicObjects.forEach(obj => {
             scene.physics.add.existing(obj)

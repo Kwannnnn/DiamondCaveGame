@@ -12,22 +12,22 @@ export default class RankingScene extends Phaser.Scene {
     init(data) {
         this.dataToDisplay = [{
             rank: 1,
-            team: "A1B2C3",
-            player1: "test1",
-            player2: "test2",
-            score: "32767",
+            team: 'A1B2C3',
+            player1: 'test1',
+            player2: 'test2',
+            score: '32767',
         }, {
             rank: 2,
-            team: "373737",
-            player1: "aaa",
-            player2: "bbb",
-            score: "37",
+            team: '373737',
+            player1: 'aaa',
+            player2: 'bbb',
+            score: '37',
         }, {
             rank: 3,
-            team: "000000",
-            player1: "Aaaaaaaaaaaaaaaaaaaa",
-            player2: "a",
-            score: "1",
+            team: '000000',
+            player1: 'Aaaaaaaaaaaaaaaaaaaa',
+            player2: 'a',
+            score: '1',
         }];
         // this.dataToDisplay = data.ranklist;
     }
@@ -43,7 +43,7 @@ export default class RankingScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0,0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
 
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
@@ -63,7 +63,7 @@ export default class RankingScene extends Phaser.Scene {
             createCellContainerCallback: (cell, cellContainer) => this.populateCellContainer(cell, cellContainer),
             items: this.dataToDisplay // the array of data objects
         })
-        .layout()
+            .layout()
     }
 
     setupBackground() {
@@ -105,11 +105,11 @@ export default class RankingScene extends Phaser.Scene {
      */
     createTableItem(backgroundColor) {
         var background = this.rankingScene.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor);
-        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', {fixedWidth: 40, halign:'right', valign:'center'});
-        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', {fixedWidth: 70, halign:'left', valign:'center'});
-        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', {fixedWidth: 100, halign:'left', valign:'center'});
-        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', {fixedWidth: 100, halign:'left', valign:'center'});
-        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', {fixedWidth: 70, halign:'right', valign:'center'});
+        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', { fixedWidth: 40, halign:'right', valign:'center' });
+        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: 70, halign:'left', valign:'center' });
+        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: 100, halign:'left', valign:'center' });
+        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: 100, halign:'left', valign:'center' });
+        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', { fixedWidth: 70, halign:'right', valign:'center' });
 
         return this.rankingScene.add.sizer({
             width: undefined,
@@ -117,12 +117,12 @@ export default class RankingScene extends Phaser.Scene {
             orientation: 0,
             align: 'right'
         })
-        .addBackground(background)
-        .add(rank, 0, 'center', { left: 10, right: 20 }, false, 'rank')
-        .add(team, 0, 'center', { right: 20 }, false, 'team')
-        .add(player1, 0, 'center', {right: 20}, false, 'player1')
-        .add(player2, 0, 'center', {right: 20}, false, 'player2')
-        .add(score, 0, 'center', { right: 20 }, false, 'score');
+            .addBackground(background)
+            .add(rank, 0, 'center', { left: 10, right: 20 }, false, 'rank')
+            .add(team, 0, 'center', { right: 20 }, false, 'team')
+            .add(player1, 0, 'center', { right: 20 }, false, 'player1')
+            .add(player2, 0, 'center', { right: 20 }, false, 'player2')
+            .add(score, 0, 'center', { right: 20 }, false, 'score');
     }
 
     populateCellContainer(cell, cellContainer) {
