@@ -5,22 +5,8 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
-import ChatScene from './ChatScene';
 
 export default class Game extends Phaser.Scene {
-    // A physics group representing the diamond sprites
-    diamonds;
-    // A physics group representing the enemies sprites
-    enemies;
-    // ???
-    layer;
-    // A maping of playerIds to player sprites
-    players = new Map();
-    // The unit the client is able to control
-    controlledUnit;
-    // The current state of the game
-    gameState;
-
     constructor() {
         super({
             key: CST.SCENES.GAME
@@ -53,7 +39,7 @@ export default class Game extends Phaser.Scene {
 
     create() {
         // Create the tilemap with the specified tile dimensions
-        let map = this.make.tilemap({data: this.gameState.tileMap, tileWidth: 32, tileHeight: 32});
+        let map = this.make.tilemap({ data: this.gameState.tileMap, tileWidth: 32, tileHeight: 32 });
         // Map the correct part of the tiles image to the tilemap
         let tileSet = map.addTilesetImage('tiles');
         // Draw the tiles on the screen
@@ -103,7 +89,7 @@ export default class Game extends Phaser.Scene {
     setupPlayers() {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
-            console.log("PERK TO BE ADDED TO PLAYERS: " + this.perk)
+            console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
             var player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
         });
@@ -111,17 +97,17 @@ export default class Game extends Phaser.Scene {
 
     setupPerks() {
         switch (this.perk) {
-            case "Health":
-                this.changeHealth(10);
-                break;
+        case 'Health':
+            this.changeHealth(10);
+            break;
 
-            case "AddDiamonds":
-                this.diamondPerk();
-                console.log("Collected diamonds after perk: " + this.collectedDiamonds);
-                break;
+        case 'AddDiamonds':
+            this.diamondPerk();
+            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+            break;
 
-            default:
-                console.log("No team perks!");
+        default:
+            console.log('No team perks!');
         }
     }
 
@@ -333,7 +319,7 @@ export default class Game extends Phaser.Scene {
 
         const damage = 10;
         // Send message to the server
-        this.socket.emit("hitByEnemy", {
+        this.socket.emit('hitByEnemy', {
             lobbyID: this.lobbyID,
             damage: damage
         });
@@ -346,12 +332,12 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate y for exit to be place} y 
      */
     placeExit(x, y) {
-        this.exit = this.physics.add.sprite(x, y, "exit");
+        this.exit = this.physics.add.sprite(x, y, 'exit');
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
             console.log('collided');
             if (this.canExitScene()) {
                 this.exitScene();
-                this.exit.disableBody(false,false);
+                this.exit.disableBody(false, false);
             }
         });
     }
@@ -361,10 +347,10 @@ export default class Game extends Phaser.Scene {
      * @returns boolean
      */
     canExitScene() {
-        if (this.collectedDiamonds >= this.gameState.gems.length){
+        if (this.collectedDiamonds >= this.gameState.gems.length) {
             return true;
         } else {
-            console.log("Not all diamonds have been collected!")
+            console.log('Not all diamonds have been collected!')
             return false;
         }
     }
@@ -372,7 +358,7 @@ export default class Game extends Phaser.Scene {
     /**
      * Sends message to server to transfer players to PerkScene
      */
-    exitScene(){
+    exitScene() {
         this.socket.emit('reachedEnd', this.lobbyID);
     }
 
@@ -424,7 +410,7 @@ export default class Game extends Phaser.Scene {
             // Change the health on hud
             // HUD.changeHealth(damage);
 
-            console.log("Team got damage " + damage.damage + " health points");
+            console.log('Team got damage ' + damage.damage + ' health points');
         })
     }
 }

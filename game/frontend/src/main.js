@@ -30,12 +30,12 @@ const config = {
         RankingScene,
         ChatScene
     ],
-    parent: "game",
+    parent: 'game',
     type: Phaser.AUTO,
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 0}
+            gravity: { y: 0 }
         }
     },
     dom: {

@@ -111,7 +111,7 @@ class LobbyManager {
 
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.id);
-            player.socket.emit('runGameScene', roomId,room.gameState)
+            player.socket.emit('runGameScene', roomId, room.gameState)
             console.log('Spectator ' + player.id + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);

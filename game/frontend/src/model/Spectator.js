@@ -1,4 +1,4 @@
-import ControlledUnit from "./ControlledUnit";
+import ControlledUnit from './ControlledUnit';
 
 export default class Spectator extends ControlledUnit {
     constructor(scene, x, y) {
