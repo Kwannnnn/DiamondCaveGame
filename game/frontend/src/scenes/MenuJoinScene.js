@@ -12,7 +12,7 @@ export default class JoinScene extends Phaser.Scene {
         });
     }
 
-    init(){
+    init() {
         this.events.on('shutdown', () => {
             if (this.socket !== undefined) this.socket.removeAllListeners();
         });
