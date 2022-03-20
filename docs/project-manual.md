@@ -24,4 +24,4 @@ Before running the server, you will need to install several Node packages depend
 
 Once the installation completes, you can run the client with the `npm start` command. The server will be accessible on your local machine under port `8080` by default.
 
-If you changed the server port, you would also need to adjust it on the client by changing the `SERVER_URL` variable in the `MenuJoinScene.js` & `MenuLobbyScene.js` files located in the `src` subdirectory.
+If you changed the server port, you would also need to adjust it on the client by changing the `SERVER_URL` variable in the `MenuJoinScene.js`, `MenuLobbyScene.js`, & `SpectatorJoinScene.js` files located in the `src` subdirectory.

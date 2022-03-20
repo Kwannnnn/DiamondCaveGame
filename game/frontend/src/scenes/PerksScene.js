@@ -47,7 +47,6 @@ export default class PerkMenu extends Phaser.Scene {
         //             this.countDown.setText(this.timer);
         //             if (this.timer < 1) {
         //                 console.log('timer hit 0.');
-        //                 // TODO add message to protocol
         //                 // Sends message indicating that the time
         //                 // this.socket.emit('finishedPerkChoosing', this.lobbyID);
         //                 this.countDownTimer.remove();
@@ -99,7 +98,6 @@ export default class PerkMenu extends Phaser.Scene {
             perk.setColor('white');
         });
 
-        // TODO Add message to the protocol
         // Send chosenPerk message to server 
         this.socket.emit('chosenPerk', { username: this.username, perkId: perkId, lobbyID: this.lobbyID });
         this.perks[perkId].setColor('green');

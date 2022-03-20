@@ -129,7 +129,7 @@ playerId;
                 y: 336,
             },
             
-            // The path the enenmy will travel
+            // The path the enemy will travel
             // path: {
             //     x: 496,
             //     y: 336,
@@ -156,7 +156,26 @@ playerId;
         </td>
     </tr>
 
+<tr>
+        <td>runGameScene</td>
+<td>
+<p>
 
+```javascript
+{
+    // the id of the room the client is joining
+    roomId: ...,
+    // the current game state as an object (for structure see "initialGameState")
+    gameState: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server transmits the current game state to a spectating client.
+        </td>
+    </tr>
 <!-- <tr>
         <td>gameOver</td>
 <td>
@@ -178,7 +197,6 @@ playerId;
             With this event the server indicates the  end of a new game.
         </td>
 </tr> -->
-
 
 <tr>
     <td>teammateMoved</td>
@@ -228,6 +246,56 @@ gemId;
         </td>
     </tr>
     <tr>
+        <td>choosePerks</td>
+<td>
+<p>
+
+```javascript
+// a list of perks as array
+perks:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server transmits a list of available perks to all clients in the room.
+        </td>
+    </tr>
+    <tr>
+        <td>teammatePerkChoice</td>
+<td>
+<p>
+
+```javascript
+// the perk chosen by a teammate
+teammatePerk:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room that
+            a perk has been chosen by a player.
+        </td>
+    </tr>
+    <tr>
+        <td>perkForNextGame</td>
+<td>
+<p>
+
+```javascript
+// the name of the chosen perk as a string
+perk:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room about
+            the perk chosen for the next game.
+        </td>
+    </tr>
+    <tr>
         <td>chatMessage</td>
 <td>
 <p>
@@ -240,8 +308,9 @@ gemId;
     message: ...,
 }
 ```
+
 </p>
-        
+
 <td>
     With this event the server forwards a message sent by another player
 </td>
@@ -250,7 +319,6 @@ gemId;
     <td>
         spectatorJoined
     </td>
-
 
 <td>
 
@@ -273,7 +341,6 @@ playerId: ...,
     <td>
         currentGames
     </td>
-
 
 <td>
 
@@ -301,13 +368,10 @@ playerId: ...,
 
 </tr>
 <!-- this is one row -->
-<!-- this is one row -->
 <tr>
     <td>
         rankList
     </td>
-
-
 <td>
 
 ```javascript
@@ -447,14 +511,6 @@ roomId;
         <td>roomNotReady</td>
         <td>-</td>
         <td>
-            With this response the server indicates that the room the client is
-            attempting to start does not have enough players.
-        </td>
-    </tr>
-    <tr>
-        <td>roomNotReady</td>
-        <td>-</td>
-        <td>
             With this response the server indicates that the room the client is attempting to start does not have enough players.
         </td>
     </tr>
@@ -561,7 +617,6 @@ roomId;
         joinRoomAsSpectator
     </td>
 
-
 <td>
 
 ```javascript
@@ -577,7 +632,6 @@ roomId:;
 
 </tr>
 <!-- this is one row -->
-
 
 <tr>
         <td>gameStart</td>
@@ -647,6 +701,60 @@ roomId;
         </td>
     </tr>
     <tr>
+        <td>reachedEnd</td>
+<td>
+<p>
+
+```javascript
+// The id of the game room
+roomId:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that they have completed the map.
+        </td>
+    </tr>
+    <tr>
+        <td>finishedPerkChoosing</td>
+<td>
+<p>
+
+```javascript
+// The id of the game room
+lobbyID:;
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that the perk choice timer has run out.
+        </td>
+    </tr>
+    <tr>
+        <td>chosenPerk</td>
+<td>
+<p>
+
+```javascript
+{
+    // Username of the current player as a string 
+    username: ...,
+    // The id of the perk chosen
+    perkId: ...,
+    // The id of the game room
+    roomId: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the client indicates that they have completed the map.
+        </td>
+    </tr>
+    <tr>
         <td>chatMessage</td>
 <td>
 <p>
@@ -669,7 +777,6 @@ message:
         getCurrentGames
     </td>
 
-
 <td>-</td>
 
 <td>
@@ -679,13 +786,10 @@ message:
 </tr>
 <!-- this is one row -->
 
-
-<!-- this is one row -->
 <tr>
     <td>
         gameOver
     </td>
-
 
 <td>
 
