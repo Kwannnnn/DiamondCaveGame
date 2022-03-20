@@ -13,7 +13,7 @@ export default class MenuButton extends Phaser.GameObjects.Sprite {
         
         this.setDepth(1)
             .setInteractive()
-            .on('pointerdown', () => parentScene.scene.start(targetScene))
+            .on('pointerdown', () => parentScene.scene.start(targetScene, {undefined}))
             .on('pointerover', () => this.setTint(0x30839f))
             .on('pointerout', () => this.clearTint());
     }
