@@ -28,7 +28,6 @@ rules:
   no-unreachable: error
   no-unreachable-loop: error
   no-useless-return: error
-  no-unused-vars: error
   object-curly-spacing:
     - error
     - always

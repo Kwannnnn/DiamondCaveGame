@@ -1,6 +1,6 @@
 export default class ControlledUnit extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture, frame) {
-        if(frame) {
+        if (frame) {
             super(scene, x, y, texture, frame);
         } else {
             super(scene, x, y, texture);

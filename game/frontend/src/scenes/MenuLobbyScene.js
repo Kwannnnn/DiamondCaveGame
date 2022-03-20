@@ -24,12 +24,18 @@ export default class LobbyScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0,0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
 
-        this.backButton.on('pointerdown', () => {this.scene.start(CST.SCENES.MENU);});
-        this.backButton.on('pointerover', () => {this.backButton.setTint(0x30839f);});
-        this.backButton.on('pointerout', () => {this.backButton.clearTint();});
+        this.backButton.on('pointerdown', () => {
+            this.scene.start(CST.SCENES.MENU);
+        });
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
 
         this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Disconnected', {
             color: '#FFFFFF',
@@ -43,7 +49,9 @@ export default class LobbyScene extends Phaser.Scene {
             fontSize: 40
         }).setOrigin(0.5).setInteractive();
 
-        if (lobbyID === undefined) this.actionButton.on('pointerdown', () => {this.connect();});
+        if (lobbyID === undefined) this.actionButton.on('pointerdown', () => {
+            this.connect();
+        });
         else {
             //TODO: Disable button until both players are connected
             this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', lobbyID));
@@ -59,31 +67,41 @@ export default class LobbyScene extends Phaser.Scene {
                 });
             });
         }
-        this.actionButton.on('pointerover', () => {this.actionButton.setTint(0x30839f);});
-        this.actionButton.on('pointerout', () => {this.actionButton.clearTint();});
+        this.actionButton.on('pointerover', () => {
+            this.actionButton.setTint(0x30839f);
+        });
+        this.actionButton.on('pointerout', () => {
+            this.actionButton.clearTint();
+        });
     }
 
-    connect(){
-        let ip = 'http://'+SERVER_URL;
+    connect() {
+        let ip = 'http://' + SERVER_URL;
         this.username = this.usernameFormObject.getChildByName('username').value;
-        if (this.username === ''){
+        if (this.username === '') {
             this.message.setText('Please enter a username');
             return;
         }
 
-        this.message.setText('Connecting to:'+ip);
-        this.socket = io(SERVER_URL, {query: 'username='+this.username ,reconnection: false});
+        this.message.setText('Connecting to:' + ip);
+        this.socket = io(SERVER_URL, { query: 'username=' + this.username, reconnection: false });
 
-        this.socket.on('connect', ()=>{this.createLobby();}); // emit createRoom event to the server
+        this.socket.on('connect', ()=>{
+            this.createLobby();
+        }); // emit createRoom event to the server
 
-        this.socket.on('roomCreated', (args)=>{this.createRoom(args);});
+        this.socket.on('roomCreated', (args)=>{
+            this.createRoom(args);
+        });
 
         this.socket.on('newPlayerJoined', (playerNames)=>{
             playerIDs = playerNames;
             this.displayRoom(playerIDs);
         }); // re-render the scene if new player joins
 
-        this.socket.on('connect_error', ()=>{this.displayError();});
+        this.socket.on('connect_error', ()=>{
+            this.displayError();
+        });
 
         this.socket.on('initialGameState', (payload) => {
             this.scene.start(CST.SCENES.GAME, {
@@ -102,7 +120,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     // Room creation (new room)
-    createRoom(args){ 
+    createRoom(args) { 
         lobbyID = args.roomId;
         playerIDs = args.playerIDs;
         console.log(playerIDs);
@@ -116,7 +134,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.displayStartButton();
     }
 
-    displayError(){
+    displayError() {
         this.message.setText('Could not connect!');
     }
 
@@ -126,7 +144,7 @@ export default class LobbyScene extends Phaser.Scene {
 
     displayPlayer(playerIDs) {
         for (let i = 1; i <= playerIDs.length; i++) {
-            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ': ' + playerIDs[i-1], {
+            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ': ' + playerIDs[i - 1], {
                 color: '#FFFFFF',
                 fontSize: 40
             }).setOrigin(0.5);
@@ -136,14 +154,18 @@ export default class LobbyScene extends Phaser.Scene {
     displayStartButton() {
         this.actionButton.setText('Start game');
         this.actionButton.off('pointerdown');
-        if (playerIDs.length !== 2){
+        if (playerIDs.length !== 2) {
             this.actionButton.off('pointerover');
             this.actionButton.off('pointerout');
             this.actionButton.setTint(0x71797E);
         } else {
             this.actionButton.clearTint();
-            this.actionButton.on('pointerover', () => {this.actionButton.setTint(0x30839f);});
-            this.actionButton.on('pointerout', () => {this.actionButton.clearTint();});
+            this.actionButton.on('pointerover', () => {
+                this.actionButton.setTint(0x30839f);
+            });
+            this.actionButton.on('pointerout', () => {
+                this.actionButton.clearTint();
+            });
             this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', lobbyID));
         }
     }

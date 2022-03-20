@@ -1,5 +1,4 @@
-import ControlledUnit from "./ControlledUnit";
-import { CST } from "../utils/CST"
+import ControlledUnit from './ControlledUnit';
 
 export default class Player extends ControlledUnit {
     constructor(scene, x, y, username, perk) {
@@ -18,15 +17,15 @@ export default class Player extends ControlledUnit {
 
         // Check if perk is applied to the room
         if (perk) {
-            console.log(perk + " IS USED")
+            console.log(perk + ' IS USED')
             // Check which perk is applied
             switch (perk) {
-                case "MovementSpeed":
-                    this.increaseSpeed();
-                    break;
+            case 'MovementSpeed':
+                this.increaseSpeed();
+                break;
 
-                default:
-                    console.log("no perks for player " + username);
+            default:
+                console.log('no perks for player ' + username);
 
             }
         }
@@ -75,19 +74,19 @@ export default class Player extends ControlledUnit {
         this.orientation = orientation;
         this.setNamePosition();
 
-        switch (this.orientation){
-            case 0: 
-                this.anims.play('right', true);
-                break;
-            case 90:
-                this.anims.play('up', true);
-                break;
-            case 180:
-                this.anims.play('left', true);
-                break;
-            default:
-                this.anims.play('down', true);
-                break;
+        switch (this.orientation) {
+        case 0: 
+            this.anims.play('right', true);
+            break;
+        case 90:
+            this.anims.play('up', true);
+            break;
+        case 180:
+            this.anims.play('left', true);
+            break;
+        default:
+            this.anims.play('down', true);
+            break;
         }
     }
 

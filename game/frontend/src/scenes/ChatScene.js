@@ -1,4 +1,4 @@
-import { CST } from "../utils/CST";
+import { CST } from '../utils/CST';
 import InputText from 'phaser3-rex-plugins/plugins/inputtext.js';
 
 export default class ChatScene extends Phaser.Scene {
@@ -52,8 +52,7 @@ export default class ChatScene extends Phaser.Scene {
 
         this.chatZone.on('pointermove', (pointer) => {
 
-            if (pointer.isDown)
-            {
+            if (pointer.isDown) {
                 this.chat.y += (pointer.velocity.y / 10);
 
                 this.chat.y = Phaser.Math.Clamp(this.chat.y, -400, 99999);
@@ -65,17 +64,17 @@ export default class ChatScene extends Phaser.Scene {
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
         // send message to server on enter key
-        this.enterKey.on('down', event => {
-            if (this.chatInput.text != "") {
+        this.enterKey.on('down', (event) => {
+            if (this.chatInput.text != '') {
                 this.socket.emit('chatMessage', this.chatInput.text);
-                this.chatInput.text = "";
+                this.chatInput.text = '';
             }
         });
 
         // display the messages in chat box
         this.socket.on('chatMessage', (data) => {
             const { sender, message } = data;     
-            let chatMessage = sender + ": " + message;
+            let chatMessage = sender + ': ' + message;
             this.chatMessages.push(chatMessage);
             this.chatMessages.push('\n');
             this.chat.setText(this.chatMessages);

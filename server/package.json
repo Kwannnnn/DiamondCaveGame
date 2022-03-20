@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node src/server.js",
         "dev": "nodemon src/server.js",
-        "eslint": "npx eslint --ext .js ."
+        "eslint": "npx eslint --ext .js .",
+        "eslint-fix": "npx eslint --fix --ext .js ."
     },
     "author": "",
     "license": "ISC",

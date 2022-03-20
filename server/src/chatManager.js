@@ -1,19 +1,19 @@
 // This class manages all chat functionality
 const rooms = require('./model/rooms.js');
 
-class ChatManager{
-    constructor(io){
+class ChatManager {
+    constructor(io) {
         this.io = io;
     }
 
-    handleChatMessage(player, message){
+    handleChatMessage(player, message) {
         let spectator = false;
 
         if (rooms.get(player.roomId) === undefined) return;
 
         // Are we a spectator?
-        for (let roomSpectator of rooms.get(player.roomId).spectators){
-            if (roomSpectator.id === player.id){
+        for (let roomSpectator of rooms.get(player.roomId).spectators) {
+            if (roomSpectator.id === player.id) {
                 spectator = true;
                 break;
             }
