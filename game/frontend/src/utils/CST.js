@@ -8,7 +8,8 @@ export const CST = {
         PERKS: "PERKS",
         ACTIVEGAMES: "ACTIVEGAMES",
         SPECTATORJOIN: "SPECTATORJOIN",
-        RANKING: "RANKING"
+        RANKING: "RANKING",
+        CHAT: "CHAT"
     },
     COLORS: {
         RANKLIST_PRIMARY: 0x4e342e,

@@ -58,7 +58,7 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
-        // this.setupHUD();
+        this.setupHUD();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
