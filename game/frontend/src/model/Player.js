@@ -53,8 +53,6 @@ export default class Player extends ControlledUnit {
     setupAnimations() {
         const animationKeys = ['up', 'down', 'right', 'left'];
         for (const [index, key] of animationKeys.entries()) {
-            console.log('index: ' + index);
-            console.log('key: ' + key);
             this.scene.anims.create({
                 key: key,
                 frames: [ { key: 'player', frame: index } ],
