@@ -55,6 +55,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 
 ### 19. As a developer I want to have developer console (you can skip some)
 
+### 20. As a user I would like to have attractive scenes
+
 ## Backlog Items
 
 ### US 01
@@ -205,6 +207,17 @@ Backlog item | Definition | Priority | Weight | Depends on |
 ### US 18
 
 ### US 19
+
+### US 20
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Reposition the game to the middle of the screen and change the page background to black | M | 3 | - |
+| BI-02 | Update the input scenes in the menu to use input objects styled to the game and remove status text | M | 4 | - |
+| BI-03 | Create a scrollable table component to display running games for spectators | M | 5 | - |
+| BI-04 | Convert the perk scene into a popup over the game scene and improve visual style | M | 6 | - |
+| BI-05 | Convert the chat box into an always-visible sidebar and style it to the game | M | 7 | - |
+| BI-06 | Improve HUD style to fit the game | M | 4 | - |
 
 ---
 
