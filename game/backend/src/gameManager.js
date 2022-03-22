@@ -186,7 +186,7 @@ class GameManager {
                 'active': 0,
             }],
 
-            
+
         };
         return gameState;
     }
