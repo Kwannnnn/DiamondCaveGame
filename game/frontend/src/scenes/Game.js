@@ -327,7 +327,20 @@ export default class Game extends Phaser.Scene {
     }
 
 
-   
+    /**
+     * update laser trap state on collision
+     */
+    updateLaserTraps() {
+        this.laserTrapGroup.children.each(st => {
+            if (st.active === 0) {
+                st.active = 1;
+                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = "laserTrapCollisions";
+            } else {
+                st.active = 0;
+            }
+        });
+    }
+
 
 
 
