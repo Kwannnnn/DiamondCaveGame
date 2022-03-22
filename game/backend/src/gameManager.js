@@ -1,7 +1,7 @@
 // This class manages everything related to in-game events
 const rooms = require('./model/rooms.js');
 const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
-
+const maps = require('./model/maps.js');
 
 const Run = require('./model/run.js');
 const runs = require('./model/runs.js');
@@ -94,27 +94,7 @@ class GameManager {
         const player2 = room.players[1];
 
         let gameState = {
-            'tileMap': [
-                [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 2, 2, 2, 2, 2, 3, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-            ],
+            'tileMap': maps.get(1).tilemap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
                 'x': 32 + 16, // player 1 spawn x position
@@ -266,6 +246,92 @@ class GameManager {
                 // Message is sent to all players in room to indicate health loss
                 player.socket.emit('reduceHealth', { damage });
             });
+        }
+    }
+
+    // Intersting way of handling developers joining the room (can be even called retarded)
+    handleDeveloperSpawnOnTheMap(mapInfo) {
+        // TODO get the room with developers' room id
+        const room = rooms.get(); // ROOM ID of development room
+        
+        if (room) {
+            room.players.push(player);
+
+            if (room.players.length > 1) {
+                room.players.forEach(developer => {
+                    let gameState = {
+                        'tileMap': maps.get(mapInfo.mapId).tilemap,
+                        'players': [{
+                            'playerId': room.players[0], // the id of player 1
+                            'x': 32 + 16, // player 1 spawn x position
+                            'y': 32 + 16, // player 1 spawn y position
+                            'orientation': 0
+                        }, {
+                            'playerId': room.players[1], // the id of player 2
+                            'x': 64 + 16, // player 2 spawn x position
+                            'y': 64 + 16, // player 2 spawn y position
+                            'orientation': 0
+                        }],
+            
+                        'gemsCollected' : 0,
+            
+                        'gems': [{
+                            'gemId': 1,
+                            'x': 112, // gem spawn x position
+                            'y': 48 // gem spawn y position
+                        },
+                        {
+                            'gemId': 2,
+                            'x': 178, // gem spawn x position
+                            'y': 80 // gem spawn y position
+                        },
+                        {
+                            'gemId': 3,
+                            'x': 240, // gem spawn x position
+                            'y': 112 // gem spawn y position
+                        },
+                        {
+                            'gemId': 4,
+                            'x': 304, // gem spawn x position
+                            'y': 144 // gem spawn y position
+                        },
+                        {
+                            'gemId': 5,
+                            'x': 368, // gem spawn x position
+                            'y': 176 // gem spawn y position
+                        }],
+                        'enemies': [{
+                            'enemyId': 1,
+                            'start': {
+                                'x': 336,
+                                'y': 336,
+                            },
+                            'path': [{
+                                'x': 496,
+                                'y': 336,
+                            },
+                            {
+                                'x': 496,
+                                'y': 496,
+                            },
+                            {
+                                'x': 336,
+                                'y': 496,
+                            },
+                            {
+                                'x': 336,
+                                'y': 336,
+                            }],
+                        }],
+                    };
+
+                    // TODO update protocol
+                    developer.socket.emit('developerGamestate', {
+                        initialGameState: gameState
+                    });
+                })
+            }
+            
         }
     }
 
