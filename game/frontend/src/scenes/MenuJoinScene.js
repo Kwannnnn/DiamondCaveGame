@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
-import {usernameForm} from '../components/TextField'
+import {usernameForm} from '../components/UsernameTextField'
+import {lobbyCodeForm} from '../components/LobbyTextField'
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
-const lobbyCodeForm = '<label class="custom-field one">\n' +
-    '  <input type="text" name="lobby" placeholder="Enter lobby code"/>';
+// const lobbyCodeForm = '<label class="custom-field one">\n' +
+//     '  <input type="text" name="lobby" placeholder="Enter lobby code"/>';
 // const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';
 
 export default class JoinScene extends Phaser.Scene {

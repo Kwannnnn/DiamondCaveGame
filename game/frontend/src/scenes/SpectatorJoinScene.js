@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
-import {usernameForm} from '../components/TextField'
+import {usernameForm} from '../components/UsernameTextField'
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 // const usernameForm = '<label class="custom-field one">\n' +
