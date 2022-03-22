@@ -99,17 +99,17 @@ export default class Game extends Phaser.Scene {
 
     setupPerks() {
         switch (this.perk) {
-        case 'Health':
-            this.changeHealth(10);
-            break;
+            case 'Health':
+                this.changeHealth(10);
+                break;
 
-        case 'AddDiamonds':
-            this.diamondPerk();
-            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
-            break;
+            case 'AddDiamonds':
+                this.diamondPerk();
+                console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+                break;
 
-        default:
-            console.log('No team perks!');
+            default:
+                console.log('No team perks!');
         }
     }
 
