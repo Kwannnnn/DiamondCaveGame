@@ -136,7 +136,19 @@ playerId;
             // }
             path: [] 
         }, ...
-    ]
+    ], 
+        laserTraps: 
+    [{
+        //identifier for the trap
+        trapId: 4,
+        //spawn location for the trap
+        start: {
+            x: 200,
+            y: 200,
+        },
+        active: 0,
+    }, ...
+    ],
 }
 ```
 
