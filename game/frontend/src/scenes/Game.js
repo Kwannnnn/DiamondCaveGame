@@ -317,8 +317,17 @@ export default class Game extends Phaser.Scene {
             this.laserTrapGroup.add(sprite);
         });
 
-        
+        // flickering sprite at a frequancy of every 2 seconds
+        this.timedEvent = this.time.addEvent({
+            delay: 2000,
+            callback: this.updateSpikes,
+            callbackScope: this,
+            loop: true
+        });
     }
+
+
+   
 
 
 
