@@ -26,6 +26,9 @@ export default class PerkMenu extends Phaser.Scene {
         this.load.image('bloodStone', 'assets/perk_sprites/BloodStone.png');
         this.load.image('heart', 'assets/perk_sprites/Heart.png');
         this.load.image('speedBoots', 'assets/perk_sprites/SpeedBoots.png');
+        this.load.image('bloodStoneChosen', 'assets/perk_sprites/BloodStone_Chosen.png');
+        this.load.image('heartChosen', 'assets/perk_sprites/Heart_Chosen.png');
+        this.load.image('speedBootsChosen', 'assets/perk_sprites/SpeedBoots_Chosen.png');
     }
 
     create() {
@@ -39,33 +42,35 @@ export default class PerkMenu extends Phaser.Scene {
         this.perks = [];
         const startPos = this.game.renderer.width / 2 - 80;
         for (let i = 0; i < this.perksNames.length; i++) {
-            let perkButton;
-            switch (this.perksNames[i]) {
-                case 'Movement Speed':
-                    perkButton = this.add.sprite(startPos + 100 * i, this.game.renderer.height / 2, 'speedBoots').setOrigin(0.5).setInteractive();
-                    break;
-                case 'Health':
-                    perkButton = this.add.sprite(startPos + 100 * i, this.game.renderer.height / 2, 'heart').setOrigin(0.5).setInteractive();
-                    break;
-                case 'Add Diamonds':
-                    perkButton = this.add.sprite(startPos + 100 * i, this.game.renderer.height / 2, 'bloodStone').setOrigin(0.5).setInteractive();
-                    break;
-                default:
-                    console.error('Unknown perk');
-                    break;
-            }
-            if (perkButton !== undefined) {
-                perkButton.on('pointerdown', () => {
-                    this.selectPerk(i);
-                });
-                this.perks.push(perkButton);
-            }
+            //Get texture for perk sprite
+            let perkTexture = this.selectPerkTexture(this.perksNames[i], false);
+            if (perkTexture === null) return;
+
+            //Render and set properties for perk sprite
+            let perkButton = this.add.sprite(startPos + 100 * i, this.game.renderer.height / 2, perkTexture).setOrigin(0.5).setInteractive();
+            perkButton.on('pointerdown', () => {
+                this.selectPerk(i);
+            });
+            perkButton.perkName = this.perksNames[i];
+
+            this.perks.push(perkButton);
         }
 
+        // Display user's choice
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 100, 'Your Choice:', { fontSize:30 }).setOrigin(0.5);
+        this.playerChoice = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 140, 'None', { fontSize:25 }).setOrigin(0.5);
+
         // Display teammate's choice
-        this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 180, 'Teammate Choice:', { fontSize:30 }).setOrigin(0.5);
-        this.teammateChoice = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 220, 'None', { fontSize:25 }).setOrigin(0.5);
-        this.displayTeammatePerk();
+        this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 220, 'Teammate Choice:', { fontSize:30 }).setOrigin(0.5);
+        this.teammateChoice = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 260, 'None', { fontSize:25 }).setOrigin(0.5);
+        
+        this.createListeners();
+    }
+
+    createListeners() {
+        this.socket.on('teammatePerkChoice', (teammatePerk) => {
+            this.teammateChoice.setText(teammatePerk.teammatePerk);
+        })
 
         // Wait for final perk to be sent from server (now it only listens to movement perk)
         this.socket.on('perkForNextGame', (args) => {
@@ -83,19 +88,28 @@ export default class PerkMenu extends Phaser.Scene {
     // Even that is getting called by clicking on the perk text
     selectPerk(perkId) {
         this.perks.forEach(perk => {
-            perk.tint = 0xffffff;
+            perk.setTexture(this.selectPerkTexture(perk.perkName, false));
         });
 
         // Send chosenPerk message to server 
         this.socket.emit('chosenPerk', { username: this.username, perkId: perkId, lobbyID: this.lobbyID });
-        this.perks[perkId].tint = 0x00FF00;
+        this.perks[perkId].setTexture(this.selectPerkTexture(this.perks[perkId].perkName, true));
+
+        this.playerChoice.setText(this.perks[perkId].perkName);
     }
 
-    displayTeammatePerk() {
-        this.socket.on('teammatePerkChoice', (teammatePerk) => {
-            this.teammateChoice.destroy();
-            this.teammateChoice = this.add.text(900, 340, teammatePerk.teammatePerk, { fontSize:25 });
-        })
+    selectPerkTexture(perkName, isSelected) {
+        switch (perkName) {
+            case 'Movement Speed':
+                return isSelected ? 'speedBootsChosen' : 'speedBoots';
+            case 'Health':
+                return isSelected ? 'heartChosen' : 'heart';
+            case 'Add Diamonds':
+                return isSelected ? 'bloodStoneChosen' : 'bloodStone';
+            default:
+                console.error('Unknown perk');
+                return null;
+        }
     }
 
     runTimer() {
