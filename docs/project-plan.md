@@ -55,11 +55,9 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 
 ### 19. As a developer I want to have developer console (you can skip some)
 
-### 20. As a user I want to be able to play in all 3 worlds of the game
+### 20.  As a user I would like to have attractive scenes
 
 ### 21. As a user I want the HUD to clearly display the current game state
-
-### 22. As a user I want to have attractive scenes
 
 ### 23. As a user I want the game to have sounds effects
 
@@ -68,6 +66,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### 25. As a developer I want to have a dedicated room for testing
 
 ### 26. As a developer I want a playable version of the game to be uploaded to the VPS every week
+
+### 27. As a user I want to be able to play in all 3 worlds of the game
 
 ## Backlog Items
 
@@ -222,6 +222,15 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 20
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Reposition the game to the middle of the screen and change the page background to black | M | 3 | - |
+| BI-02 | Update the input scenes in the menu to use input objects styled to the game and remove status text | M | 4 | - |
+| BI-03 | Create a scrollable table component to display running games for spectators | M | 5 | - |
+| BI-04 | Convert the perk scene into a popup over the game scene and improve visual style | M | 6 | - |
+| BI-05 | Convert the chat box into an always-visible sidebar and style it to the game | M | 7 | - |
+| BI-06 | Improve HUD style to fit the game | M | 4 | - |
+
 ### US 21
 
 ### US 22
@@ -239,6 +248,8 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-03 | Create functionality to spawn on the developer map | M | 8 | - |
 
 ### US 26
+
+### US 27
 
 ---
 
