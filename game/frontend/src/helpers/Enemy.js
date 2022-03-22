@@ -11,6 +11,7 @@ export function determineVelocity(position, target) {
         velocityX = -speed;
     }
 
+
     if (y < target.y) {
         velocityY = speed;
     } else if (y > target.y) {
