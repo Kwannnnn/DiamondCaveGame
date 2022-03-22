@@ -352,6 +352,13 @@ export default class Game extends Phaser.Scene {
     }
 
     /**
+     * damage caused to health when coliding with laser trap
+     */
+   dealLaserDamage() {
+        this.changeHealth(-15);
+    }
+
+    /**
      * Handle colliding with an enemy
      */
     collideEnemy(player, enemy) {
