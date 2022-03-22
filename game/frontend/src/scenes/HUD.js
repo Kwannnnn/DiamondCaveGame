@@ -42,7 +42,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('timer-bg', 'assets/window_message_box.png');
         
         //preloading assets for chat
-        this.load.image('chat', 'assets/comment-message.png');
         this.load.html('form', 'assets/pages/form.html');
         // //preloading rexUI plugin
         // this.load.scenePlugin({
@@ -109,29 +108,29 @@ export default class HUD extends Phaser.Scene {
 
         // Create chat interface
         // chat icon
-        this.chatButton = this.add.sprite(40, 680, 'chat')
-            .setDepth(1)
-            .setOrigin(0.5)
-            .setScale(1.5)
-            .setInteractive();
-        // chat input
-        this.chatButton.on('pointerdown', () => {
-            // open chatbox
-            if (!this.chatOn) { 
-                this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
-                this.chatOn = !this.chatOn;
-            } else {
-                // close chatbox
-                this.scene.remove(CST.SCENES.CHAT);
-                this.chatOn = !this.chatOn;
-            }
-        });
-        this.chatButton.on('pointerover', () => {
-            this.chatButton.setTint(0x30839f);
-        });
-        this.chatButton.on('pointerout', () => {
-            this.chatButton.clearTint();
-        });
+        // this.chatButton = this.add.sprite(40, 680, 'chat')
+        //     .setDepth(1)
+        //     .setOrigin(0.5)
+        //     .setScale(1.5)
+        //     .setInteractive();
+        // // chat input
+        // this.chatButton.on('pointerdown', () => {
+        //     // open chatbox
+        //     if (!this.chatOn) { 
+        //         this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
+        //         this.chatOn = !this.chatOn;
+        //     } else {
+        //         // close chatbox
+        //         this.scene.remove(CST.SCENES.CHAT);
+        //         this.chatOn = !this.chatOn;
+        //     }
+        // });
+        // this.chatButton.on('pointerover', () => {
+        //     this.chatButton.setTint(0x30839f);
+        // });
+        // this.chatButton.on('pointerout', () => {
+        //     this.chatButton.clearTint();
+        // });
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });

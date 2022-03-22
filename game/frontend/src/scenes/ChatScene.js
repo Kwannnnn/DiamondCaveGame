@@ -11,8 +11,6 @@ export default class ChatScene extends Phaser.Scene {
     init(data) {
         this.chatMessages = [];
         this.socket = data.socket;
-
-        this.input.keyboard.enabled = true;
     }
 
     preload() {
@@ -60,6 +58,20 @@ export default class ChatScene extends Phaser.Scene {
 
         });
 
+        // Disabled keyboard event from player when chat input is focused
+        this.chatInput.on('focus', () => {
+            this.scene.get(CST.SCENES.GAME).input.keyboard.enabled = false;
+        });
+
+    
+        // De-focused the input text by clicking on the Game scene
+        this.scene.get(CST.SCENES.GAME).input.on('pointerdown', () => {
+            this.chatInput.setBlur();
+        })
+
+
+
+
         // set enter key for sending message
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
@@ -79,8 +91,12 @@ export default class ChatScene extends Phaser.Scene {
             this.chatMessages.push('\n');
             this.chat.setText(this.chatMessages);
         })
-            
-    
+    }
 
+    update() {
+        // enabled player keyboard input when chat input is not focused
+        if (this.chatInput.isFocused === false) {
+            this.scene.get(CST.SCENES.GAME).input.keyboard.enabled = true;
+        }     
     }
 }   
