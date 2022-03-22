@@ -24,7 +24,7 @@ export default class DeveloperScene extends Phaser.Scene {
     }
 
     create() {
-        this.message = this.add.text(100, 50, `Enter room id`, {
+        this.message = this.add.text(100, 50, 'Enter room id', {
             color: '#FFFFFF',
             fontSize: 40,
         });
