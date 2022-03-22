@@ -7,6 +7,13 @@ import { Player, Spectator } from '../model';
 import HUD from './HUD';
 
 export default class Game extends Phaser.Scene {
+
+
+
+    // A physics group representing laser traps
+    laserTraps;
+
+
     constructor() {
         super({
             key: CST.SCENES.GAME
@@ -24,6 +31,9 @@ export default class Game extends Phaser.Scene {
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
+
+        this.load.image('laser','assets/laser_trap.PNG');
+        
     }
 
     init(data) {
