@@ -33,8 +33,8 @@ export default class PerkMenu extends Phaser.Scene {
 
     create() {
         // Set background to black and add title
-        this.cameras.main.setBackgroundColor('black');
-        new Header(this, this.game.renderer.width / 2, 100, 'Choose a perk');
+        //this.add.rectangle(this.renderer.width / 2 - 200, this.renderer.height / 2 - 200, 400, 400, 0x000000)
+        new Header(this, this.game.renderer.width / 2, 200, 'Choose a perk');
         
         this.runTimer();
 
