@@ -33,7 +33,7 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser','assets/laser_trap.PNG');
-        
+
     }
 
     init(data) {
@@ -301,6 +301,27 @@ export default class Game extends Phaser.Scene {
             }
         });
     }
+
+
+    /**
+     * Setup laser traps
+     */
+    setupLaserTraps() {
+        this.laserTrapData = new Map();
+        this.laserTrapGroup = this.physics.add.group();
+
+        this.gameState.laserTraps.forEach(st => {
+            const sprite = this.physics.add.sprite(st.start.x, st.start.y, 'laser');
+            sprite.id = st.trapId;
+            sprite.active = st.active;
+            this.laserTrapGroup.add(sprite);
+        });
+
+        
+    }
+
+
+
 
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
