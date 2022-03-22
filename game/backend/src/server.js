@@ -75,6 +75,10 @@ io.on('connection', (socket) => {
     socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));
+
+    socket.on('developerJoinedRoom', (playerID) => lobbyManager.handleDeveloperJoinRoom(playerID));
+
+    socket.on('developerSpawn', (mapInfo) => gameManager.handleDeveloperSpawnOnTheMap(mapInfo));
 });
 
 function handleConnect(player) {
