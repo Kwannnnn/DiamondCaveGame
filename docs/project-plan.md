@@ -54,11 +54,10 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### 18. As an admin I want to be able to influence the game
 
 ### 19. As a developer I want to have developer console (you can skip some)
+
 ### 20.  As a user I would like to have attractive scenes
 
 ### 21. As a user I want the HUD to clearly display the current game state
-
-### 22. As a user I want to have attractive scenes
 
 ### 23. As a user I want the game to have sounds effects
 
