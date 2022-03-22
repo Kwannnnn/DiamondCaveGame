@@ -54,8 +54,21 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### 18. As an admin I want to be able to influence the game
 
 ### 19. As a developer I want to have developer console (you can skip some)
+### 20.  As a user I would like to have attractive scenes
 
-### 20. As a user I would like to have attractive scenes
+### 21. As a user I want the HUD to clearly display the current game state
+
+### 22. As a user I want to have attractive scenes
+
+### 23. As a user I want the game to have sounds effects
+
+### 24. As a user I want the game to have visual effects
+
+### 25. As a developer I want to have a dedicated room for testing
+
+### 26. As a developer I want a playable version of the game to be uploaded to the VPS every week
+
+### 27. As a user I want to be able to play in all 3 worlds of the game
 
 ## Backlog Items
 
@@ -219,6 +232,26 @@ Backlog item | Definition | Priority | Weight | Depends on |
 | BI-05 | Convert the chat box into an always-visible sidebar and style it to the game | M | 7 | - |
 | BI-06 | Improve HUD style to fit the game | M | 4 | - |
 
+### US 21
+
+### US 22
+
+### US 23
+
+### US 24
+
+### US 25
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Create a menu scene to go to developers room | M | 6 | - |
+| BI-02 | Create a room with certain lobbyID for developers (the code cannot be taken by usual rooms) | M | 6 | - |
+| BI-03 | Create functionality to spawn on the developer map | M | 8 | - |
+
+### US 26
+
+### US 27
+
 ---
 
 ## Known problems
@@ -232,3 +265,4 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-05 | WASD cannot by typed in chat | H | 5 | In progress |
 | PB-06 | Spectator list can overflow, obscuring entries | H | 5 | In progress |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
+| PB-08 | Player's timers aren't synchronized | N | 6 | Not started |
