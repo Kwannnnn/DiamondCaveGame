@@ -16,8 +16,11 @@ export default class MenuScene extends Phaser.Scene {
     create() {
         const MARGIN_Y = 70;
         const START_Y = this.game.renderer.height - 320;
+
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+
+        this.developerRoomButton = new MenuButton(this, this.game.renderer.width - 50, 50, 'developer_button', CST.SCENES.DEV);
         this.createNewRoomButton = new MenuButton(this, this.game.renderer.width / 2, START_Y, 'play_button', CST.SCENES.LOBBY);
         this.joinRoomButton = new MenuButton(this, this.game.renderer.width / 2, START_Y + MARGIN_Y, 'join_button', CST.SCENES.JOIN);
         this.rankingButton = new MenuButton(this, this.game.renderer.width / 2, START_Y + 2 * MARGIN_Y, 'scoreboard_button', CST.SCENES.RANKING);
