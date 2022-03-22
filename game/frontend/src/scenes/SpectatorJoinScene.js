@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
+import {usernameForm} from '../components/TextField'
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
-const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
+// const usernameForm = '<label class="custom-field one">\n' +
+//     '  <input type="text" name="username" placeholder="Enter your username"/>';
 let listingEntries = [];
 let listingButtons = [];
 export default class SpectatorJoinScene extends Phaser.Scene {

@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
+import {usernameForm} from '../components/TextField'
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 const lobbyCodeForm = '<input type="text" name="lobby" placeholder="Enter lobby code"/>';
-const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';
+// const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';
 
 export default class JoinScene extends Phaser.Scene {
     constructor() {
@@ -56,7 +57,7 @@ export default class JoinScene extends Phaser.Scene {
 
     join() {
         let lobby = this.lobbyCodeInput.getChildByName('lobby').value;
-        this.username = this.usernameForm.getChildByName('usernameForm').value;
+        this.username = this.usernameForm.getChildByName('username').value;
         if (lobby === '') {
             this.message.setText('Please enter the lobby code');
             return;
