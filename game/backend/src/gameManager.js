@@ -78,9 +78,10 @@ class GameManager {
             for (let i = 0; i < gems.length; i++) {
                 if (gems[i].gemId == diamond.gemId) {
                     gems.splice(i, 1);
-                    room.gemsCollected++;
                 }
             }
+            rooms.get(roomId).gemsCollected++;
+            console.log("Gems collected: "+rooms.get(roomId).gemsCollected);
             // Notify teammate about collected diamond
             player.socket.to(roomId).emit('gemCollected', diamond.gemId);
 
