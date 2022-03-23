@@ -211,5 +211,4 @@ export default class HUD extends Phaser.Scene {
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
     }
-
 }
