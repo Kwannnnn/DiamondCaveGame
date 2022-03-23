@@ -60,6 +60,17 @@ export default class Game extends Phaser.Scene {
 
         this.handleSocketEvents();
 
+
+        this.pressureCheckEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.checkPressurePlates,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    checkPressurePlates() {
+        handlePressureDoors(this.layer, this.players);
     }
 
     update() {
@@ -69,8 +80,7 @@ export default class Game extends Phaser.Scene {
         } else {
             this.input.keyboard.enabled = true;
             this.controlledUnit.update();
-        }
-    
+        }  
     }
 
     /**
@@ -394,8 +404,6 @@ export default class Game extends Phaser.Scene {
     handlePlayerMoved(args) { 
         let p = this.players.get(args.playerId);
         p.move(args.x, args.y, args.orientation);
-
-        handlePressureDoors(this.layer, this.players);
     }
 
     handleSocketEvents() {
