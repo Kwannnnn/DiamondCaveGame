@@ -50,24 +50,25 @@ export default class DeveloperScene extends Phaser.Scene {
 
             // set the socket to listen for messages on
             this.socket = io(SERVER_URL, { query: 'username=' + this.username, reconnection: false });
+            console.log(`socket ${this.socket}`);
 
             // send message with data to server
             this.socket.emit('developerSpawn', {
                 mapId: this.mapId,
                 username: this.username,
             });
-        });
 
-        // patiently listen for response
-        this.socket.on('developerGamestate', (payload) => {
-            this.scene.start(CST.SCENES.GAME, {
-                world: 1,
-                stage: 1,
-                socket: this.socket,
-                username: this.username,
-                initialGameState: payload,
+            // patiently listen for response
+            this.socket.on('developerGamestate', (payload) => {
+                this.scene.start(CST.SCENES.GAME, {
+                    world: 1,
+                    stage: 1,
+                    socket: this.socket,
+                    username: this.username,
+                    initialGameState: payload,
+                });
+                this.socket.disconnect();
             });
-            this.socket.disconnect();
         });
     }
 }
