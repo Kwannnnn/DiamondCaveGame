@@ -5,6 +5,7 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -51,6 +52,7 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        setTraps(this.gameState.pressurePlateTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
@@ -392,6 +394,8 @@ export default class Game extends Phaser.Scene {
     handlePlayerMoved(args) { 
         let p = this.players.get(args.playerId);
         p.move(args.x, args.y, args.orientation);
+
+        handlePressureDoors(this.layer, this.players);
     }
 
     handleSocketEvents() {
