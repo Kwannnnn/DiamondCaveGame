@@ -205,7 +205,9 @@ export default class Game extends Phaser.Scene {
 
         this.socket.emit('gemCollected', {
             roomId: this.lobbyID,
-            gemId: diamond.id
+            gemId: diamond.id,
+            x:diamond.x,
+            y:diamond.y
         });
     }
 
@@ -459,6 +461,10 @@ export default class Game extends Phaser.Scene {
         p.move(args.x, args.y, args.orientation);
     }
 
+    handleCheatDetected(cheaterId){
+        console.log("Player with id "+cheaterId+" has cheated!");
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
@@ -481,5 +487,6 @@ export default class Game extends Phaser.Scene {
 
             console.log('Team got damage ' + damage.damage + ' health points');
         })
+        this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
     }
 }
