@@ -67,6 +67,7 @@ export default class DeveloperScene extends Phaser.Scene {
                 username: this.username,
                 initialGameState: payload,
             });
+            this.socket.disconnect();
         });
     }
 }
