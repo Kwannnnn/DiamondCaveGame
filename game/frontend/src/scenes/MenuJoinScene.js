@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
-import {usernameForm} from '../components/UsernameTextField'
-import {lobbyCodeForm} from '../components/LobbyTextField'
+import { usernameForm } from '../components/UsernameTextField'
+import { lobbyCodeForm } from '../components/LobbyTextField'
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 // const lobbyCodeForm = '<label class="custom-field one">\n' +
