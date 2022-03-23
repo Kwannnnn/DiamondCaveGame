@@ -249,7 +249,13 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 23
 
+| BI-01 | Find sound effects for events in the game | M | 5 | - |
+| BI-02 | Implement chosen sound effects | M | 6 | - |
+
 ### US 24
+
+| BI-01 | Find visual effects for events in the game | M | 5 | - |
+| BI-02 | Implement chosen visual effects | M | 6 | - |
 
 ### US 25
 
