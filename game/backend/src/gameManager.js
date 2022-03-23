@@ -144,6 +144,18 @@ class GameManager {
             }],
 
 
+            'pressurePlateTraps': [{
+                'trapId': 1,
+                'plate': {
+                    x: 400,
+                    y: 400,
+                    pressed: false,
+                },
+                'door': {
+                    x: 600,
+                    y: 400
+                }
+            }],
         };
         return gameState;
     }
