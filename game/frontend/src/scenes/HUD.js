@@ -43,8 +43,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
         this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
         
-        //preloading assets for chat
-        this.load.html('form', 'assets/pages/form.html');
     }
 
     create() {
