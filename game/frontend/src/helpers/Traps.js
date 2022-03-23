@@ -8,7 +8,7 @@ export function handlePressureDoors(layer, players) {
     resetDoors(layer, players);
 
     for (const player of players.values()) {
-        const plate = triggeredPressurePlate({x: player.x, y: player.y});
+        const plate = triggeredPressurePlate({ x: player.x, y: player.y });
         if (plate != null) {
             const trap = getTrapForPlate(plate);
     
