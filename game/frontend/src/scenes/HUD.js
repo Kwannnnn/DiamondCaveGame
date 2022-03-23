@@ -45,7 +45,7 @@ export default class HUD extends Phaser.Scene {
         
         //preloading assets for chat
         this.load.html('form', 'assets/pages/form.html');
-
+    }
 
     create() {
         // background shadow
@@ -97,33 +97,7 @@ export default class HUD extends Phaser.Scene {
         this.clock = this.add.text(300, 25, `Time: ${this.seconds}:${this.minutes}`, {
             color: '#FFFFFF',
             fontSize: 40,
-        });
-
-        // Create chat interface
-        // chat icon
-        // this.chatButton = this.add.sprite(40, 680, 'chat')
-        //     .setDepth(1)
-        //     .setOrigin(0.5)
-        //     .setScale(1.5)
-        //     .setInteractive();
-        // // chat input
-        // this.chatButton.on('pointerdown', () => {
-        //     // open chatbox
-        //     if (!this.chatOn) { 
-        //         this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
-        //         this.chatOn = !this.chatOn;
-        //     } else {
-        //         // close chatbox
-        //         this.scene.remove(CST.SCENES.CHAT);
-        //         this.chatOn = !this.chatOn;
-        //     }
-        // });
-        // this.chatButton.on('pointerover', () => {
-        //     this.chatButton.setTint(0x30839f);
-        // });
-        // this.chatButton.on('pointerout', () => {
-        //     this.chatButton.clearTint();
-        // });
+        });        
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
@@ -138,6 +112,7 @@ export default class HUD extends Phaser.Scene {
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
     }
+
 
     // The difference between setting and changing health is that changing is relative, while setting is absolute
     // Setting to +20 makes the player's health 20%
@@ -201,5 +176,4 @@ export default class HUD extends Phaser.Scene {
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
     }
-
 }
