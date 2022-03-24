@@ -134,6 +134,16 @@ class GameManager {
                     'y': 336,
                 }],
             }],
+            'laserTraps': [{
+                'trapId': 4,
+                'start': {
+                    'x': 200,
+                    'y': 200,
+                },
+                'active': 0,
+            }],
+
+
         };
         return gameState;
     }
