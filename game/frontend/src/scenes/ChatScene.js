@@ -37,7 +37,7 @@ export default class ChatScene extends Phaser.Scene {
         this.chatBox.setDefaultStyles({
             lineStyle: {
                 width: 3,
-                color: 0x58F900,
+                color: 0x159622,
             },
             fillStyle: {
                 color: 0x070707,
@@ -54,7 +54,7 @@ export default class ChatScene extends Phaser.Scene {
 
         // create geometry mask to hide pixels
         let mask = new Phaser.Display.Masks.GeometryMask(this, this.chatBox);
-        this.chat = this.add.text(15, 150, this.chatMessages, { color: '#58F900', padding: 10, wordWrap: { width: 240, useAdvancedWrap: true } }).setOrigin(0);
+        this.chat = this.add.text(15, 150, this.chatMessages, { color: '#1ed631', padding: 10, wordWrap: { width: 240, useAdvancedWrap: true } }).setOrigin(0);
         this.chat.setMask(mask); 
 
         //  The rectangle they can 'drag' within
