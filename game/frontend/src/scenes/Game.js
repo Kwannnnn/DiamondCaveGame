@@ -18,7 +18,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         // FIXME: Add an actual enemy sprite
         this.load.image('enemy', 'assets/dirt.png');
-        // this.load.image("exit", "assets/exit.png")
+        this.load.image('exit', 'assets/exit.png');
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
@@ -56,7 +56,7 @@ export default class Game extends Phaser.Scene {
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit(200, 200);
+        this.placeExit();
 
         this.handleSocketEvents();
 
@@ -337,8 +337,9 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate x for exit to be place} x 
      * @param {coordinate y for exit to be place} y 
      */
-    placeExit(x, y) {
-        this.exit = this.physics.add.sprite(x, y, 'exit');
+    placeExit() {
+        console.log(this.initialGameState);
+        this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
             console.log('collided');
             if (this.canExitScene()) {
