@@ -151,13 +151,15 @@ export default class HUD extends Phaser.Scene {
     // Setting to +20 makes the player's health 20%
     // Changing to +20 makes the player's health equal to their current health + 20
     changeHealth(difference) {
-        this.setHealth(this.middle.displayWidth + difference);
-        this.updateHealth(difference);
+        this.setHealth(this.currentHealth + difference);
+        this.currentHealth += difference;
         console.log('Teams health is: ' + this.currentHealth);
     }
 
     changeHealthAnimated(difference) {
-        this.setHealthAnimated(this.middle.displayWidth + difference);
+        this.setHealthAnimated(this.currentHealth + difference);
+        this.currentHealth += difference;
+        console.log('Teams health is: ' + this.currentHealth);
     }
 
     setHealth(percentage) {
@@ -204,10 +206,6 @@ export default class HUD extends Phaser.Scene {
             // console.log(this.collectedDiamonds);
             this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
         }        
-    }
-
-    updateHealth(health) {
-        this.currentHealth += health;
     }
 
     updateNumberOfSpectators(numberOfSpectators) {

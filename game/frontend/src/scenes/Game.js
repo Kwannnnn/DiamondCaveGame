@@ -75,7 +75,7 @@ export default class Game extends Phaser.Scene {
      * Adds the HUD to the GameScene
      */
     setupHUD() {
-        this.scene.add('hud', HUD, true, {
+        this.hud = this.scene.add('hud', HUD, true, {
             world: 1,
             stage: 1,
             totalDiamonds: this.gameState.gems.length,
@@ -320,6 +320,8 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.y -= 32;
 
         const damage = 10;
+        this.hud.changeHealthAnimated(-damage);
+
         // Send message to the server
         this.socket.emit('hitByEnemy', {
             lobbyID: this.lobbyID,
