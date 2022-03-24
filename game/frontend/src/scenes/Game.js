@@ -99,17 +99,17 @@ export default class Game extends Phaser.Scene {
 
     setupPerks() {
         switch (this.perk) {
-        case 'Health':
-            this.changeHealth(10);
-            break;
+            case 'Health':
+                this.changeHealth(10);
+                break;
 
-        case 'AddDiamonds':
-            this.diamondPerk();
-            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
-            break;
+            case 'AddDiamonds':
+                this.diamondPerk();
+                console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+                break;
 
-        default:
-            console.log('No team perks!');
+            default:
+                console.log('No team perks!');
         }
     }
 
@@ -399,7 +399,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.remove('hud');
-            this.scene.start(CST.SCENES.PERKS, {
+            this.scene.pause();
+            this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,
                 username: this.username,
                 socket: this.socket,
