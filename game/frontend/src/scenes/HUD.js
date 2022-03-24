@@ -3,6 +3,8 @@ import SelectHealingPerk from '../events/HealingPerkEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
+const MARGIN_X = 32;
+const MARGIN_Y = 16;
 let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
@@ -10,9 +12,7 @@ export default class HUD extends Phaser.Scene {
             key: 'hud'
         });
 
-        this.fullWidth = 200;
-        this.healthBarX = 50;
-        this.healthBarY = 40;
+        this.fullWidth = 179;
 
         // Initial clock counts
         this.minutes = 0;
@@ -35,18 +35,15 @@ export default class HUD extends Phaser.Scene {
 
     preload() {
         //preloading assets for life-pool
-        this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
-        this.load.image('middle', 'assets/barHorizontal_green_mid.png')
-        this.load.image('right-cap', 'assets/barHorizontal_green_right.png')
-
-        this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
-        this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
-        this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
+        this.load.image('middle', 'assets/barHorizontal.png');
+        this.load.image('right-cap', 'assets/barHorizontal_right.png');
+        this.load.image('health', 'assets/healthOverlay.png');
+        this.load.image('gem', 'assets/gem.png');
+        this.load.image('timer-bg', 'assets/window_message_box.png');
         
         //preloading assets for chat
         this.load.image('chat', 'assets/comment-message.png');
         this.load.html('form', 'assets/pages/form.html');
-
         // //preloading rexUI plugin
         // this.load.scenePlugin({
         //     key: 'rexuiplugin',
@@ -56,56 +53,59 @@ export default class HUD extends Phaser.Scene {
     }
 
     create() {
-        // background shadow
-        this.leftShadowCap = this.add.image(this.healthBarX, this.healthBarY, 'left-cap-shadow')
-            .setOrigin(0, 0.5)
+        this.healthBarNew = this.add.image(MARGIN_X, MARGIN_Y, 'health')
+            .setOrigin(0, 0)
+            .setScale(0.2)
+            .setDepth(100);
 
-        this.middleShadowCap = this.add.image(this.healthBarX + this.leftShadowCap.width, this.healthBarY, 'middle-shadow')
-            .setOrigin(0, 0.5)
+        this.gem = this.add.image(MARGIN_X, 3 * MARGIN_Y, 'gem')
+            .setOrigin(0, 0)
+            .setScale(0.2)
+            .setDepth(100);
 
-        this.rightShadowCap = this.add.image(this.healthBarX + this.middleShadowCap.displayWidth, this.healthBarY, 'right-cap-shadow')
-            .setOrigin(0, 0.5)
+        this.timerBg = this.add.image(this.game.renderer.width / 2, MARGIN_Y, 'timer-bg')
+            .setDepth(100);
 
-        this.leftCap = this.add.image(this.healthBarX, this.healthBarY, 'left-cap')
-            .setOrigin(0, 0.5)
+        this.middle = this.add.image(1.5 * MARGIN_X, MARGIN_Y + 4, 'middle')
+            .setOrigin(0, 0.0)
+            .setScale(0.6)
 
-        this.middle = this.add.image(this.healthBarX + this.leftCap.width, this.healthBarY, 'middle')
-            .setOrigin(0, 0.5)
-
-        this.rightCap = this.add.image(this.healthBarX + this.middle.displayWidth, this.healthBarY, 'right-cap')
-            .setOrigin(0, 0.5)
-
-        
+        this.rightCap = this.add.image(1.5 * MARGIN_X + this.middle.displayWidth, MARGIN_Y + 4, 'right-cap')
+            .setOrigin(0, 0.0)
+            .setScale(0.6)
 
         // Value given in percentage
         this.setHealth(this.currentHealth);
 
         // Create the world and stage text
-        this.gamestage = this.add.text(1000, 25, `World: ${this.world}-${this.stage}`, {
+        this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `World: ${this.world}-${this.stage}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(1, 1);
 
         // Create the numberOfSpectstors and stage text
-        this.numberOfSpectators = this.add.text(35, 80, ` Number of spectators: ${numberOfSpectators}`, {
+        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${numberOfSpectators}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(1, 1);
+
         this.socket.on('newSpectatorJoined', ()=>{
             numberOfSpectators += 1; console.log('Success ' + numberOfSpectators); this.updateNumberOfSpectators(numberOfSpectators);
         })
 
         // Create the Diamond counter
-        this.diamondCounter = this.add.text(600, 25, `Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`, {
+        this.diamondCounter = this.add.text(MARGIN_X + 32, 3 * MARGIN_Y + 2, `${this.collectedDiamonds}/${this.totalDiamonds}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(0, 0);
 
         // Create the clock
-        this.clock = this.add.text(300, 25, `Time: ${this.seconds}:${this.minutes}`, {
+        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, `${this.seconds}:${this.minutes}`, {
             color: '#FFFFFF',
             fontSize: 40,
-        });
+        })
+            .setOrigin(0, 0)
+            .setDepth(101);
 
         // Create chat interface
         // chat icon
@@ -173,7 +173,6 @@ export default class HUD extends Phaser.Scene {
             ease: Phaser.Math.Easing.Sine.Out,
             onUpdate: () => {
                 this.rightCap.x = this.middle.x + this.middle.displayWidth
-                this.leftCap.visible = this.middle.displayWidth > 0
                 this.middle.visible = this.middle.displayWidth > 0
                 this.rightCap.visible = this.middle.displayWidth > 0
             }
@@ -183,12 +182,17 @@ export default class HUD extends Phaser.Scene {
     // Update time and clock
     updateClock() {
         this.seconds++;
+
         if (this.seconds === 60) {
             this.minutes++;
             this.seconds = 0;
         }
 
-        this.clock.setText(`Time: ${this.minutes}:${this.seconds}`);
+        if (this.seconds <= 9) {
+            this.clock.setText(`${this.minutes}:0${this.seconds}`);
+        } else {
+            this.clock.setText(`${this.minutes}:${this.seconds}`);
+        }
     }
 
     updateDiamondCount(count) {
@@ -198,7 +202,7 @@ export default class HUD extends Phaser.Scene {
             this.diamondCounter.setText('Go to next map!');
         } else {
             // console.log(this.collectedDiamonds);
-            this.diamondCounter.setText(`Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`);
+            this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
         }        
     }
 
@@ -207,7 +211,7 @@ export default class HUD extends Phaser.Scene {
     }
 
     updateNumberOfSpectators(numberOfSpectators) {
-        this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
+        this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
     }
 
 }
