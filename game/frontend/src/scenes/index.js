@@ -6,3 +6,4 @@ export { default as MenuScene } from './MenuScene';
 export { default as PerksScene } from './PerksScene';
 export { default as SpectatorJoinScene } from './SpectatorJoinScene';
 export { default as RankingScene } from './RankingScene';
+export { default as DeveloperScene } from './DeveloperScene';
