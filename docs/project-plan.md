@@ -55,11 +55,13 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 
 ### 19. As a developer I want to have developer console (you can skip some)
 
-### 20. As a user I want to be able to play in all 3 worlds of the game
+### 20.  As a user I would like to have attractive scenes
 
-### 21. As a user I want the HUD to clearly display the current game state
+### 21. As a user I want the HUD to accurately display the current game state
 
-### 22. As a user I want to have attractive scenes
+    a. The health bar needs to update with damage
+    b. The timer needs to be synchronized using a tick system
+    c. The world indicator needs to update with map changes
 
 ### 23. As a user I want the game to have sounds effects
 
@@ -68,6 +70,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### 25. As a developer I want to have a dedicated room for testing
 
 ### 26. As a developer I want a playable version of the game to be uploaded to the VPS every week
+
+### 27. As a user I want to be able to play 3 engaging maps
 
 ## Backlog Items
 
@@ -222,13 +226,36 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 20
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Reposition the game to the middle of the screen and change the page background to black | M | 3 | - |
+| BI-02 | Update the input scenes in the menu to use input objects styled to the game and remove status text | M | 4 | - |
+| BI-03 | Create a scrollable table component to display running games for spectators | M | 5 | - |
+| BI-04 | Convert the perk scene into a popup over the game scene and improve visual style | M | 6 | - |
+| BI-05 | Convert the chat box into an always-visible sidebar and style it to the game | M | 7 | - |
+| BI-06 | Improve HUD style to fit the game | M | 4 | - |
+
 ### US 21
+
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Track game time on the server and regularly send to client with ticks | M | 7 | - |
+| BI-02 | Display game time on the client and manage network delays | M | 8 | - |
+| BI-03 | Update the world counter on world change | M | 4 | - |
+| BI-04 | Update the health display on taking damage | M | 5 | - |
+| BI-05 | Track gems on the server and update client gem state based on that data | M | 5 | - |
 
 ### US 22
 
 ### US 23
 
+| BI-01 | Find sound effects for events in the game | M | 5 | - |
+| BI-02 | Implement chosen sound effects | M | 6 | - |
+
 ### US 24
+
+| BI-01 | Find visual effects for events in the game | M | 5 | - |
+| BI-02 | Implement chosen visual effects | M | 6 | - |
 
 ### US 25
 
@@ -240,17 +267,26 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 26
 
+Backlog item | Definition | Priority | Weight | Depends on |
+| -| -| -| -| -|
+| BI-01 | Configure the VPS to serve the game client and multiplayer server | M | 6 | - |
+| BI-02 | Create a CI/CD pipeline to upload builds to the VPS | M | 6 | - |
+
+### US 27
+
 ---
 
 ## Known problems
 
 Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | - | - | - | - | - |
-| PB-01 | The name of the current player doesn't follow character, not seen by other player | N | 3 | In progress |
+| PB-01 | The name of the current player doesn't follow character, not seen by other player | N | 3 | Done |
 | PB-02 | The server does not record the game state, which allows arbitrary data to be sent by clients without any integrity verification | H | 8 | Done |
-| PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | In progress |
+| PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | Done |
 | PB-04 | The game can be started with one player, causing a server crash | H | 4 | Done |
-| PB-05 | WASD cannot by typed in chat | H | 5 | In progress |
-| PB-06 | Spectator list can overflow, obscuring entries | H | 5 | In progress |
+| PB-05 | WASD cannot by typed in chat | H | 5 | Done |
+| PB-06 | Spectator list can overflow, obscuring entries | H | 5 | Done |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
-| PB-08 | Player's timers aren't synchronized | N | 6 | Not started |
+| PB-08 | The server must validate player movement to prevent speedhacking or teleporting | H | 7 | Not started |
+| PB-09 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
+| PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | Not started |

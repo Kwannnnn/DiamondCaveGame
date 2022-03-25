@@ -5,6 +5,8 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
+import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -17,13 +19,16 @@ export default class Game extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         // FIXME: Add an actual enemy sprite
         this.load.image('enemy', 'assets/dirt.png');
-        // this.load.image("exit", "assets/exit.png")
+        this.load.image('exit', 'assets/exit.png');
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
+
+        this.load.image('laser', 'assets/laser_trap.PNG');
+
     }
 
     init(data) {
@@ -47,28 +52,34 @@ export default class Game extends Phaser.Scene {
         this.layer = map.createLayer(0, tileSet);
 
         this.setupHUD();
+        this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        setTraps(this.gameState.pressurePlateTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit(200, 200);
+        this.placeExit();
 
         this.handleSocketEvents();
 
+
+        this.pressureCheckEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.checkPressurePlates,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    checkPressurePlates() {
+        handlePressureDoors(this.layer, this.players);
     }
 
     update() {
-        if (this.scene.isActive(CST.SCENES.CHAT)) {
-            this.input.keyboard.enabled = false;
-           
-        } else {
-            this.input.keyboard.enabled = true;
-            this.controlledUnit.update();
-        }
-    
+        this.controlledUnit.update();
     }
 
     /**
@@ -83,6 +94,15 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+    /**
+     * Adds the chat room to the GameScene
+     */
+
+    setupChat() {
+        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
+            socket: this.socket
+        });
+    }
     /**
      * Creates all player objects and adds them to the players Map property
      * of the GameScene. 
@@ -99,17 +119,17 @@ export default class Game extends Phaser.Scene {
 
     setupPerks() {
         switch (this.perk) {
-        case 'Health':
-            this.changeHealth(10);
-            break;
+            case 'Health':
+                this.changeHealth(10);
+                break;
 
-        case 'AddDiamonds':
-            this.diamondPerk();
-            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
-            break;
+            case 'AddDiamonds':
+                this.diamondPerk();
+                console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+                break;
 
-        default:
-            console.log('No team perks!');
+            default:
+                console.log('No team perks!');
         }
     }
 
@@ -292,10 +312,60 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+
+    /**
+     * Setup laser traps
+     */
+    setupLaserTraps() {
+        this.laserTrapData = new Map();
+        this.laserTrapGroup = this.physics.add.group();
+
+        this.gameState.laserTraps.forEach(st => {
+            const sprite = this.physics.add.sprite(st.start.x, st.start.y, 'laser');
+            sprite.id = st.trapId;
+            sprite.active = st.active;
+            this.laserTrapGroup.add(sprite);
+        });
+
+        // flickering sprite at a frequancy of every 2 seconds
+        this.timedEvent = this.time.addEvent({
+            delay: 2000,
+            callback: this.updateSpikes,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+
+    /**
+     * update laser trap state on collision
+     */
+    updateLaserTraps() {
+        this.laserTrapGroup.children.each(st => {
+            if (st.active === 0) {
+                st.active = 1;
+                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
+            } else {
+                st.active = 0;
+            }
+        });
+    }
+
+
+
+
+
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
         HUD.changeHealth(healthChange);
+    }
+
+    /**
+     * damage caused to health when coliding with laser trap
+     */
+    dealLaserDamage() {
+        this.changeHealth(-15);
     }
 
     /**
@@ -333,8 +403,9 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate x for exit to be place} x 
      * @param {coordinate y for exit to be place} y 
      */
-    placeExit(x, y) {
-        this.exit = this.physics.add.sprite(x, y, 'exit');
+    placeExit() {
+        console.log(this.initialGameState);
+        this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
             console.log('collided');
             if (this.canExitScene()) {
@@ -398,7 +469,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.remove('hud');
-            this.scene.start(CST.SCENES.PERKS, {
+            this.scene.pause();
+            this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,
                 username: this.username,
                 socket: this.socket,

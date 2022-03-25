@@ -1,4 +1,6 @@
 // This class manages everything related to in-game events
+const map2 = require('./maps/map2.js');
+const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
 const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
 const maps = require('./model/maps.js');
@@ -20,7 +22,7 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room);
+            const initialGameState = this.generateInitialGameState(room, map1);
             rooms.get(roomId).gameState = initialGameState;
             console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
@@ -90,12 +92,12 @@ class GameManager {
         }
     }
 
-    generateInitialGameState(room) {
+    generateInitialGameState(room, map) {
         const player1 = room.players[0];
         const player2 = room.players[1];
 
         let gameState = {
-            'tileMap': maps.get(1).tilemap,
+            'tileMap': map.tileMap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
                 'x': 32 + 16, // player 1 spawn x position
@@ -104,37 +106,12 @@ class GameManager {
             }, {
                 'playerId': player2.id, // the id of player 2
                 'x': 64 + 16, // player 2 spawn x position
-                'y': 64 + 16, // player 2 spawn y position
+                'y': 32 + 16, // player 2 spawn y position
                 'orientation': 0
             }],
-
             'gemsCollected' : 0,
-
-            'gems': [{
-                'gemId': 1,
-                'x': 112, // gem spawn x position
-                'y': 48 // gem spawn y position
-            },
-            {
-                'gemId': 2,
-                'x': 178, // gem spawn x position
-                'y': 80 // gem spawn y position
-            },
-            {
-                'gemId': 3,
-                'x': 240, // gem spawn x position
-                'y': 112 // gem spawn y position
-            },
-            {
-                'gemId': 4,
-                'x': 304, // gem spawn x position
-                'y': 144 // gem spawn y position
-            },
-            {
-                'gemId': 5,
-                'x': 368, // gem spawn x position
-                'y': 176 // gem spawn y position
-            }],
+            'exit': map.exit,
+            'gems': [...map.gems],
             'enemies': [{
                 'enemyId': 1,
                 'start': {
@@ -157,6 +134,18 @@ class GameManager {
                     'x': 336,
                     'y': 336,
                 }],
+            }],
+            'pressurePlateTraps': [{
+                'trapId': 1,
+                'plate': {
+                    x: 400,
+                    y: 400,
+                    pressed: false,
+                },
+                'door': {
+                    x: 600,
+                    y: 400
+                }
             }],
         };
         return gameState;
@@ -225,7 +214,7 @@ class GameManager {
 
                 room.players.forEach(player => {
                     console.log(player.id);
-                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room) });
+                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
                 });
             }
         }

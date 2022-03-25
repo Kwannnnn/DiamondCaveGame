@@ -136,7 +136,19 @@ playerId;
             // }
             path: [] 
         }, ...
-    ]
+    ], 
+        laserTraps: 
+    [{
+        //identifier for the trap
+        trapId: 4,
+        //spawn location for the trap
+        start: {
+            x: 200,
+            y: 200,
+        },
+        active: 0,
+    }, ...
+    ],
 }
 ```
 
@@ -476,6 +488,31 @@ playerId: ...,
 
 <td>
     Sends both players the name of the perk that will be used next game. 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    DeveloperGamestate
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // Game state object with tilemap, players location and gems
+        ititialGameState: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the game state of the map a developer has chosen 
 </td>
 
 </tr>
@@ -906,6 +943,32 @@ roomId:...
 
 <td>
     Indicates that player hit the enemy and sends all information to reduce health of the team 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    developerSpawn
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // map id developer wants to spawn
+        mapID: ...,
+
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the chosen id of the map developer wants to spawn on 
 </td>
 
 </tr>
