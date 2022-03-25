@@ -461,8 +461,8 @@ export default class Game extends Phaser.Scene {
         p.move(args.x, args.y, args.orientation);
     }
 
-    handleCheatDetected(cheaterId){
-        console.log("Player with id "+cheaterId+" has cheated!");
+    handleCheatDetected(cheaterId) {
+        console.log('Player with id ' + cheaterId + ' has cheated!');
     }
 
     handleSocketEvents() {

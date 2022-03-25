@@ -68,9 +68,9 @@ class GameManager {
     }
 
     handleCollectDiamond(player, diamond) {
-        if(player.x===diamond.x&&player.y===diamond.y) {
-            console.log("Player " + player.x + " " + player.y);
-            console.log("Diamond " + diamond.x + " " + diamond.y);
+        if (player.x === diamond.x && player.y === diamond.y) {
+            console.log('Player ' + player.x + ' ' + player.y);
+            console.log('Diamond ' + diamond.x + ' ' + diamond.y);
             const roomId = diamond.roomId;
             const room = rooms.get(roomId);
             const gems = rooms.get(roomId).gameState.gems;
@@ -84,7 +84,7 @@ class GameManager {
                     }
                 }
                 rooms.get(roomId).gemsCollected++;
-                console.log("Gems collected: " + rooms.get(roomId).gemsCollected);
+                console.log('Gems collected: ' + rooms.get(roomId).gemsCollected);
                 // Notify teammate about collected diamond
                 player.socket.to(roomId).emit('gemCollected', diamond.gemId);
 
@@ -94,7 +94,7 @@ class GameManager {
             } else {
                 player.socket.emit('roomNotFound', roomId);
             }
-        } else{
+        } else {
             player.socket.emit('cheatDetected', player.id);
         }
     }
