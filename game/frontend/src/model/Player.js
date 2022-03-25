@@ -20,12 +20,12 @@ export default class Player extends ControlledUnit {
             console.log(perk + ' IS USED')
             // Check which perk is applied
             switch (perk) {
-            case 'MovementSpeed':
-                this.increaseSpeed();
-                break;
+                case 'MovementSpeed':
+                    this.increaseSpeed();
+                    break;
 
-            default:
-                console.log('no perks for player ' + username);
+                default:
+                    console.log('no perks for player ' + username);
 
             }
         }
@@ -73,18 +73,18 @@ export default class Player extends ControlledUnit {
         this.setNamePosition();
 
         switch (this.orientation) {
-        case 0: 
-            this.anims.play('right', true);
-            break;
-        case 90:
-            this.anims.play('up', true);
-            break;
-        case 180:
-            this.anims.play('left', true);
-            break;
-        default:
-            this.anims.play('down', true);
-            break;
+            case 0: 
+                this.anims.play('right', true);
+                break;
+            case 90:
+                this.anims.play('up', true);
+                break;
+            case 180:
+                this.anims.play('left', true);
+                break;
+            default:
+                this.anims.play('down', true);
+                break;
         }
     }
 
