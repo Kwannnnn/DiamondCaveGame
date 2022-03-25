@@ -5,15 +5,9 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
-
-
-
-    // A physics group representing laser traps
-    laserTraps;
-
-
     constructor() {
         super({
             key: CST.SCENES.GAME
@@ -32,7 +26,7 @@ export default class Game extends Phaser.Scene {
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
-        this.load.image('laser','assets/laser_trap.PNG');
+        this.load.image('laser', 'assets/laser_trap.PNG');
 
     }
 
@@ -61,6 +55,7 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        setTraps(this.gameState.pressurePlateTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
@@ -68,6 +63,17 @@ export default class Game extends Phaser.Scene {
 
         this.handleSocketEvents();
 
+
+        this.pressureCheckEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.checkPressurePlates,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    checkPressurePlates() {
+        handlePressureDoors(this.layer, this.players);
     }
 
     update() {
@@ -77,8 +83,7 @@ export default class Game extends Phaser.Scene {
         } else {
             this.input.keyboard.enabled = true;
             this.controlledUnit.update();
-        }
-    
+        }  
     }
 
     /**
@@ -334,7 +339,7 @@ export default class Game extends Phaser.Scene {
         this.laserTrapGroup.children.each(st => {
             if (st.active === 0) {
                 st.active = 1;
-                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = "laserTrapCollisions";
+                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
             } else {
                 st.active = 0;
             }
@@ -354,7 +359,7 @@ export default class Game extends Phaser.Scene {
     /**
      * damage caused to health when coliding with laser trap
      */
-   dealLaserDamage() {
+    dealLaserDamage() {
         this.changeHealth(-15);
     }
 
