@@ -8,13 +8,6 @@ import HUD from './HUD';
 import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
-
-
-
-    // A physics group representing laser traps
-    laserTraps;
-
-
     constructor() {
         super({
             key: CST.SCENES.GAME
@@ -33,7 +26,7 @@ export default class Game extends Phaser.Scene {
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
-        this.load.image('laser','assets/laser_trap.PNG');
+        this.load.image('laser', 'assets/laser_trap.PNG');
 
     }
 
@@ -346,7 +339,7 @@ export default class Game extends Phaser.Scene {
         this.laserTrapGroup.children.each(st => {
             if (st.active === 0) {
                 st.active = 1;
-                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = "laserTrapCollisions";
+                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
             } else {
                 st.active = 0;
             }
@@ -366,7 +359,7 @@ export default class Game extends Phaser.Scene {
     /**
      * damage caused to health when coliding with laser trap
      */
-   dealLaserDamage() {
+    dealLaserDamage() {
         this.changeHealth(-15);
     }
 
