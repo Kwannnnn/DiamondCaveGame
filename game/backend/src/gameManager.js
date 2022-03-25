@@ -134,16 +134,18 @@ class GameManager {
                     'y': 336,
                 }],
             }],
-            'laserTraps': [{
-                'trapId': 4,
-                'start': {
-                    'x': 200,
-                    'y': 200,
+            'pressurePlateTraps': [{
+                'trapId': 1,
+                'plate': {
+                    x: 400,
+                    y: 400,
+                    pressed: false,
                 },
-                'active': 0,
+                'door': {
+                    x: 600,
+                    y: 400
+                }
             }],
-
-
         };
         return gameState;
     }
