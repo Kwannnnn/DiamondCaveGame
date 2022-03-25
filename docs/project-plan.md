@@ -287,6 +287,7 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-05 | WASD cannot by typed in chat | H | 5 | Done |
 | PB-06 | Spectator list can overflow, obscuring entries | H | 5 | Done |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
-| PB-08 | The server must validate player movement to prevent speedhacking or teleporting | H | 7 | Not started |
+| PB-08 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | In progress |
 | PB-09 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
-| PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | Not started |
+| PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | In progress |
+| PB-11 | Colliding with an enemy has a chance to put the player inside a wall | H | 7 | Not started |
