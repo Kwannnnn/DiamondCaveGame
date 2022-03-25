@@ -51,7 +51,6 @@ export default class Game extends Phaser.Scene {
         this.layer = map.createLayer(0, tileSet);
 
         this.setupHUD();
-        this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
@@ -99,15 +98,6 @@ export default class Game extends Phaser.Scene {
         });
     }
 
-    /**
-     * Adds the chat room to the GameScene
-     */
-
-    setupChat() {
-        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
-            socket: this.socket
-        });
-    }
     /**
      * Creates all player objects and adds them to the players Map property
      * of the GameScene. 
