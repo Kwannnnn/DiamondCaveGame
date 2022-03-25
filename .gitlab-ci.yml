@@ -4,8 +4,8 @@ stages:
 
 cache:
   paths:
-    - backend/node_modules/
-    - frontend-webpack/node_modules/
+    - game/frontend/node_modules/
+    - game/backend/node_modules/
 sast:
   stage: test
 
@@ -32,7 +32,8 @@ deploy:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - DEPLOY_SERVER=$DEPLOY_SERVER
-    - ssh node-host@${DEPLOY_SERVER} './startHeadless.sh'
+    - BRANCH=$CI_COMMIT_BRANCH
+    - ssh node-host@${DEPLOY_SERVER} ./startHeadless.sh $BRANCH
 
 include:
 - template: Security/SAST.gitlab-ci.yml
