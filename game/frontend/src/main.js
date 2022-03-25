@@ -10,7 +10,8 @@ import {
     ActiveGamesScene,
     SpectatorJoinScene,
     RankingScene,
-    ChatScene
+    ChatScene,
+    DeveloperScene,
 } from './scenes';
 
 const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth)
@@ -34,7 +35,8 @@ const config = {
         ActiveGamesScene,
         SpectatorJoinScene,
         RankingScene,
-        ChatScene
+        ChatScene,
+        DeveloperScene,
     ],
     parent: 'game',
     type: Phaser.AUTO,
@@ -50,4 +52,3 @@ const config = {
 }
 
 const game = new Phaser.Game(config);
-
