@@ -347,13 +347,10 @@ export default class Game extends Phaser.Scene {
     }
 
 
-
-
-
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
-        HUD.changeHealth(healthChange);
+        this.hud.changeHealth(healthChange);
     }
 
     /**
@@ -385,7 +382,6 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.y -= 32;
 
         const damage = 10;
-        this.hud.changeHealthAnimated(-damage);
 
         // Send message to the server
         this.socket.emit('hitByEnemy', {
@@ -479,9 +475,14 @@ export default class Game extends Phaser.Scene {
         });
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud
-            // HUD.changeHealth(damage);
+            this.changeHealth(-damage);
 
-            console.log('Team got damage ' + damage.damage + ' health points');
+            console.log('Team got damage ' + damage + ' health points');
+        })
+
+        this.socket.on('gameOver', () => {
+            //TODO: end the game
+            console.log('Game over! You are dead!');
         })
     }
 }

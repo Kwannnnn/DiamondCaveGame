@@ -235,17 +235,19 @@ class GameManager {
      * @param {roomId} id of the room that has to reduce health 
      * @param {damage} damage that has been caused to the team
      */
-    handleReduceHealth(roomId, damage) {
+    handleHitByEnemy(roomId, damage) {
         const room = rooms.get(roomId);
 
         if (room) {
             room.health -= damage;
 
-            room.players.forEach(player => {
-                // TODO add message to the protocol
-                // Message is sent to all players in room to indicate health loss
-                player.socket.emit('reduceHealth', { damage });
-            });
+            if (room.health <= 0) {
+                this.io.to(room.id).emit('gameOver');
+                return;
+            }
+
+            // Message is sent to all players in room to indicate health loss
+            this.io.to(room.id).emit('reduceHealth', damage);
         }
     }
 

@@ -29,7 +29,6 @@ export default class HUD extends Phaser.Scene {
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
         
-        // health in percentage
         this.currentHealth = 100;
     }
 
@@ -73,8 +72,9 @@ export default class HUD extends Phaser.Scene {
             .setOrigin(0, 0.0)
             .setScale(0.6)
 
-        // Value given in percentage
-        this.setHealth(this.currentHealth);
+        // At the start players have full health
+        // so difference is 0
+        this.changeHealth(0);
 
         // Create the world and stage text
         this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `World: ${this.world}-${this.stage}`, {
@@ -151,7 +151,19 @@ export default class HUD extends Phaser.Scene {
     // Setting to +20 makes the player's health 20%
     // Changing to +20 makes the player's health equal to their current health + 20
     changeHealth(difference) {
-        this.setHealth(this.currentHealth + difference);
+        //update health bar on the hud
+        const health = this.currentHealth + difference;
+
+        if (health <= 0) {
+            this.middle.destroy();
+            // this.middle.displayWidth = 0;
+        } else {
+            const percentage = health * 0.01;
+        this.middle.displayWidth = this.fullWidth * percentage;
+        this.rightCap.x = this.middle.x + this.middle.displayWidth;
+        }
+        
+
         this.currentHealth += difference;
         console.log('Teams health is: ' + this.currentHealth);
     }
@@ -160,11 +172,6 @@ export default class HUD extends Phaser.Scene {
         this.setHealthAnimated(this.currentHealth + difference);
         this.currentHealth += difference;
         console.log('Teams health is: ' + this.currentHealth);
-    }
-
-    setHealth(percentage) {
-        this.middle.displayWidth = this.fullWidth * (percentage / 100);
-        this.rightCap.x = this.middle.x + this.middle.displayWidth;
     }
 
     setHealthAnimated(percentage) {
