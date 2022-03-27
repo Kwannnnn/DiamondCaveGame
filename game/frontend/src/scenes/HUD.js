@@ -23,7 +23,6 @@ export default class HUD extends Phaser.Scene {
         this.chatOn = false;
         this.chatMessages = [];
 
-        this.world = data.world;
         this.stage = data.stage;
         this.socket = data.socket;
         this.collectedDiamonds = 0;
@@ -69,7 +68,7 @@ export default class HUD extends Phaser.Scene {
         this.setHealth(this.currentHealth);
 
         // Create the world and stage text
-        this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `World: ${this.world}-${this.stage}`, {
+        this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `Level: ${this.stage}`, {
             color: '#FFFFFF',
             fontSize: 20,
         }).setOrigin(1, 1);

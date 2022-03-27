@@ -97,6 +97,7 @@ class GameManager {
         const player2 = room.players[1];
 
         let gameState = {
+            'level': room.level,
             'tileMap': map.tileMap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
@@ -206,6 +207,7 @@ class GameManager {
         const room = rooms.get(lobbyID);
 
         if (room) {
+            room.level += 1;
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 console.log(room.players[0].perkChoice);
