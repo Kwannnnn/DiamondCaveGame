@@ -80,6 +80,8 @@ playerId;
 
 ```javascript
 {
+    // The current level of the team in the game
+    level: ..., 
     tileMap: [
         [2,2,2,2],
         [2,1,1,2],
