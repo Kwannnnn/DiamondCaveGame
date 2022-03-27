@@ -9,7 +9,7 @@ let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
-            key: 'hud'
+            key: CST.SCENES.HUD
         });
 
         this.fullWidth = 179;
@@ -93,7 +93,7 @@ export default class HUD extends Phaser.Scene {
         this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, `${this.seconds}:${this.minutes}`, {
             color: '#FFFFFF',
             fontSize: 40,
-        });        
+        }).setDepth(150);        
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });

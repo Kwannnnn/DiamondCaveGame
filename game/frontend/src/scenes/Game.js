@@ -33,6 +33,8 @@ export default class Game extends Phaser.Scene {
 
     init(data) {
         this.collectedDiamonds = 0;
+        this.world = data.world;
+        this.stage = data.stage;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
@@ -40,7 +42,7 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
 
         console.log(this.gameState);
-        console.log(data.socket);
+        console.log(this.scene);
     }
 
     create() {
@@ -467,7 +469,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
-            this.scene.remove('hud');
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
             this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,
