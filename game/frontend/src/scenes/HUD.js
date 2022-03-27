@@ -156,7 +156,7 @@ export default class HUD extends Phaser.Scene {
 
         if (health <= 0) {
             this.middle.destroy();
-            // this.middle.displayWidth = 0;
+            this.rightCap.destroy();
         } else {
             const percentage = health * 0.01;
             this.middle.displayWidth = this.fullWidth * percentage;

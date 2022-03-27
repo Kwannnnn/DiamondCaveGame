@@ -67,8 +67,6 @@ io.on('connection', (socket) => {
 
     // This message is received when a player gets hit byt the enemy
     socket.on('hitByEnemy', (args) => gameManager.handleHitByEnemy(args.lobbyID, args.damage));
-
-    socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));
 

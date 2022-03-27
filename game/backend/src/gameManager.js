@@ -241,13 +241,13 @@ class GameManager {
         if (room) {
             room.health -= damage;
 
-            if (room.health <= 0) {
-                this.io.to(room.id).emit('gameOver');
-                return;
-            }
-
             // Message is sent to all players in room to indicate health loss
             this.io.to(room.id).emit('reduceHealth', damage);
+
+            if (room.health <= 0) {
+                this.io.to(room.id).emit('gameOver');
+                this.handleGameOver(room);
+            }
         }
     }
 
@@ -338,18 +338,17 @@ class GameManager {
             
     }
 
-    handleGameOver(roomId) {
-        const room = rooms.get(roomId);
+    handleGameOver(room) {
         const playerUsernames = room.players.map(p => p.id);
         //TODO: create an algorithm for calculating totalScore
         const totalScore = room.gameState.gemsCollected;
         const time = 6969;
 
-        const run = new Run(roomId, totalScore, time, playerUsernames);
+        const run = new Run(room.id, totalScore, time, playerUsernames);
         runs.enqueue(run);
 
         // remove room from rooms map since we dont need it anymore
-        // rooms.delete(roomId);
+        rooms.delete(room.id);
         console.log(runs.toArray());
     }
 }
