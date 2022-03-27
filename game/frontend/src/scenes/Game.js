@@ -5,6 +5,7 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
 import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
@@ -32,6 +33,8 @@ export default class Game extends Phaser.Scene {
 
     init(data) {
         this.collectedDiamonds = 0;
+        this.world = data.world;
+        this.stage = data.stage;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
@@ -39,7 +42,7 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
 
         console.log(this.gameState);
-        console.log(data.socket);
+        console.log(this.scene);
     }
 
     create() {
@@ -51,6 +54,7 @@ export default class Game extends Phaser.Scene {
         this.layer = map.createLayer(0, tileSet);
 
         this.setupHUD();
+        this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
@@ -77,13 +81,7 @@ export default class Game extends Phaser.Scene {
     }
 
     update() {
-        if (this.scene.isActive(CST.SCENES.CHAT)) {
-            this.input.keyboard.enabled = false;
-           
-        } else {
-            this.input.keyboard.enabled = true;
-            this.controlledUnit.update();
-        }  
+        this.controlledUnit.update();
     }
 
     /**
@@ -97,6 +95,15 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+    /**
+     * Adds the chat room to the GameScene
+     */
+
+    setupChat() {
+        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
+            socket: this.socket
+        });
+    }
     /**
      * Creates all player objects and adds them to the players Map property
      * of the GameScene. 
@@ -462,7 +469,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
-            this.scene.remove('hud');
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
             this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,

@@ -123,7 +123,6 @@ export default class LobbyScene extends Phaser.Scene {
     createRoom(args) { 
         this.lobbyID = args.roomId;
         this.playerIDs = args.playerIDs;
-        console.log(this.playerIDs);
         this.displayRoom(this.playerIDs);
     }
 

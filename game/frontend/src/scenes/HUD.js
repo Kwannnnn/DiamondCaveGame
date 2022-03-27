@@ -9,7 +9,7 @@ let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
-            key: 'hud'
+            key: CST.SCENES.HUD
         });
 
         this.fullWidth = 179;
@@ -40,15 +40,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         this.load.image('timer-bg', 'assets/window_message_box.png');
         
-        //preloading assets for chat
-        this.load.image('chat', 'assets/comment-message.png');
-        this.load.html('form', 'assets/pages/form.html');
-        // //preloading rexUI plugin
-        // this.load.scenePlugin({
-        //     key: 'rexuiplugin',
-        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
-        //     sceneKey: 'rexUI'
-        // });
     }
 
     create() {
@@ -102,35 +93,7 @@ export default class HUD extends Phaser.Scene {
         this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, `${this.seconds}:${this.minutes}`, {
             color: '#FFFFFF',
             fontSize: 40,
-        })
-            .setOrigin(0, 0)
-            .setDepth(101);
-
-        // Create chat interface
-        // chat icon
-        this.chatButton = this.add.sprite(40, 680, 'chat')
-            .setDepth(1)
-            .setOrigin(0.5)
-            .setScale(1.5)
-            .setInteractive();
-        // chat input
-        this.chatButton.on('pointerdown', () => {
-            // open chatbox
-            if (!this.chatOn) { 
-                this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
-                this.chatOn = !this.chatOn;
-            } else {
-                // close chatbox
-                this.scene.remove(CST.SCENES.CHAT);
-                this.chatOn = !this.chatOn;
-            }
-        });
-        this.chatButton.on('pointerover', () => {
-            this.chatButton.setTint(0x30839f);
-        });
-        this.chatButton.on('pointerout', () => {
-            this.chatButton.clearTint();
-        });
+        }).setDepth(150);        
 
         // Clock
         this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
@@ -213,5 +176,4 @@ export default class HUD extends Phaser.Scene {
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
     }
-
 }

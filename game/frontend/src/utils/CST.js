@@ -11,6 +11,7 @@ export const CST = {
         RANKING: 'RANKING',
         CHAT: 'CHAT',
         DEV: 'DEV',
+        HUD: 'HUD'
     },
     COLORS: {
         RANKLIST_PRIMARY: 0x4e342e,
