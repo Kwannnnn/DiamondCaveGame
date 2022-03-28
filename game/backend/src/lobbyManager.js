@@ -135,6 +135,7 @@ class LobbyManager {
      * @param player the player object that represent a player or a spectator joining
      */
     validateNames(room, player) {
+
         if (room.players.length != 0 || room.spectators.length != 0) {
             //if there are already players or spectators in the room, check names
 
@@ -155,7 +156,13 @@ class LobbyManager {
                     return;
                 }
             }
+
+            //players or spectators exist, but after iterating over them no duplicating names found
+            return true;
         }
+
+        //no player nor spectator exist
+        return true;
     }
 
 }
