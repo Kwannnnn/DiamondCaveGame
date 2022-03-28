@@ -144,7 +144,7 @@ class LobbyManager {
             for (const p of room.players) {
                 if (p.id == player.id) {
                     player.socket.emit('nameAlreadyExistForAPlayer');
-                    return;
+                    return false;
                 }
             }
 
@@ -153,7 +153,7 @@ class LobbyManager {
             for (const s of room.spectators) {
                 if (s.id == player.id) {
                     player.socket.emit('nameAlreadyExistForASpectator');
-                    return;
+                    return false;
                 }
             }
 

@@ -576,6 +576,25 @@ gemId;
             boundires, and/or orientation facing south-west.
         </td>
     </tr>
+
+
+
+
+<tr>
+    <td>nameAlreadyExistForAPlayer</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
+</tr>
+
+
+<tr>
+    <td>nameAlreadyExistForASpectator</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
+</tr>
+
+
+
 </table>
 
 ## Client Events
