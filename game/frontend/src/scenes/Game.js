@@ -28,7 +28,6 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser', 'assets/laser_trap.PNG');
-
     }
 
     init(data) {
@@ -313,60 +312,10 @@ export default class Game extends Phaser.Scene {
         });
     }
 
-
-    /**
-     * Setup laser traps
-     */
-    setupLaserTraps() {
-        this.laserTrapData = new Map();
-        this.laserTrapGroup = this.physics.add.group();
-
-        this.gameState.laserTraps.forEach(st => {
-            const sprite = this.physics.add.sprite(st.start.x, st.start.y, 'laser');
-            sprite.id = st.trapId;
-            sprite.active = st.active;
-            this.laserTrapGroup.add(sprite);
-        });
-
-        // flickering sprite at a frequancy of every 2 seconds
-        this.timedEvent = this.time.addEvent({
-            delay: 2000,
-            callback: this.updateSpikes,
-            callbackScope: this,
-            loop: true
-        });
-    }
-
-
-    /**
-     * update laser trap state on collision
-     */
-    updateLaserTraps() {
-        this.laserTrapGroup.children.each(st => {
-            if (st.active === 0) {
-                st.active = 1;
-                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
-            } else {
-                st.active = 0;
-            }
-        });
-    }
-
-
-
-
-
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
         HUD.changeHealth(healthChange);
-    }
-
-    /**
-     * damage caused to health when coliding with laser trap
-     */
-    dealLaserDamage() {
-        this.changeHealth(-15);
     }
 
     /**

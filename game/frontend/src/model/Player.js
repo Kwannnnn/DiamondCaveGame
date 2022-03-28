@@ -12,6 +12,15 @@ export default class Player extends ControlledUnit {
         this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
         this.setNamePosition();
 
+        // Change spike trap variable
+        this.spikeTrapsOn = false;
+        this.timedEvent = this.time.addEvent({
+            delay: 2000,
+            callback: updateSpikeTraps,
+            callbackScope: this,
+            loop: true
+        });
+
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
 
@@ -123,17 +132,22 @@ export default class Player extends ControlledUnit {
             this.setNamePosition();
         }
 
+        // LASER TRAP
         if (tile && tile.index == 3) {
             // Call damage player method
             // Or call trap object
-            console.log('You walked on a trap');
+            console.log('You walked on a laser trap');
         }
 
+        // SPIKE TRAP
         if (tile && tile.index == 4) {
-            // Do smth else
-            console.log('You walked on tile with index 4');
+            console.log('You walked on a spike trap');
+            if (this.spikeTrapsOn) {
+                //take damage
+                this.takeSpikeDamage;
+                console.log('spike trap active, take damage');
+            }
         }
-
 
         if (movementX !== 0 || movementY !== 0) {
             this.handlePlayerMoved();
@@ -164,5 +178,13 @@ export default class Player extends ControlledUnit {
 
     setSocket(socket) {
         this.socket = socket;
+    }
+
+    takeSpikeDamage() {
+        HUD.changeHealth(-10);
+    }
+
+    updateSpikeTrap() {
+        this.spikeTrapsOn = !this.spikeTrapsOn;
     }
 }
