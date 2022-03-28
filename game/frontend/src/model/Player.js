@@ -14,9 +14,9 @@ export default class Player extends ControlledUnit {
 
         // Change spike trap variable
         this.spikeTrapsOn = false;
-        this.timedEvent = this.time.addEvent({
+        this.trapUpdate = this.scene.time.addEvent({
             delay: 2000,
-            callback: updateSpikeTraps,
+            callback: this.updateSpikeTraps,
             callbackScope: this,
             loop: true
         });
@@ -184,7 +184,7 @@ export default class Player extends ControlledUnit {
         HUD.changeHealth(-10);
     }
 
-    updateSpikeTrap() {
+    updateSpikeTraps() {
         this.spikeTrapsOn = !this.spikeTrapsOn;
     }
 }
