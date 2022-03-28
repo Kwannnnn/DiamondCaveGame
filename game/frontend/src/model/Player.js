@@ -12,15 +12,15 @@ export default class Player extends ControlledUnit {
         this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
         this.setNamePosition();
 
-        // Change spike trap variable
+        // Change whether spike traps are on or off
         this.invulnerableToSpikes = false;
-        this.spikeTrapsOn = false;
-        this.trapUpdate = this.scene.time.addEvent({
-            delay: 2000,
-            callback: this.updateSpikeTraps,
-            callbackScope: this,
-            loop: true
-        });
+        this.spikeTrapsOn = true;
+        // this.trapUpdate = this.scene.time.addEvent({
+        //     delay: 2000,
+        //     callback: this.updateSpikeTraps(),
+        //     callbackScope: this,
+        //     loop: true
+        // });
 
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
@@ -142,16 +142,23 @@ export default class Player extends ControlledUnit {
 
         // SPIKE TRAP
         if (tile && tile.index == 4) {
-            console.log('You walked on a spike trap');
-            if (this.spikeTrapsOn && !invulnerableToSpikes) {
-                //take damage
-                this.takeSpikeDamage;
-                console.log('spike trap active, take damage');
-                this.invulnerableToSpikeDamage = this.scene.time.addEvent({
-                    delay: 1000,
-                    callback: this.updateInvulnerableToSpikes,
+            // make sure traps are on and you can even be hit
+            if (this.spikeTrapsOn && !this.invulnerableToSpikes) {
+                console.log(this.invulnerableToSpikes);
+                this.setSpikeVulnerability(true);
+
+                // this makes it so that you cannot be hit by spikes again for the provided time period
+                this.spikeCooldown = this.scene.time.addEvent({
+                    delay: 5000,
+                    callback: this.setSpikeVulnerability(false),
                     callbackScope: this,
                     loop: false
+                });
+
+                // emit so that damage taken is registered in the server
+                this.socket.emit('hitByEnemy', {
+                    lobbyId: this.scene.lobbyId,
+                    damage: 10
                 });
             }
         }
@@ -187,15 +194,16 @@ export default class Player extends ControlledUnit {
         this.socket = socket;
     }
 
-    takeSpikeDamage() {
-        HUD.changeHealth(-10);
-    }
-
     updateSpikeTraps() {
         this.spikeTrapsOn = !this.spikeTrapsOn;
     }
 
     updateInvulnerableToSpikes() {
         this.invulnerableToSpikes = !this.invulnerableToSpikes;
+    }
+
+    setSpikeVulnerability(status) {
+        this.invulnerableToSpikes = status;
+        console.log('aksjdn   ' + this.invulnerableToSpikes);
     }
 }
