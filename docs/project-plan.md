@@ -291,4 +291,4 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-09 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
 | PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | In progress |
 | PB-11 | Colliding with an enemy has a chance to put the player inside a wall | H | 7 | Not started |
-| PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H |  | In progress |
+| PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H | 4 | In progress |
