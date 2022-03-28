@@ -13,6 +13,7 @@ export default class Player extends ControlledUnit {
         this.setNamePosition();
 
         // Change spike trap variable
+        this.invulnerableToSpikes = false;
         this.spikeTrapsOn = false;
         this.trapUpdate = this.scene.time.addEvent({
             delay: 2000,
@@ -142,10 +143,16 @@ export default class Player extends ControlledUnit {
         // SPIKE TRAP
         if (tile && tile.index == 4) {
             console.log('You walked on a spike trap');
-            if (this.spikeTrapsOn) {
+            if (this.spikeTrapsOn && !invulnerableToSpikes) {
                 //take damage
                 this.takeSpikeDamage;
                 console.log('spike trap active, take damage');
+                this.invulnerableToSpikeDamage = this.scene.time.addEvent({
+                    delay: 1000,
+                    callback: this.updateInvulnerableToSpikes,
+                    callbackScope: this,
+                    loop: false
+                });
             }
         }
 
@@ -186,5 +193,9 @@ export default class Player extends ControlledUnit {
 
     updateSpikeTraps() {
         this.spikeTrapsOn = !this.spikeTrapsOn;
+    }
+
+    updateInvulnerableToSpikes() {
+        this.invulnerableToSpikes = !this.invulnerableToSpikes;
     }
 }
