@@ -67,7 +67,7 @@ class GameManager {
         player.socket.emit('rankList', runs.toArray());
     }
 
-    handleCollectDiamond(roomId, gemId) {
+    handleCollectDiamond(player, roomId, gemId) {
         // if (player.x === diamond.x && player.y === diamond.y) {
         //     console.log('Player ' + player.x + ' ' + player.y);
         //     console.log('Diamond ' + diamond.x + ' ' + diamond.y);
@@ -86,11 +86,11 @@ class GameManager {
                 room.gemsCollected++;
                 console.log('Gems collected: ' + room.gemsCollected);
                 // Notify teammate about collected diamond
-                this.io.to(roomId).emit('gemCollected', gemId);
+                player.socket.to(roomId).emit('gemCollected', gemId);
 
-                // room.spectators.forEach(spectator => {
-                //     spectator.socket.emit('gemCollected', diamond.gemId);
-                // });
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('gemCollected', gemId);
+                });
             } else {
                 player.socket.emit('roomNotFound', roomId);
             }

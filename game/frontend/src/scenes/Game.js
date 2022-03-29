@@ -202,7 +202,7 @@ export default class Game extends Phaser.Scene {
      * @param diamond the collected diamond
      */
     collectDiamond(player, diamond) {
-        diamond.destroy();
+        this.destroyDiamondSprite(diamond);
         this.updateCollectedDiamondsCount();
 
         console.log('gem id ' + diamond.id);
@@ -221,7 +221,7 @@ export default class Game extends Phaser.Scene {
         // Iterate through diamond physics group to remove matching diamond
         this.diamonds.children.each((child) => {
             if (child.id === gemId) {
-                child.destroy();
+                this.destroyDiamondSprite(child);
                 this.updateCollectedDiamondsCount();
             }
         });

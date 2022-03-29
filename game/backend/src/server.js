@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
 
     socket.on('playerMove', (newPosition) => gameManager.handlePlayerMove(newPosition, player));
 
-    socket.on('collectGem', (args) => gameManager.handleCollectDiamond(args.roomId, args.gemId));
+    socket.on('collectGem', (args) => gameManager.handleCollectDiamond(player, args.roomId, args.gemId));
 
     socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
 
