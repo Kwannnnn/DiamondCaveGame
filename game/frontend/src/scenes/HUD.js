@@ -160,13 +160,15 @@ export default class HUD extends Phaser.Scene {
 
     updateDiamondCount(count) {
         this.collectedDiamonds = count;
+        this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
+
 
         if (this.collectedDiamonds === this.totalDiamonds) {
-            this.diamondCounter.setText('Go to next map!');
-        } else {
-            // console.log(this.collectedDiamonds);
-            this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
-        }        
+            this.add.text(this.game.renderer.width / 2 + 140, MARGIN_Y + 100, 'Go to next map!', {
+                color: '#FFFFFF',
+                fontSize: 30,
+            }).setOrigin(1, 1)
+        }     
     }
 
     updateHealth(health) {

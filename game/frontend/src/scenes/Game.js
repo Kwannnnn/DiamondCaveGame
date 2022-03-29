@@ -202,18 +202,13 @@ export default class Game extends Phaser.Scene {
      * @param diamond the collected diamond
      */
     collectDiamond(player, diamond) {
-        this.destroyDiamondSprite(diamond);
+        diamond.destroy();
         this.updateCollectedDiamondsCount();
 
-        //this is a small test for the speed increase 
-        /* this.increaseSpeed();
-        console.log('current delay:'+this.delay); */
-
-        this.socket.emit('gemCollected', {
+        console.log('gem id ' + diamond.id);
+        this.socket.emit('collectGem', {
             roomId: this.lobbyID,
-            gemId: diamond.id,
-            x:diamond.x,
-            y:diamond.y
+            gemId: diamond.id
         });
     }
 
@@ -222,11 +217,11 @@ export default class Game extends Phaser.Scene {
      * event on the web socket.
      * @param diamond the diamond that has been collected
      */
-    handleDiamondCollected(diamond) {
+    handleDiamondCollected(gemId) {
         // Iterate through diamond physics group to remove matching diamond
         this.diamonds.children.each((child) => {
-            if (child.id === diamond) {
-                this.destroyDiamondSprite(child);
+            if (child.id === gemId) {
+                child.destroy();
                 this.updateCollectedDiamondsCount();
             }
         });
@@ -242,15 +237,9 @@ export default class Game extends Phaser.Scene {
 
         this.gameState.gems.forEach(g => {
             let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+            sprite.setScale(0.2);
+            sprite.id = g.gemId;
             this.diamonds.add(sprite);
-        });
-
-        let id = 1;
-        // Scope each diamond
-        this.diamonds.children.iterate(function (child) {
-            child.setScale(0.2);
-            child.id = id;
-            id++;
         });
     }
 
@@ -410,7 +399,6 @@ export default class Game extends Phaser.Scene {
         console.log(this.initialGameState);
         this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            console.log('collided');
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
@@ -472,7 +460,7 @@ export default class Game extends Phaser.Scene {
     }
 
     handleSocketEvents() {
-        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
+        this.socket.on('gemCollected', (gemId) => this.handleDiamondCollected(gemId));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.remove(CST.SCENES.HUD);
