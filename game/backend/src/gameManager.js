@@ -71,29 +71,29 @@ class GameManager {
         // if (player.x === diamond.x && player.y === diamond.y) {
         //     console.log('Player ' + player.x + ' ' + player.y);
         //     console.log('Diamond ' + diamond.x + ' ' + diamond.y);
-            const room = rooms.get(roomId);
-            const gems = room.gameState.gems;
-            if (room) {
-                // Update the game state of the room
-                // TODO: Change the status of the gem, instead of
-                // deleting it completely
-                for (let i = 0; i < gems.length; i++) {
-                    if (gems[i].gemId == gemId) {
-                        gems.splice(i, 1);
-                    }
+        const room = rooms.get(roomId);
+        const gems = room.gameState.gems;
+        if (room) {
+            // Update the game state of the room
+            // TODO: Change the status of the gem, instead of
+            // deleting it completely
+            for (let i = 0; i < gems.length; i++) {
+                if (gems[i].gemId == gemId) {
+                    gems.splice(i, 1);
                 }
-
-                room.gemsCollected++;
-                console.log('Gems collected: ' + room.gemsCollected);
-                // Notify teammate about collected diamond
-                player.socket.to(roomId).emit('gemCollected', gemId);
-
-                room.spectators.forEach(spectator => {
-                    spectator.socket.emit('gemCollected', gemId);
-                });
-            } else {
-                player.socket.emit('roomNotFound', roomId);
             }
+
+            room.gemsCollected++;
+            console.log('Gems collected: ' + room.gemsCollected);
+            // Notify teammate about collected diamond
+            player.socket.to(roomId).emit('gemCollected', gemId);
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('gemCollected', gemId);
+            });
+        } else {
+            player.socket.emit('roomNotFound', roomId);
+        }
         // } else {
         //     player.socket.emit('cheatDetected', player.id);
         // }
