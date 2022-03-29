@@ -7,11 +7,12 @@ import {
     JoinScene,
     MenuScene,
     PerksScene,
-    ActiveGamesScene,
+    //ActiveGamesScene,
     SpectatorJoinScene,
     RankingScene,
     ChatScene,
     DeveloperScene,
+    HUD
 } from './scenes';
 
 const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth)
@@ -32,10 +33,9 @@ const config = {
         PerksScene,
         LobbyScene,
         JoinScene,
-        ActiveGamesScene,
+        //ActiveGamesScene,
         SpectatorJoinScene,
         RankingScene,
-        ChatScene,
         DeveloperScene,
     ],
     parent: 'game',

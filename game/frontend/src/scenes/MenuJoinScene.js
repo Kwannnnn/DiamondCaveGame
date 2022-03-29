@@ -3,8 +3,7 @@ import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 import { lobbyCodeForm } from '../components/LobbyTextField'
 
-// const SERVER_URL = 'vps1056.directvps.nl:3000';
-const SERVER_URL = 'localhost:3000';
+const SERVER_URL = 'http://localhost:3000';
 // const lobbyCodeForm = '<label class="custom-field one">\n' +
 //     '  <input type="text" name="lobby" placeholder="Enter lobby code"/>';
 // const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';

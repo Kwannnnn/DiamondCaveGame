@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
 import { Header } from '../components';
+import ChatScene from './ChatScene';
 
 /*
     This scene is run after the team finishes the map. Here the perk for the next map is chosen.
@@ -20,6 +21,9 @@ export default class PerkMenu extends Phaser.Scene {
 
         // Only for testing
         this.gameState = data.gameState;
+
+        console.log(this.scene);
+
     }
 
     preload() {
@@ -32,6 +36,7 @@ export default class PerkMenu extends Phaser.Scene {
     }
 
     create() {
+        this.setupChat();
         // Set background to black and add title
         new Header(this, this.game.renderer.width / 2, 200, 'Choose a perk');
         
@@ -73,8 +78,11 @@ export default class PerkMenu extends Phaser.Scene {
 
         // Wait for final perk to be sent from server (now it only listens to movement perk)
         this.socket.on('perkForNextGame', (args) => {
-            this.scene.stop(this);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: 2,  
                 username: this.username,
                 initialGameState: args.gameState,
                 lobbyID: this.lobbyID,
@@ -109,6 +117,12 @@ export default class PerkMenu extends Phaser.Scene {
                 console.error('Unknown perk');
                 return null;
         }
+    }
+
+    setupChat() {
+        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
+            socket: this.socket
+        });
     }
 
     runTimer() {

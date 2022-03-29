@@ -68,27 +68,34 @@ class GameManager {
     }
 
     handleCollectDiamond(player, diamond) {
-        const roomId = diamond.roomId;
-        const room = rooms.get(roomId);
-        const gems = rooms.get(roomId).gameState.gems;
-        if (room) {
-            // Update the game state of the room
-            // TODO: Change the status of the gem, instead of
-            // deleting it completely
-            for (let i = 0; i < gems.length; i++) {
-                if (gems[i].gemId == diamond.gemId) {
-                    gems.splice(i, 1);
-                    room.gemsCollected++;
+        if (player.x === diamond.x && player.y === diamond.y) {
+            console.log('Player ' + player.x + ' ' + player.y);
+            console.log('Diamond ' + diamond.x + ' ' + diamond.y);
+            const roomId = diamond.roomId;
+            const room = rooms.get(roomId);
+            const gems = rooms.get(roomId).gameState.gems;
+            if (room) {
+                // Update the game state of the room
+                // TODO: Change the status of the gem, instead of
+                // deleting it completely
+                for (let i = 0; i < gems.length; i++) {
+                    if (gems[i].gemId == diamond.gemId) {
+                        gems.splice(i, 1);
+                    }
                 }
-            }
-            // Notify teammate about collected diamond
-            player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+                rooms.get(roomId).gemsCollected++;
+                console.log('Gems collected: ' + rooms.get(roomId).gemsCollected);
+                // Notify teammate about collected diamond
+                player.socket.to(roomId).emit('gemCollected', diamond.gemId);
 
-            room.spectators.forEach(spectator => {
-                spectator.socket.emit('gemCollected', diamond.gemId);
-            });
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('gemCollected', diamond.gemId);
+                });
+            } else {
+                player.socket.emit('roomNotFound', roomId);
+            }
         } else {
-            player.socket.emit('roomNotFound', roomId);
+            player.socket.emit('cheatDetected', player.id);
         }
     }
 
@@ -97,6 +104,7 @@ class GameManager {
         const player2 = room.players[1];
 
         let gameState = {
+            'level': room.level,
             'tileMap': map.tileMap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
@@ -135,16 +143,6 @@ class GameManager {
                     'y': 336,
                 }],
             }],
-            'laserTraps': [{
-                'trapId': 4,
-                'start': {
-                    'x': 200,
-                    'y': 200,
-                },
-                'active': 0,
-            }],
-
-
             'pressurePlateTraps': [{
                 'trapId': 1,
                 'plate': {
@@ -216,6 +214,7 @@ class GameManager {
         const room = rooms.get(lobbyID);
 
         if (room) {
+            room.level += 1;
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 console.log(room.players[0].perkChoice);
