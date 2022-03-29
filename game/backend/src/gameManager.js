@@ -26,7 +26,7 @@ class GameManager {
             rooms.get(roomId).gameState = initialGameState;
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             this.io.to(roomId).emit('initialGameState', initialGameState);
-            room.startTime();
+            room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }
 
@@ -36,6 +36,7 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
+            // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
             player.x = newPosition.x;
             player.y = newPosition.y;
             player.orientation = newPosition.orientation;
@@ -348,6 +349,11 @@ class GameManager {
         // remove room from rooms map since we dont need it anymore
         // rooms.delete(roomId);
         console.log(runs.toArray());
+    }
+
+    onUpdateTime(roomId, newTime) {
+        this.io.to(roomId).emit('current-time', newTime);
+        console.log('Room ' + roomId + ': ' + newTime);
     }
 }
 
