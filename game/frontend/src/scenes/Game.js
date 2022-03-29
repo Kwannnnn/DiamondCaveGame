@@ -29,7 +29,9 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser', 'assets/laser_trap.PNG');
-        this.load.image('spike', 'assets/spikeTrap.png');
+
+        this.load.image('spikeOn',  'assets/spikeTrapOn.png');
+        this.load.image('spikeOff', 'assets/spikeTrapOff.png');
     }
 
     init(data) {
@@ -83,6 +85,7 @@ export default class Game extends Phaser.Scene {
 
     update() {
         this.controlledUnit.update();
+        this.hasSteppedOnSpikeTrap();
     }
 
     /**
@@ -287,20 +290,20 @@ export default class Game extends Phaser.Scene {
      */
     setupSpikeTraps() {
         // get all spike trap coordinates
-        this.spikeLocations = this.getCoordinatesFromTileMap(4);
-        this.spikeTraps = [];
-        this.spikeTrapsGroup = this.physics.add.group();
+        this.spikeLocations = this.getCoordinatesFromTileMap(4); // array of coordinate objects
+        this.spikeTraps = []; // array of SpikeTrap objects
+        this.spikeTrapSprites = []; // array of spike trap sprites
+        this.spikeTrapsGroup = this.physics.add.group(); // array of sprite objects
 
         // create a spike trap object for each spawn location and add overlap to it
         for (let i = 0; i < this.spikeLocations.length; i++) {
-            let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spike').setScale(0.1);
+            //let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
 
-            let trap = new SpikeTrap(this.scene, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
-
-            this.physics.add.overlap(this.controlledUnit, trapSprite, console.log('overlap works'));
+            const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
 
             this.spikeTraps.push(trap);
-            this.spikeTrapsGroup.add(trapSprite);
+            //this.spikeTrapSprites.push(trapSprite);
+            //this.spikeTrapsGroup.add(trapSprite);
         }
     }
 
@@ -326,6 +329,20 @@ export default class Game extends Phaser.Scene {
             }
         }
         return locations;
+    }
+
+    /**
+     * Check whether player has stepped on a spike trap
+     */
+    hasSteppedOnSpikeTrap() {
+        const playerPos = this.controlledUnit.getLocation();
+
+        for (let i = 0; i < this.spikeTraps.length; i++) {
+            const spikePos = { x: this.spikeTraps[i].x, y: this.spikeTraps[i].y };
+            if (playerPos.x === spikePos.x && playerPos.y === spikePos.y) {
+                this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit);
+            }
+        }
     }
 
     /**

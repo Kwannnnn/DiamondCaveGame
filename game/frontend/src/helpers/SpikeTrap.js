@@ -1,6 +1,8 @@
 
 // A SpikeTrap object will be spawned at every location that there is a 3 in the tileMap
 
+let immunePlayers = []; // array of Player objects
+
 export default class SpikeTrap {
     constructor(scene, x, y, lobbyId, trapId, socket) {
         // constructor variables
@@ -12,25 +14,19 @@ export default class SpikeTrap {
         this.socket = socket;
 
         // initialize logic variables
-        this.immunePlayers = [];
         this.spikesOn = true;
-        this.enabled = false;
+        this.enabled = true;
 
         // start spikes up&down
-        //this.startSpikeCycle();
+        // this.startSpikeCycle();
     }
 
     // handle what happens when a player steps on the trap
     steppedOnSpikeTrap(player) {
-        console.log('stepped on trap, player: '+player.playerId);
-        console.log('spikes on: '+this.spikesOn);
-        console.log('is immune: '+this.isPlayerImmune(player));
-        console.log('enabled: '+this.enabled);
+        console.log(immunePlayers.length);
 
         // make sure trap is on and player can even be hit
-        if (this.spikesOn && !this.isPlayerImmune(player) && this.enabled) {
-            console.log(this.invulnerableToSpikes);
-
+        if (this.spikesOn && !immunePlayers.includes(player) && this.enabled) {
             this.damageCooldown(player);
 
             // emit so that damage taken is registered in the server
@@ -38,6 +34,7 @@ export default class SpikeTrap {
                 lobbyId: this.lobbyId,
                 damage: 10
             });
+            console.log('spike dealt damage to player');
         }
     }
 
@@ -45,12 +42,11 @@ export default class SpikeTrap {
     startSpikeCycle() {
         if (this.enabled) {
             console.log('spike cycle enabled')
-            // this.spikeCycle = this.scene.time.addEvent({
-            //     delay: 2000,
-            //     callback: this.swapState,
-            //     callbackScope: this,
-            //     loop: false
-            // });
+
+            this.spikeCycle = setInterval(this.swapState, 2000);
+
+        } else {
+            console.log('trap cycle cant be enabled');
         }
     }
 
@@ -58,13 +54,8 @@ export default class SpikeTrap {
     damageCooldown(player) {
         this.makePlayerImmune(player);
 
-        // this makes it so that you cannot be hit by this trap again for the provided time period
-        this.spikeDamage = this.scene.time.addEvent({
-            delay: 5000,
-            callback: this.removeImmunity(player),
-            callbackScope: this,
-            loop: false
-        });
+        // this makes the player vulnerable again after the given time
+        setTimeout(this.removeImmunity, 500, player);
     }
 
     getLocation() {
@@ -77,7 +68,7 @@ export default class SpikeTrap {
     // invert the spikesOn variable
     swapState() {
         this.spikesOn = !this.spikesOn;
-        console.log('state swapped, spike trap: ' + this.spikesOn);
+        console.log('spike with id '+ this.trapId + ' is now ' + this.spikesOn);
     }
 
     enableTrap() {
@@ -85,27 +76,33 @@ export default class SpikeTrap {
         this.startSpikeCycle();
     }
 
+    // disable trap and stop spike rotation
     disableTrap() {
         this.spikeCycle.destroy();
-        this.enabled = false
+        this.enabled = false;
+        this.spikesOn = false;
     }
 
     makePlayerImmune(player) {
-        this.immunePlayers.push(player);
+        if (!immunePlayers.includes(player)) {
+            immunePlayers.push(player);
+        }
     }
 
+    // if the given player is in the array of immune players, remove them
     removeImmunity(player) {
         // find player if they exist and remove them
-        if (this.isPlayerImmune(player)) {
-            for (let i = 0; i < this.immunePlayers.length; i++) {
-                if (this.immunePlayers[i] === player) {
-                    this.immunePlayers.splice(i, 1);
+        if (immunePlayers.includes(player)) {
+            for (let i = 0; i < immunePlayers.length; i++) {
+                if (immunePlayers[i] === player) {
+                    immunePlayers.splice(i, 1);
+                    console.log(`player ${player} made vulnerable again to spike trap ${this.trapId}`);
                 }
             }
         }
     }
 
-    isPlayerImmune(player) {
-        return !!this.immunePlayers.includes(player);
+    getState() {
+        return this.spikesOn;
     }
 }

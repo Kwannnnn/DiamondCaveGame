@@ -166,7 +166,7 @@ export default class Player extends ControlledUnit {
         this.socket = socket;
     }
 
-    getCurrentLocation() {
+    getLocation() {
         return {
             x: this.x,
             y: this.y
