@@ -53,10 +53,10 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-game.events.on('hidden',function(){
+game.events.on('hidden', function () {
     console.log('hidden');
-},this);
+}, this);
 
-game.events.on('visible',function(){
+game.events.on('visible', function () {
     console.log('visible');
-},this);
+}, this);
