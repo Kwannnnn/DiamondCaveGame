@@ -5,7 +5,8 @@ class Room {
         this.players = [],
         this.health = 100,
         this.spectators = [],
-        this.gameState = {}
+        this.gameState = {},
+        this.gemsCollected = 0;
     }
 }
 

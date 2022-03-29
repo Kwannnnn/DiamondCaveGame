@@ -24,7 +24,7 @@ deploy:
   image: alpine:latest
   stage: deploy
   rules:
-    - if: '$CI_COMMIT_BRANCH =~ /week[0-9]/'
+    - if: '$CI_COMMIT_BRANCH =~ /^week[0-9]/'
   script:
     - apk update
     - apk add git
