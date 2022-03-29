@@ -12,16 +12,6 @@ export default class Player extends ControlledUnit {
         this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
         this.setNamePosition();
 
-        // Change whether spike traps are on or off
-        this.invulnerableToSpikes = false;
-        this.spikeTrapsOn = true;
-        // this.trapUpdate = this.scene.time.addEvent({
-        //     delay: 2000,
-        //     callback: this.updateSpikeTraps(),
-        //     callbackScope: this,
-        //     loop: true
-        // });
-
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
 
@@ -176,16 +166,10 @@ export default class Player extends ControlledUnit {
         this.socket = socket;
     }
 
-    updateSpikeTraps() {
-        this.spikeTrapsOn = !this.spikeTrapsOn;
-    }
-
-    updateInvulnerableToSpikes() {
-        this.invulnerableToSpikes = !this.invulnerableToSpikes;
-    }
-
-    setSpikeVulnerability(status) {
-        this.invulnerableToSpikes = status;
-        console.log('aksjdn   ' + this.invulnerableToSpikes);
+    getCurrentLocation() {
+        return {
+            x: this.x,
+            y: this.y
+        }
     }
 }
