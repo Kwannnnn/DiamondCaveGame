@@ -29,6 +29,7 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser', 'assets/laser_trap.PNG');
+        this.load.image('spike', 'assets/spikeTrap.png');
     }
 
     init(data) {
@@ -55,7 +56,6 @@ export default class Game extends Phaser.Scene {
 
         this.setupHUD();
         this.setupChat();
-        this.setupSpikeTraps();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
@@ -65,9 +65,9 @@ export default class Game extends Phaser.Scene {
         this.setupControlledUnit();
         this.setupCamera();
         this.placeExit();
+        this.setupSpikeTraps();
 
         this.handleSocketEvents();
-
 
         this.pressureCheckEvent = this.time.addEvent({
             delay: 100,
@@ -284,19 +284,22 @@ export default class Game extends Phaser.Scene {
      * Place SpikeTrap objects where 4s appear on the tilemap
      */
     setupSpikeTraps() {
+        // get all spike trap coordinates
         this.spikeLocations = this.getCoordinatesFromTileMap(4);
         this.spikeTraps = [];
+        this.spikeTrapsGroup = this.physics.add.group();
 
-        console.log(this.spikeLocations[0].x);
-
-        // create a spike trap object for each spawn location
+        // create a spike trap object for each spawn location and add overlap to it
         for (let i = 0; i < this.spikeLocations.length; i++) {
-            let trap = new SpikeTrap(this.scene, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, this);
-            console.log(trap);
-            this.physics.add.overlap(this.controlledUnit, trap, trap.steppedOnSpikeTrap(this.controlledUnit));
-            this.spikeTraps.push(trap);
-        }
+            let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spike').setScale(0.1);
 
+            let trap = new SpikeTrap(this.scene, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
+
+            this.physics.add.overlap(this.controlledUnit, trapSprite, console.log('overlap works'));
+
+            this.spikeTraps.push(trap);
+            this.spikeTrapsGroup.add(trapSprite);
+        }
     }
 
     /**

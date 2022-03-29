@@ -2,13 +2,14 @@
 // A SpikeTrap object will be spawned at every location that there is a 3 in the tileMap
 
 export default class SpikeTrap {
-    constructor(scene, x, y, lobbyId, players) {
+    constructor(scene, x, y, lobbyId, trapId, socket) {
         // constructor variables
         this.scene = scene;
         this.x = x;
         this.y = y;
         this.lobbyId = lobbyId;
-        this.players = players;
+        this.trapId = trapId;
+        this.socket = socket;
 
         // initialize logic variables
         this.immunePlayers = [];
@@ -21,6 +22,11 @@ export default class SpikeTrap {
 
     // handle what happens when a player steps on the trap
     steppedOnSpikeTrap(player) {
+        console.log('stepped on trap, player: '+player.playerId);
+        console.log('spikes on: '+this.spikesOn);
+        console.log('is immune: '+this.isPlayerImmune(player));
+        console.log('enabled: '+this.enabled);
+
         // make sure trap is on and player can even be hit
         if (this.spikesOn && !this.isPlayerImmune(player) && this.enabled) {
             console.log(this.invulnerableToSpikes);
@@ -85,11 +91,18 @@ export default class SpikeTrap {
     }
 
     makePlayerImmune(player) {
-        this.immunePlayers.add(player);
+        this.immunePlayers.push(player);
     }
 
     removeImmunity(player) {
-        this.immunePlayers.remove(player);
+        // find player if they exist and remove them
+        if (this.isPlayerImmune(player)) {
+            for (let i = 0; i < this.immunePlayers.length; i++) {
+                if (this.immunePlayers[i] === player) {
+                    this.immunePlayers.splice(i, 1);
+                }
+            }
+        }
     }
 
     isPlayerImmune(player) {
