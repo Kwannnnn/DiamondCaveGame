@@ -471,6 +471,13 @@ export default class Game extends Phaser.Scene {
         console.log('Player with id ' + cheaterId + ' has cheated!');
     }
 
+    /**
+     * Should be triggered when player tries to leave the map alone
+     */
+    handleSingleMapLeaving() {
+        console.log('You cannot leave the map alone');
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
@@ -493,7 +500,9 @@ export default class Game extends Phaser.Scene {
             // HUD.changeHealth(damage);
 
             console.log('Team got damage ' + damage.damage + ' health points');
-        })
+        });
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+
+        this.socket.on('waitForTeammate', () => this.handleSingleMapLeaving());
     }
 }

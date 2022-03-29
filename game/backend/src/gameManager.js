@@ -159,13 +159,23 @@ class GameManager {
         return gameState;
     }
 
-    handleReachingMapEnd(roomID) {
+    handleReachingMapEnd(player, roomID) {
         const room = rooms.get(roomID);
     
         if (room) {
-            room.players.forEach(player => {
-                player.socket.emit('choosePerks', perks);
-            });
+
+            // Check if two players reached the end, or only one
+            if (!room.playersReachedEnd) {
+                room.playersReachedEnd = 1;
+                player.socket.emit('waitForTeammate');
+            } else if (room.playersReachedEnd == 1) {
+                room.players.forEach(player => {
+                    player.socket.emit('choosePerks', perks);
+                });
+
+                room.playersReachedEnd = 0;
+            }
+            
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
