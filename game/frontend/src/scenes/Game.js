@@ -88,7 +88,7 @@ export default class Game extends Phaser.Scene {
      * Adds the HUD to the GameScene
      */
     setupHUD() {
-        this.scene.add('hud', HUD, true, {
+        this.hud = this.scene.add('hud', HUD, true, {
             stage: this.gameState.level,
             totalDiamonds: this.gameState.gems.length,
             socket: this.socket
@@ -495,5 +495,6 @@ export default class Game extends Phaser.Scene {
             console.log('Team got damage ' + damage.damage + ' health points');
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+        this.socket.on('current-time', (time) => this.hud.setTime(time));
     }
 }
