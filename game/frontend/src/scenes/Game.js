@@ -7,6 +7,7 @@ import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
 import { handlePressureDoors, setTraps } from '../helpers/Traps';
+import SpikeTrap from '../helpers/SpikeTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -54,6 +55,7 @@ export default class Game extends Phaser.Scene {
 
         this.setupHUD();
         this.setupChat();
+        this.setupSpikeTraps();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
@@ -112,7 +114,7 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
+            const player = new Player(this, p.x, p.y, p.playerId, this.perk, this.spikeTraps);
             this.players.set(p.playerId, player);
         });
     }
@@ -276,6 +278,49 @@ export default class Game extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    }
+
+    /**
+     * Place SpikeTrap objects where 4s appear on the tilemap
+     */
+    setupSpikeTraps() {
+        this.spikeLocations = this.getCoordinatesFromTileMap(4);
+        this.spikeTraps = [];
+
+        console.log(this.spikeLocations[0].x);
+
+        // create a spike trap object for each spawn location
+        for (let i = 0; i < this.spikeLocations.length; i++) {
+            let trap = new SpikeTrap(this.scene, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, this);
+            console.log(trap);
+            this.physics.add.overlap(this.controlledUnit, trap, trap.steppedOnSpikeTrap(this.controlledUnit));
+            this.spikeTraps.push(trap);
+        }
+
+    }
+
+    /**
+     * Finds the coordinates for each location that the given number appears
+     */
+    getCoordinatesFromTileMap(tileNumber) {
+        let locations = [];
+
+        // itirate through the gameState tileMap to find coordinates of the provided number
+        for (let row = 0; row < this.gameState.tileMap.length; row++) {
+            for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
+                // value found?
+                if (this.gameState.tileMap[row][column] == tileNumber) {
+                    // translate index to coordinates
+                    let coordinates = {
+                        x: column * 32 + 16,
+                        y: row * 32 + 16
+                    };
+                    // register these coordinates
+                    locations.push(coordinates);
+                }
+            }
+        }
+        return locations;
     }
 
     /**

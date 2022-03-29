@@ -142,25 +142,7 @@ export default class Player extends ControlledUnit {
 
         // SPIKE TRAP
         if (tile && tile.index == 4) {
-            // make sure traps are on and you can even be hit
-            if (this.spikeTrapsOn && !this.invulnerableToSpikes) {
-                console.log(this.invulnerableToSpikes);
-                this.setSpikeVulnerability(true);
-
-                // this makes it so that you cannot be hit by spikes again for the provided time period
-                this.spikeCooldown = this.scene.time.addEvent({
-                    delay: 5000,
-                    callback: this.setSpikeVulnerability(false),
-                    callbackScope: this,
-                    loop: false
-                });
-
-                // emit so that damage taken is registered in the server
-                this.socket.emit('hitByEnemy', {
-                    lobbyId: this.scene.lobbyId,
-                    damage: 10
-                });
-            }
+            // spike trap implementation is in SpikeTrap.js
         }
 
         if (movementX !== 0 || movementY !== 0) {

@@ -36,7 +36,7 @@ function resetDoors(layer, players) {
 
         const door = trap.door;
         const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
-        doorTile.index = 2;
+        //doorTile.index = 2;
     }
 }
 
