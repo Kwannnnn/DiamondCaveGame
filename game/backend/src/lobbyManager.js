@@ -77,7 +77,11 @@ class LobbyManager {
 
 
             //validate names
-            this.validateNames(room, player);
+            //if the return value is false, there are duplicates
+            if (!this.validateNames(room, player)) {
+                return;
+            }
+
 
 
 
@@ -114,7 +118,10 @@ class LobbyManager {
         if (room) {
 
             //validate names
-            this.validateNames(room, player);
+            //if the return value is false, there are duplicates
+            if (!this.validateNames(room, player)) {
+                return;
+            }
             
             room.spectators.push(player);
 
