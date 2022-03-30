@@ -11,7 +11,8 @@ export default class Player extends ControlledUnit {
         this.setupAnimations();
         this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
         this.setNamePosition();
-
+        
+        
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
 
