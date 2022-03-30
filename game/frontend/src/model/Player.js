@@ -1,11 +1,12 @@
 import ControlledUnit from './ControlledUnit';
 
 export default class Player extends ControlledUnit {
-    constructor(scene, x, y, username, perk) {
+    constructor(scene, x, y, id, username, perk) {
         super(scene, x, y, 'player');
         this.setScale(0.14);
 
         this.scene = scene;
+        this.id = id;
         this.username = username;
         this.setupPlayerMovement();
         this.setupAnimations();

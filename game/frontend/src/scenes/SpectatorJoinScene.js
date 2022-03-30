@@ -9,7 +9,7 @@ let listingButtons = [];
 export default class SpectatorJoinScene extends Phaser.Scene {
     constructor() {
         super({
-            key: CST.SCENES.SPECTATORJOIN
+            key: CST.SCENES.SPECTATE
         });
     }
 
@@ -144,14 +144,12 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.socket.emit('getCurrentGames');
 
         this.socket.on('currentGames', (payload) => {
-            // console.log(payload);
-            // this.scene.start(CST.SCENES.ACTIVEGAMES,{
-            //     plays:payload
-            // });
-            console.log(payload);
-
             let games = [];
-            for (let game of payload) if (game.gameActive) games.push(game);
+            for (const game of payload) {
+                if (game.gameActive) {
+                    games.push(game);
+                }
+            } 
 
             this.showCurrentGames(games);
         });

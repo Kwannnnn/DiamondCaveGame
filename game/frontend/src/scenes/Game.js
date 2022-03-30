@@ -119,7 +119,7 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
+            const player = new Player(this, p.x, p.y, p.playerId, p.username, this.perk);
             this.players.set(p.playerId, player);
         });
     }
@@ -146,8 +146,9 @@ export default class Game extends Phaser.Scene {
      */
     setupControlledUnit() {
         // Check if the username is in the list of players
-        if (this.gameState.players.find(p => p.playerId === this.username)) {
-            this.controlledUnit = this.players.get(this.username);
+        const player = this.gameState.players.find(p => p.playerId === this.socket.id);
+        if (player !== undefined) {
+            this.controlledUnit = this.players.get(this.socket.id);
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
