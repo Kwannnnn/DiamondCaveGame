@@ -14,7 +14,7 @@ class ChatManager {
 
         // Are we a spectator?
         for (let roomSpectator of rooms.get(player.roomId).spectators) {
-            console.log("RoomSpectator id: "+roomSpectator.id+" "+player.id);
+            console.log('RoomSpectator id: ' + roomSpectator.id + ' ' + player.id);
             if (roomSpectator.id === player.id) {
                 spectator = true;
                 break;
@@ -25,11 +25,9 @@ class ChatManager {
             message: message
         };
 
-        if (!spectator) {
-            this.io.to(player.roomId).emit('chatMessage', data);
-        } // Not a spectator
-        else{
-            console.log("Firmino")
+        if (!spectator) this.io.to(player.roomId).emit('chatMessage', data);// Not a spectator
+        else {
+            console.log('Firmino')
             for (let roomSpectator of rooms.get(player.roomId).spectators) roomSpectator.socket.emit('chatMessage', data); // Is a spectator
         }
         console.log('Sent message from "' + player.id + '": ' + message);
