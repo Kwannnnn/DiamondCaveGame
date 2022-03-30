@@ -99,10 +99,7 @@ export default class Player extends ControlledUnit {
         var right = this.scene.input.keyboard.checkDown(this.keys.right, this.delay);
         var up = this.scene.input.keyboard.checkDown(this.keys.up, this.delay);
         var down = this.scene.input.keyboard.checkDown(this.keys.down, this.delay)  
-        console.log(this.keys.left.isDown, this.keys.right.isDown, up, down);
-        //if (this.keys.left.isDown && this.keys.right.isDown) return;
-        //if (up && down) return;
-
+        
         if (this.keys.left.isDown && this.keys.right.isDown) {
             return;
         }
