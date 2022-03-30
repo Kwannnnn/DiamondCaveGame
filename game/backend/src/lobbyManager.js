@@ -20,7 +20,7 @@ class LobbyManager {
 
             // get ids of players in the room
             for (let player of room.players) {
-                roomObject.playerIds.push(player.id)
+                roomObject.playerIds.push(player.username);
             }
 
             games.push(roomObject);
@@ -40,13 +40,13 @@ class LobbyManager {
 
         //add player to the room
         this.joinRoom(room, player, false);
-        let playerIDs = [];
+        let playerUsernames = [];
         for (player of room.players) {
-            playerIDs.push(player.id);
+            playerUsernames.push(player.username);
         }
 
         //send message back to player with room id and list of playerIDs
-        player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerIDs });
+        player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerUsernames });
     }
 
     joinRoom(room, player, isSpectator) {
@@ -56,6 +56,7 @@ class LobbyManager {
         // Store roomId for future use
         // Might not be needed lol
         player.roomId = room.id;
+        console.log(player.username, 'Joined', room.id);
     }
 
     handleJoinRoom(roomId, player) {
@@ -75,31 +76,32 @@ class LobbyManager {
                 return;
             }
 
-
             //validate names
             //if the return value is false, there are duplicates
             if (!this.validateNames(room, player)) {
                 return;
             }
 
-
-
-
             this.joinRoom(room, player, false);
-            let playerIDs = [];
+            let playerUsernames = [];
             for (player of room.players) {
-                playerIDs.push(player.id);
+                playerUsernames.push(player.username);
             }
 
             let data = {
                 roomId: roomId,
-                playerIDs: playerIDs
+                playerIDs: playerUsernames
             };
             // send room data to the player joins the room
             player.socket.emit('roomJoined', data);
 
             // broadcast to every other team member
             player.socket.to(room.id).emit('newPlayerJoined', player.id);
+
+            // send game-ready-to-start game event if room is full
+            if (room.players.length == this.MAX_ROOM_SIZE) {
+                player.socket.to(roomId).emit('gameReadyToStart');
+            }
 
         } else {
             player.socket.emit('roomNotFound', roomId);
@@ -168,9 +170,9 @@ class LobbyManager {
             
             room.spectators.push(player);
             // TODO: handle on client
-            player.socket.to(room.id).emit('newSpectatorJoined', player.id);
+            player.socket.to(room.id).emit('newSpectatorJoined', player.username);
             player.socket.emit('runGameScene', roomId, room.gameState)
-            console.log('Spectator ' + player.id + ' joined room ' + roomId);
+            console.log('Spectator ' + player.username + ' joined room ' + roomId);
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
