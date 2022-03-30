@@ -7,7 +7,6 @@ class ChatManager {
     }
 
     handleChatMessage(player, message) {
-        console.log("Salah");
         let spectator = false;
 
 
