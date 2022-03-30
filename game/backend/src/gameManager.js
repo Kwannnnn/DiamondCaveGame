@@ -79,7 +79,7 @@ class GameManager {
                 // TODO: Change the status of the gem, instead of
                 // deleting it completely
                 for (let i = 0; i < gems.length; i++) {
-                    if (gems[i].gemId == diamond.gemId) {
+                    if (gems[i].gemId === diamond.gemId) {
                         gems.splice(i, 1);
                     }
                 }

@@ -10,13 +10,14 @@ export default class LobbyScene extends Phaser.Scene {
         super({
             key: CST.SCENES.LOBBY
         });
+
+        this.playerList = new Map();
     }
 
     init(data) {
         this.events.on('shutdown', () => {
             if (this.socket !== undefined) this.socket.removeAllListeners();
         });
-        /* FIXME: The way the 2nd player display the scene is based on client variables. Should be another way to do that but I haven't figured out. */
         if (data === undefined) return;
         this.lobbyID = data.roomId;
         this.playerIDs = data.playerIDs;
@@ -49,11 +50,11 @@ export default class LobbyScene extends Phaser.Scene {
             fontSize: 40
         }).setOrigin(0.5).setInteractive();
 
-        if (this.lobbyID === undefined) this.actionButton.on('pointerdown', () => {
-            this.connect();
+        if (this.lobbyID === undefined) this.actionButton.on('pointerdown', () => { 
+            this.connect(); 
         });
+         
         else {
-            //TODO: Disable button until both players are connected
             this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', this.lobbyID));
             this.displayRoom(this.playerIDs);
             this.socket.on('initialGameState', (payload) => {
@@ -66,13 +67,31 @@ export default class LobbyScene extends Phaser.Scene {
                     initialGameState: payload
                 });
             });
+
+            this.socket.on('newPlayerJoined', (playerId)=>{
+                this.playerList.set(playerId, this.createPlayer(playerId, this.playerList.size + 1));
+                this.displayRoom(this.playerIDs);
+            }); // re-render the scene if new player joins
+
+            this.socket.on('playerLeft', (playerNames)=>{
+                this.playerIDs = playerNames;
+                for (const value of this.playerList.values()) {
+                    value.destroy();
+                }
+                this.playerList.clear();
+                this.displayRoom(this.playerIDs);
+            }); // re-render the scene if a player leaves
+
+            this.socket.on('gameReadyToStart', () => this.enableStartButton());
         }
+
         this.actionButton.on('pointerover', () => {
             this.actionButton.setTint(0x30839f);
         });
         this.actionButton.on('pointerout', () => {
             this.actionButton.clearTint();
         });
+        
     }
 
     connect() {
@@ -94,14 +113,26 @@ export default class LobbyScene extends Phaser.Scene {
             this.createRoom(args);
         });
 
-        this.socket.on('newPlayerJoined', (playerNames)=>{
-            this.playerIDs = playerNames;
+        this.socket.on('newPlayerJoined', (playerId)=>{
+            this.playerList.set(playerId, this.createPlayer(playerId, this.playerList.size + 1));
             this.displayRoom(this.playerIDs);
         }); // re-render the scene if new player joins
+
+        this.socket.on('gameReadyToStart', () => this.enableStartButton());
 
         this.socket.on('connect_error', ()=>{
             this.displayError();
         });
+
+        this.socket.on('playerLeft', (playerNames)=>{
+            this.playerIDs = playerNames;
+            console.log(this.playerList);
+            for (const value of this.playerList.values()) {
+                value.destroy();
+            }
+            this.playerList.clear();
+            this.displayRoom(this.playerIDs);
+        }); // re-render the scene if a player leaves
 
         this.socket.on('initialGameState', (payload) => {
             this.scene.start(CST.SCENES.GAME, {
@@ -117,6 +148,10 @@ export default class LobbyScene extends Phaser.Scene {
 
     createLobby() {
         this.socket.emit('createRoom');
+    }
+
+    leaveLobby() {
+        this.socket.emit('leaveRoom', this.lobbyID);
     }
 
     // Room creation (new room)
@@ -141,38 +176,48 @@ export default class LobbyScene extends Phaser.Scene {
         this.message.setText('Lobby Code: ' + this.lobbyID);
     }
 
+    createPlayer(playerId, index) {
+        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - index * 75), 'Player ' + index + ': ' + playerId, {
+            color: '#FFFFFF',
+            fontSize: 40
+        }).setOrigin(0.5);
+    }
+
     displayPlayer(playerIDs) {
         for (let i = 1; i <= playerIDs.length; i++) {
-            this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - i * 75), 'Player ' + i + ': ' + playerIDs[i - 1], {
-                color: '#FFFFFF',
-                fontSize: 40
-            }).setOrigin(0.5);
+            const player = this.createPlayer(playerIDs[i - 1], i);
+            this.playerList.set(playerIDs[i - 1], player);
         }
+    }
+
+    enableStartButton() {
+        this.actionButton.clearTint();
+        this.actionButton.on('pointerover', () => {
+            this.actionButton.setTint(0x30839f);
+        });
+        this.actionButton.on('pointerout', () => {
+            this.actionButton.clearTint();
+        });
+        this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', this.lobbyID));
+    }
+
+    disableStartButton() {
+        this.actionButton.off('pointerover');
+        this.actionButton.off('pointerout');
+        this.actionButton.setTint(0x71797E);
     }
 
     displayStartButton() {
         this.actionButton.setText('Start game');
         this.actionButton.off('pointerdown');
-        if (this.playerIDs.length !== 2) {
-            this.actionButton.off('pointerover');
-            this.actionButton.off('pointerout');
-            this.actionButton.setTint(0x71797E);
-        } else {
-            this.actionButton.clearTint();
-            this.actionButton.on('pointerover', () => {
-                this.actionButton.setTint(0x30839f);
-            });
-            this.actionButton.on('pointerout', () => {
-                this.actionButton.clearTint();
-            });
-            this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', this.lobbyID));
-        }
+        this.disableStartButton();
     }
 
     goBack() {
+        this.leaveLobby();
         if (this.socket !== undefined) this.socket.disconnect();
-        this.lobbyID = undefined;
-        this.playerIDs = [];
+        // this.lobbyID = undefined;
+        // this.playerIDs = [];
         this.scene.start(CST.SCENES.MENU);
     }
 }

@@ -3,8 +3,8 @@ const { customAlphabet } = require('nanoid');
 const Room = require('./model/room.js');
 const rooms = require('./model/rooms.js');
 class LobbyManager {
-    constructor(MAX_ROOM_SIZE) {
-        this.MAX_ROOM_SIZE = MAX_ROOM_SIZE;
+    constructor() {
+        this.MAX_ROOM_SIZE = 2;
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
 
@@ -76,11 +76,12 @@ class LobbyManager {
             }
 
             this.joinRoom(room, player, false);
-
             let playerIDs = [];
             for (player of room.players) {
                 playerIDs.push(player.id);
             }
+
+            console.log(player.socket.rooms);
             let data = {
                 roomId: roomId,
                 playerIDs: playerIDs
@@ -89,7 +90,7 @@ class LobbyManager {
             player.socket.emit('roomJoined', data);
 
             // broadcast to every other team member
-            player.socket.to(room.id).emit('newPlayerJoined', playerIDs);
+            player.socket.to(room.id).emit('newPlayerJoined', player.id);
 
             // send game-ready-to-start game event if room is full
             if (room.players.length == this.MAX_ROOM_SIZE) {
@@ -99,6 +100,23 @@ class LobbyManager {
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
+    }
+
+    handleLeaveRoom(roomId, player, io) {
+        const room = rooms.get(roomId);
+        if (room) {
+            // remove player from room
+            room.players = room.players.filter(p => p.id != player.id);
+            room.spectators = room.spectators.filter(p => p.id != player.id);
+        } 
+        let playerNames = [];
+        for (let p of room.players) {
+            playerNames.push(p.id);
+        }
+        // broadcast to other team member
+        room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
+        // io.to(room.id).emit('playerLeft', playerNames, console.log('success'));
+        player.socket.leave(room.id);
     }
 
     handleJoinRoomAsSpectator(roomId, player) {
