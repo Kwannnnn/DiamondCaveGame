@@ -11,9 +11,16 @@ export function handlePressureDoors(layer, players) {
         const plate = triggeredPressurePlate({ x: player.x, y: player.y });
         if (plate != null) {
             const trap = getTrapForPlate(plate);
-    
-            let doorTile = layer.getTileAtWorldXY(trap.door.x, trap.door.y, true);
-            doorTile.index = 1;
+
+            if (trap.type === 1) {
+                const doorTile = layer.getTileAtWorldXY(trap.door.x, trap.door.y, true);
+                doorTile.index = 1;
+            } else if (trap.type === 2) {
+                for (const spikeTrap of trap.spikes) {
+                    const spikeTile = layer.getTileAtWorldXY(spikeTrap.x, spikeTrap.y, true);
+                    spikeTile.index = 1;
+                }
+            }
         }
     }
 }
@@ -34,9 +41,16 @@ function resetDoors(layer, players) {
             continue;
         }
 
-        const door = trap.door;
-        const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
-        //doorTile.index = 2;
+        if (trap.type === 1) {
+            const door = trap.door;
+            const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
+            doorTile.index = 2;
+        } else if (trap.type === 2) {
+            for (const spikeTrap of trap.spikes) {
+                const spikeTile = layer.getTileAtWorldXY(spikeTrap.x, spikeTrap.y, true);
+                spikeTile.index = 4;
+            }
+        }
     }
 }
 
