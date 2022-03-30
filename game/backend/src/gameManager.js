@@ -109,11 +109,13 @@ class GameManager {
             'tileMap': map.tileMap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
+                'username': player1.username, // the username of player 1
                 'x': 32 + 16, // player 1 spawn x position
                 'y': 32 + 16, // player 1 spawn y position
                 'orientation': 0
             }, {
                 'playerId': player2.id, // the id of player 2
+                'username': player2.username, // the username of player 2
                 'x': 64 + 16, // player 2 spawn x position
                 'y': 32 + 16, // player 2 spawn y position
                 'orientation': 0
@@ -182,7 +184,7 @@ class GameManager {
             room.players.forEach(player => {
                 // If the iterable object is not the player who chose the perk, notify teammate
                 // If it is the player, assign the chosen perk to the object
-                if (player.id !== chosenPerk.username) {
+                if (player.username !== chosenPerk.username) {
                     console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
@@ -223,7 +225,6 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    console.log(player.id);
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
                 });
             }
