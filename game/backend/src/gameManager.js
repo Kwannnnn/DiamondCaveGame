@@ -26,6 +26,7 @@ class GameManager {
             rooms.get(roomId).gameState = initialGameState;
             console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
+            room.gameActive = true;
             this.io.to(roomId).emit('initialGameState', initialGameState);
         } else player.socket.emit('roomNotFound', roomId);
     }
