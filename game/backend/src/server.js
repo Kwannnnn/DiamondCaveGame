@@ -29,11 +29,8 @@ const chatManager = new cManager(io);
 debugPage.sendDebugWebPage(app);
 
 io.on('connection', (socket) => {
-    // generate new unique id for the player
-    let username = socket.request._query['username'];
-    if (username === undefined) return;
-    // console.log(socket.request._query['username']);
-    const player = new Player(username, socket);
+    const player = new Player(socket.id, socket);
+    console.log('Connection ' + socket.id);
 
     handleConnect(player);
 
