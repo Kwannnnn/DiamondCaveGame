@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 
-const SERVER_URL = 'http://localhost:3000';
 // const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
 
 export default class LobbyScene extends Phaser.Scene {
@@ -15,9 +14,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.events.on('shutdown', () => {
-            if (this.socket !== undefined) this.socket.removeAllListeners();
-        });
+        /* FIXME: The way the 2nd player display the scene is based on client variables. Should be another way to do that but I haven't figured out. */
         if (data === undefined) return;
         this.lobbyID = data.roomId;
         this.playerIDs = data.playerIDs;
@@ -38,14 +35,14 @@ export default class LobbyScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Disconnected', {
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Choose a username', {
             color: '#FFFFFF',
             fontSize: 60
         }).setOrigin(0.5);
 
         this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
 
-        this.connectButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, 'Connect', {
+        this.actionButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, this.lobbyID === undefined ? 'Create Lobby' : 'Start game', {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5).setInteractive();
@@ -66,89 +63,31 @@ export default class LobbyScene extends Phaser.Scene {
             this.connectButton.destroy();
             this.displayRoom(this.playerIDs);
             this.enableStartButton();
-            this.socket.on('initialGameState', (payload) => {
-                this.scene.start(CST.SCENES.GAME, {
-                    world: 1,
-                    stage: 1,
-                    socket: this.socket,
-                    username: this.username,
-                    lobbyID: this.lobbyID,
-                    initialGameState: payload                
-                });
-            });
-
-            this.socket.on('newPlayerJoined', (playerId)=>{
-                this.playerList.set(playerId, this.createPlayer(playerId, this.playerList.size + 1));
-                this.displayRoom(this.playerIDs);
-            }); // re-render the scene if new player joins
-
-            this.socket.on('playerLeft', (playerNames)=>{
-                this.playerIDs = playerNames;
-                for (const value of this.playerList.values()) {
-                    value.destroy();
-                }
-                this.playerList.clear();
-                this.displayRoom(this.playerIDs);
-            }); // re-render the scene if a player leaves
-
-            this.socket.on('gameReadyToStart', () => this.enableStartButton());
-
-            this.socket.on('gameNotReadyToStart', () => this.disableStartButton());
-        
         }
+
+        this.handleSocketEvents();
+
+        this.events.on('shutdown', () => {
+            if (this.socket !== undefined) this.socket.removeAllListeners();
+        });
+
+        this.actionButton.on('pointerover', () => {
+            this.actionButton.setTint(0x30839f);
+        });
+        this.actionButton.on('pointerout', () => {
+            this.actionButton.clearTint();
+        });
     }
     
     connect() {
-        let ip = 'http://' + SERVER_URL;
         this.username = this.usernameFormObject.getChildByName('username').value;
         if (this.username === '') {
             this.message.setText('Please enter a username');
             return;
         }
 
-        this.message.setText('Connecting to:' + ip);
-        this.socket = io(SERVER_URL, { query: 'username=' + this.username, reconnection: false });
-
-        this.socket.on('connect', ()=>{
-            this.createLobby();
-        }); // emit createRoom event to the server
-
-        this.socket.on('roomCreated', (args)=>{
-            this.createRoom(args);
-        });
-
-        this.socket.on('newPlayerJoined', (playerId)=>{
-            this.playerList.set(playerId, this.createPlayer(playerId, this.playerList.size + 1));
-            this.displayRoom(this.playerIDs);
-        }); // re-render the scene if new player joins
-
-        this.socket.on('gameReadyToStart', () => this.enableStartButton()); // enable the start button if all players are ready
-
-        this.socket.on('gameNotReadyToStart', () => this.disableStartButton()); // disable the start button if not all players are ready
-
-        this.socket.on('connect_error', ()=>{
-            this.displayError();
-        });
-
-        this.socket.on('playerLeft', (playerNames)=>{
-            this.playerIDs = playerNames;
-            for (const value of this.playerList.values()) {
-                value.destroy();
-            }
-            this.playerList.clear();
-            this.displayRoom(this.playerIDs);
-        }); // re-render the scene if a player leaves
-
-        this.socket.on('initialGameState', (payload) => {
-            this.scene.start(CST.SCENES.GAME, {
-                world: 1,
-                stage: 1,   
-                socket: this.socket,
-                username: this.username,
-                lobbyID: this.lobbyID,
-                initialGameState: payload
-            });
-        });
+        this.socket.emit('setUsername', this.username);
+        this.createLobby();
     }
 
     createLobby() {
@@ -224,9 +163,50 @@ export default class LobbyScene extends Phaser.Scene {
         this.socket.emit('checkGameReady', this.lobbyID);
     }
 
+    handleSocketEvents() {
+        this.socket.on('roomCreated', (args) => {
+            this.createRoom(args);
+        });
+
+        this.socket.on('newPlayerJoined', (playerId) => {
+            this.playerList.set(playerId, this.createPlayer(playerId, this.playerList.size + 1));
+            this.displayRoom(this.playerIDs);
+        }); // re-render the scene if new player joins
+
+        this.socket.on('connect_error', () => {
+            this.displayError();
+        });
+
+        // enable the start button if all players are ready
+        this.socket.on('gameReadyToStart', () => this.enableStartButton());
+
+        // disable the start button if not all players are ready
+        this.socket.on('gameNotReadyToStart', () => this.disableStartButton());
+
+        this.socket.on('initialGameState', (payload) => {
+            this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: 1,   
+                socket: this.socket,
+                username: this.username,
+                lobbyID: this.lobbyID,
+                initialGameState: payload
+            });
+        });
+
+        this.socket.on('playerLeft', (playerNames) => {
+            this.playerIDs = playerNames;
+            for (const value of this.playerList.values()) {
+                value.destroy();
+            }
+            this.playerList.clear();
+            this.displayRoom(this.playerIDs);
+        }); // re-render the scene if a player leaves
+    }
+
     goBack() {
         this.leaveLobby();
-        if (this.socket !== undefined) this.socket.disconnect();
+        if (this.socket !== undefined) this.socket.removeAllListeners();
         this.scene.start(CST.SCENES.MENU);
     }
 }

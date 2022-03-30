@@ -3,7 +3,6 @@ import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 import { lobbyCodeForm } from '../components/LobbyTextField'
 
-const SERVER_URL = 'http://localhost:3000';
 // const lobbyCodeForm = '<label class="custom-field one">\n' +
 //     '  <input type="text" name="lobby" placeholder="Enter lobby code"/>';
 // const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter username"/>';
@@ -15,14 +14,11 @@ export default class JoinScene extends Phaser.Scene {
         });
     }
 
-    init() {
-        this.events.on('shutdown', () => {
-            if (this.socket !== undefined) this.socket.removeAllListeners();
-        });
+    init(data) {
+        this.socket = data.socket;
     }
 
     create() {
-
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
 
@@ -55,46 +51,59 @@ export default class JoinScene extends Phaser.Scene {
             .on('pointerout', () => {
                 this.joinButton.clearTint();
             });
+
+        this.events.on('shutdown', () => {
+            if (this.socket !== undefined) this.socket.removeAllListeners();
+        });
+
+        this.handleSocketEvents();
     }
 
     join() {
         let lobby = this.lobbyCodeInput.getChildByName('lobby').value;
         this.username = this.usernameForm.getChildByName('username').value;
+
         if (lobby === '') {
             this.message.setText('Please enter the lobby code');
             return;
         }
+
         if (lobby.length != 6) {
             this.message.setText('Incorrect room code');
             return;
         }
+
         lobby = lobby.toUpperCase();
+
         if (this.username === '') {
             this.message.setText('Please enter a username');
             return;
         }
-        this.message.setText('Connecting to lobby:' + lobby);
-        this.socket = io(SERVER_URL, { query: 'username=' + this.username, reconnection: false });
 
-        this.socket.on('connect_error', ()=>{
+        this.message.setText('Connecting to lobby: ' + lobby);
+
+        this.socket.emit('setUsername', this.username);
+        this.socket.emit('joinRoom', lobby);
+    }
+    
+    handleSocketEvents() {
+        // TODO: Remove this. It is not necessary anymore!
+        this.socket.on('connect_error', () => {
             this.message.setText('Could not connect to server');
         });
 
-        this.socket.on('connect', ()=>{
-            this.socket.emit('joinRoom', lobby);
-        });
-
-        this.socket.on('roomJoined', (args)=>{
+        this.socket.on('roomJoined', (args) => {
             this.scene.start(CST.SCENES.LOBBY, { roomId: args.roomId, username: this.username, playerIDs: args.playerIDs, socket: this.socket });
         }); // jump to menu scene with data responded from server
 
-        this.socket.on('alreadyInRoom', ()=>{
+        this.socket.on('alreadyInRoom', () => {
             this.message.setText('Someone by that name is already in the lobby');
         });
-        this.socket.on('roomFull', ()=>{
+        this.socket.on('roomFull', () => {
             this.message.setText('This lobby is full');
         });
-        this.socket.on('roomNotFound', ()=>{
+
+        this.socket.on('roomNotFound', () => {
             this.message.setText('The lobby ' + lobby + ' could not be found');
         });
         this.socket.on('nameAlreadyExistForAPlayer', ()=>{
@@ -106,7 +115,7 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     goBack() {
-        if (this.socket !== undefined) this.socket.disconnect();
+        if (this.socket !== undefined) this.socket.removeAllListeners();
         this.scene.start(CST.SCENES.MENU);
     }
 }

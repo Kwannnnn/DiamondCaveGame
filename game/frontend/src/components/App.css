@@ -3,6 +3,7 @@
     background: none;
     border: 2px solid #ddd;
     border-radius: 10px;
+    padding: 10px 18px;
     transition: border-color 0.3s ease;
     font-size: 30px;
     color:white;
