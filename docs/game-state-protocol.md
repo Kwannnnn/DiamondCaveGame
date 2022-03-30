@@ -80,6 +80,8 @@ playerId;
 
 ```javascript
 {
+    // The current level of the team in the game
+    level: ..., 
     tileMap: [
         [2,2,2,2],
         [2,1,1,2],
@@ -136,7 +138,19 @@ playerId;
             // }
             path: [] 
         }, ...
-    ]
+    ], 
+        laserTraps: 
+    [{
+        //identifier for the trap
+        trapId: 4,
+        //spawn location for the trap
+        start: {
+            x: 200,
+            y: 200,
+        },
+        active: 0,
+    }, ...
+    ],
 }
 ```
 
@@ -480,6 +494,31 @@ playerId: ...,
 
 </tr>
 
+<tr>
+
+<td>
+    DeveloperGamestate
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // Game state object with tilemap, players location and gems
+        ititialGameState: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the game state of the map a developer has chosen 
+</td>
+
+</tr>
+
 </table>
 
 ### Possible errors
@@ -576,6 +615,53 @@ gemId;
             boundires, and/or orientation facing south-west.
         </td>
     </tr>
+
+<!-- this is one row -->
+
+<tr>
+    <td>
+        gameOver
+    </td>
+
+<td>
+
+```javascript
+// the id of the room as a string
+roomId:...
+```
+
+</td>
+
+<td>
+    This event indicates that the run has ended.
+</td>
+
+</tr>
+<!-- this is one row -->
+
+
+<!-- this is one row -->
+
+<tr>
+    <td>
+        reduceHealth
+    </td>
+
+<td>
+
+```javascript
+// the damange to reduce as an integer
+damage:...
+```
+
+</td>
+
+<td>
+    With this event the server notifies that the team's health pool has been reduced and so corresponding actions must be taken (e.g. update health bar)
+</td>
+
+</tr>
+<!-- this is one row -->
 </table>
 
 ## Client Events
@@ -784,28 +870,7 @@ message:
 </td>
 
 </tr>
-<!-- this is one row -->
 
-<tr>
-    <td>
-        gameOver
-    </td>
-
-<td>
-
-```javascript
-// the id of the room as a string
-roomId:...
-```
-
-</td>
-
-<td>
-    This event indicates that the run has ended.
-</td>
-
-</tr>
-<!-- this is one row -->
 
 <tr>
 
@@ -906,6 +971,32 @@ roomId:...
 
 <td>
     Indicates that player hit the enemy and sends all information to reduce health of the team 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    developerSpawn
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // map id developer wants to spawn
+        mapID: ...,
+
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the chosen id of the map developer wants to spawn on 
 </td>
 
 </tr>

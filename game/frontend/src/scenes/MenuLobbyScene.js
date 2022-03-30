@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 
-const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
+const SERVER_URL = 'http://localhost:3000';
 // const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
 
 export default class LobbyScene extends Phaser.Scene {
@@ -123,7 +123,6 @@ export default class LobbyScene extends Phaser.Scene {
     createRoom(args) { 
         this.lobbyID = args.roomId;
         this.playerIDs = args.playerIDs;
-        console.log(this.playerIDs);
         this.displayRoom(this.playerIDs);
     }
 

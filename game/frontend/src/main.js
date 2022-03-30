@@ -7,17 +7,25 @@ import {
     JoinScene,
     MenuScene,
     PerksScene,
-    ActiveGamesScene,
+    //ActiveGamesScene,
     SpectatorJoinScene,
     RankingScene,
-    ChatScene
+    ChatScene,
+    DeveloperScene,
+    HUD
 } from './scenes';
 
+const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth)
+const DEFAULT_HEIGHT = 720 // any height you want
+const DEFAULT_WIDTH = ratio * DEFAULT_HEIGHT
+
 const config = {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1280,
-    height: 720,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: DEFAULT_WIDTH,
+        height: DEFAULT_HEIGHT
+    },
     scene: [
         LoadScene,
         MenuScene,
@@ -25,10 +33,10 @@ const config = {
         PerksScene,
         LobbyScene,
         JoinScene,
-        ActiveGamesScene,
+        //ActiveGamesScene,
         SpectatorJoinScene,
         RankingScene,
-        ChatScene
+        DeveloperScene,
     ],
     parent: 'game',
     type: Phaser.AUTO,
@@ -44,4 +52,3 @@ const config = {
 }
 
 const game = new Phaser.Game(config);
-

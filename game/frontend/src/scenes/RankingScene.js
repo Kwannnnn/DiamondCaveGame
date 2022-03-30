@@ -47,6 +47,14 @@ export default class RankingScene extends Phaser.Scene {
 
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
+        
         var gridTable = this.rankingScene.add.gridTable({
             x: this.game.renderer.width / 2,
             y: this.game.renderer.height / 2 + 190,
@@ -77,6 +85,12 @@ export default class RankingScene extends Phaser.Scene {
         }
     }
 
+    goBack() {
+        if (this.socket !== undefined) this.socket.disconnect();
+        this.scene.start(CST.SCENES.MENU);
+    }
+
+    
     setupTable() {
         return {
             cellWidth: undefined, // if undefined, cell will take remaining 

@@ -9,7 +9,9 @@ export const CST = {
         ACTIVEGAMES: 'ACTIVEGAMES',
         SPECTATORJOIN: 'SPECTATORJOIN',
         RANKING: 'RANKING',
-        CHAT: 'CHAT'
+        CHAT: 'CHAT',
+        DEV: 'DEV',
+        HUD: 'HUD'
     },
     COLORS: {
         RANKLIST_PRIMARY: 0x4e342e,

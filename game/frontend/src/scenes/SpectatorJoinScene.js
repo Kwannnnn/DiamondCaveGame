@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 
-const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
+const SERVER_URL = 'http://localhost:3000';
 // const usernameForm = '<label class="custom-field one">\n' +
 //     '  <input type="text" name="username" placeholder="Enter your username"/>';
 let listingEntries = [];

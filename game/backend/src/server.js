@@ -57,24 +57,20 @@ io.on('connection', (socket) => {
 
     socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
 
-    // TODO Should be added to the protocol
     socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
 
-    // TODO Should be added to the protocol
     // This message is received every time player clicks on perk (choses perk)
     socket.on('chosenPerk', (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
 
-    // TODO Should be added to the protocol
     // This message is received when the time for choosing perk is up
     socket.on('finishedPerkChoosing', (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
 
-    // TODO Should be added to the protocol
     // This message is received when a player gets hit byt the enemy
-    socket.on('hitByEnemy', (args) => gameManager.handleReduceHealth(args.lobbyID, args.damage));
-
-    socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
+    socket.on('hitByEnemy', (args) => gameManager.handleHitByEnemy(args.lobbyID, args.damage));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));
+
+    socket.on('developerSpawn', (mapInfo) => gameManager.handleDeveloperSpawnOnTheMap(mapInfo, player));
 });
 
 function handleConnect(player) {
