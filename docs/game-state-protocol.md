@@ -676,6 +676,23 @@ gemId;
         <th>Description</th>
     </tr>
     <tr>
+        <td>setUsername</td>
+        <td>
+<p>
+
+```javascript
+// The username of the player as a string
+username;
+```
+
+</p>
+</td>
+        <td>
+            A message sent whenever a client chooses their username whenever
+            creating a room/joining a room/is going to spectate.
+        </td>
+    </tr>
+    <tr>
         <td>createRoom</td>
         <td>-</td>
         <td>
