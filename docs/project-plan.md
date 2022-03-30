@@ -299,6 +299,5 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-17 | Make it necessary for both players to be on the exit for the team to move on | H | - | In progress |
 | PB-18 | Establish a socket connection when the client is loaded, instead of in every separate scene | H | 6 | In progress |
 | PB-19 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | In progress |
-| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
+| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | In progress |
 | PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | In progress |
-| PB-22 | The developer scene crashes the server when trying to connect | N | 5 | In progress |
