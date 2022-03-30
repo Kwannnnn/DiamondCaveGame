@@ -299,7 +299,7 @@ export default class Game extends Phaser.Scene {
         for (let i = 0; i < this.spikeLocations.length; i++) {
             let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
 
-            const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
+            const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket, trapSprite);
 
             this.spikeTraps.push(trap);
             //this.spikeTrapSprites.push(trapSprite);
