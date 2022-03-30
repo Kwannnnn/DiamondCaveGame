@@ -297,7 +297,7 @@ export default class Game extends Phaser.Scene {
 
         // create a spike trap object for each spawn location and add overlap to it
         for (let i = 0; i < this.spikeLocations.length; i++) {
-            //let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
+            let trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
 
             const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
 

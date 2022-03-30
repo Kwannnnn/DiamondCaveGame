@@ -2,6 +2,7 @@
 // A SpikeTrap object will be spawned at every location that there is a 3 in the tileMap
 
 let immunePlayers = []; // array of Player objects
+//let scene, x, y, lobbyId, trapId, socket;
 
 export default class SpikeTrap {
     constructor(scene, x, y, lobbyId, trapId, socket) {
@@ -13,12 +14,19 @@ export default class SpikeTrap {
         this.trapId = trapId;
         this.socket = socket;
 
+        console.log(trapId);
+        console.log(this.trapId);
+
+        setTimeout(this.disableTrap, 3000);
+
         // initialize logic variables
         this.spikesOn = true;
         this.enabled = true;
 
         // start spikes up&down
-        // this.startSpikeCycle();
+        this.startSpikeCycle();
+
+        console.log(this);
     }
 
     // handle what happens when a player steps on the trap
@@ -43,7 +51,7 @@ export default class SpikeTrap {
         if (this.enabled) {
             console.log('spike cycle enabled')
 
-            this.spikeCycle = setInterval(this.swapState, 2000);
+            this.spikeCycle = setInterval(this.swapState, 2000, this.trapId);
 
         } else {
             console.log('trap cycle cant be enabled');
@@ -55,7 +63,7 @@ export default class SpikeTrap {
         this.makePlayerImmune(player);
 
         // this makes the player vulnerable again after the given time
-        setTimeout(this.removeImmunity, 500, player);
+        setTimeout(this.removeImmunity, 1000, player);
     }
 
     getLocation() {
@@ -66,9 +74,9 @@ export default class SpikeTrap {
     }
 
     // invert the spikesOn variable
-    swapState() {
+    swapState(trapId) {
         this.spikesOn = !this.spikesOn;
-        console.log('spike with id '+ this.trapId + ' is now ' + this.spikesOn);
+        console.log('spike with id '+ trapId + ' is now ' + this.spikesOn);
     }
 
     enableTrap() {
@@ -78,7 +86,8 @@ export default class SpikeTrap {
 
     // disable trap and stop spike rotation
     disableTrap() {
-        this.spikeCycle.destroy();
+        console.log('disable called');
+        clearInterval(this.spikeCycle);
         this.enabled = false;
         this.spikesOn = false;
     }
