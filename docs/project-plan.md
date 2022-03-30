@@ -274,6 +274,10 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 27
 
+| BI-01 | Create map 1 | M | 7 | - |
+| BI-02 | Create map 2 | M | 7 | - |
+| BI-03 | Create map 3 | M | 7 | - |
+
 ---
 
 ## Known problems
