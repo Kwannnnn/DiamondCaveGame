@@ -274,6 +274,10 @@ Backlog item | Definition | Priority | Weight | Depends on |
 
 ### US 27
 
+| BI-01 | Create map 1 | M | 7 | - |
+| BI-02 | Create map 2 | M | 7 | - |
+| BI-03 | Create map 3 | M | 7 | - |
+
 ---
 
 ## Known problems
@@ -287,8 +291,18 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-05 | WASD cannot be typed in chat | H | 5 | Done |
 | PB-06 | Spectator list can overflow, obscuring entries | H | 5 | Done |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
-| PB-08 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | In progress |
-| PB-09 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
+| PB-08 | Health has to be on the server side | H | - | Done |
+| PB-09 | Spectators not seeing game state updates | H | - | Done |
 | PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | In progress |
-| PB-11 | Colliding with an enemy has a chance to put the player inside a wall | H | 7 | Not started |
+| PB-11 | Chat does not work for spectators at all | H | 5 | Not started |
 | PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H | 4 | In progress |
+| PB-13 | When user joins a lobby and goes back, he is still part of the lobby. Same counts for creating room and going back | H | 5 | In progress |
+| PB-14 | Diamond collection does not sync the collected diamonds between players | N | 5 | In progress |
+| PB-15 | Spectators count is not in sync for the players in the map | N | - | In progress |
+| PB-16 | When spectator joins a room where a game has not started yet, they see a black screen | H | 4 | Done |
+| PB-17 | Make it necessary for both players to be on the exit for the team to move on | H | - | In progress |
+| PB-18 | Establish a socket connection when the client is loaded, instead of in every separate scene | H | 6 | In progress |
+| PB-19 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | In progress |
+| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not started |
+| PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | In progress |
+| PB-22 | The developer scene crashes the server when trying to connect | N | 5 | In progress |

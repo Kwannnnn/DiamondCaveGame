@@ -78,7 +78,10 @@ export default class SpectatorJoinScene extends Phaser.Scene {
             // });
             console.log(payload);
 
-            this.showCurrentGames(payload);
+            let games = [];
+            for (let game of payload) if (game.gameActive) games.push(game);
+
+            this.showCurrentGames(games);
         });
 
         this.socket.on('runGameScene', (roomId, gameState)=>{
