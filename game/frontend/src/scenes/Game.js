@@ -6,7 +6,7 @@ import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
-import { handlePressureDoors, setTraps } from '../helpers/Traps';
+import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
 import SpikeTrap from '../helpers/SpikeTrap';
 
 export default class Game extends Phaser.Scene {

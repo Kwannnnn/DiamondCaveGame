@@ -1,7 +1,7 @@
-let traps = [];
+let pressurePad = [];
 
 export function setTraps(entries) {
-    traps = entries;
+    pressurePad = entries;
 }
 
 export function handlePressureDoors(layer, players) {
@@ -19,7 +19,7 @@ export function handlePressureDoors(layer, players) {
 }
 
 function resetDoors(layer, players) {
-    for (const trap of traps) {
+    for (const trap of pressurePad) {
         // Check if any players are on the plate
         const plate = trap.plate;
 
@@ -41,7 +41,7 @@ function resetDoors(layer, players) {
 }
 
 function triggeredPressurePlate(position) {
-    for (const trap of traps) {
+    for (const trap of pressurePad) {
         const plate = trap.plate;
 
         if (isSamePosition(plate, position)) {
@@ -53,7 +53,7 @@ function triggeredPressurePlate(position) {
 }
 
 function getTrapForPlate(plate) {
-    return traps.find(t => isSamePosition(t.plate, plate));
+    return pressurePad.find(t => isSamePosition(t.plate, plate));
 }
 
 function isSamePosition(pos1, pos2) {
