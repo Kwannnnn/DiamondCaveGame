@@ -339,9 +339,12 @@ export default class Game extends Phaser.Scene {
     hasSteppedOnSpikeTrap() {
         const playerPos = this.controlledUnit.getLocation();
 
+        // itirate over SpikeTrap objects
         for (let i = 0; i < this.spikeTraps.length; i++) {
             const spikePos = { x: this.spikeTraps[i].x, y: this.spikeTraps[i].y };
+            // see if positions overlap
             if (playerPos.x === spikePos.x && playerPos.y === spikePos.y) {
+                // call method to deal damage if possible
                 this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit);
             }
         }
@@ -357,9 +360,6 @@ export default class Game extends Phaser.Scene {
             this.spikeTrapSprites.forEach(ss => {
                 // are st and ss at the same location?
                 if (st.x == ss.x && st.y == ss.y) {
-
-                    console.log('spikesOn '+st.spikesOn);
-
                     // set sprite
                     if (st.spikesOn === true) {
                         ss.setTexture('spikeOn');
@@ -369,19 +369,6 @@ export default class Game extends Phaser.Scene {
                 }
             });
         });
-
-        // itirate through spike trap sprite objects
-        // this.spikeTrapSprites.forEach(ss => {
-        //     // if sprite is at the provided coordinates
-        //     if (ss.x == x && ss.y == y) {
-        //         // set sprite
-        //         if (state === false) {
-        //             ss.setTexture('spikeOn');
-        //         } else {
-        //             ss.setTexture('spikeOff');
-        //         }
-        //     }
-        // });
     }
 
     /**

@@ -71,13 +71,13 @@ export default class SpikeTrap {
 
     // disable trap and stop spike rotation
     disableTrap() {
-        console.log('disabling '+this.trapId);
         clearInterval(this.spikeCycle);
         this.enabled = false;
         this.spikesOn = false;
         // update sprite method
     }
 
+    // add Player object to array of immune players
     makePlayerImmune(player) {
         if (!immunePlayers.includes(player)) {
             immunePlayers.push(player);
