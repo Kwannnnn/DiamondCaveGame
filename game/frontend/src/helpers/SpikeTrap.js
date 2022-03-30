@@ -4,7 +4,7 @@
 let immunePlayers = []; // array of Player objects
 
 export default class SpikeTrap {
-    constructor(scene, x, y, lobbyId, trapId, socket, sprite) {
+    constructor(scene, x, y, lobbyId, trapId, socket) {
         // constructor variables
         this.scene = scene;
         this.x = x;
@@ -12,7 +12,6 @@ export default class SpikeTrap {
         this.lobbyId = lobbyId;
         this.trapId = trapId;
         this.socket = socket;
-        this.sprite = sprite;
 
         // initialize logic variables
         this.spikesOn = true;
@@ -40,11 +39,7 @@ export default class SpikeTrap {
     // every x amount of time that spikes switch from dealing damage to not and vice versa
     startSpikeCycle() {
         if (this.enabled) {
-            console.log('spike cycle enabled')
-
-            this.spikeCycle = setInterval(this.swapState, 2000, this.trapId);
-        } else {
-            console.log('spike cycle cant be enabled');
+            this.spikeCycle = setInterval(this.swapState.bind(this), 2000);
         }
     }
 
@@ -64,9 +59,9 @@ export default class SpikeTrap {
     }
 
     // invert the spikesOn variable
-    swapState(trapId) {
+    swapState() {
         this.spikesOn = !this.spikesOn;
-        console.log('spike with id '+ trapId + ' is now ' + this.spikesOn);
+        console.log('spike with id '+ this.trapId + ' is now ' + this.spikesOn);
     }
 
     enableTrap() {
@@ -80,6 +75,7 @@ export default class SpikeTrap {
         clearInterval(this.spikeCycle);
         this.enabled = false;
         this.spikesOn = false;
+        // update sprite method
     }
 
     makePlayerImmune(player) {
@@ -99,9 +95,5 @@ export default class SpikeTrap {
                 }
             }
         }
-    }
-
-    getState() {
-        return this.spikesOn;
     }
 }

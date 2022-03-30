@@ -6,7 +6,8 @@ import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
-import { handlePressureDoors, setTraps } from '../helpers/Traps';
+import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
+import SpikeTrap from '../helpers/SpikeTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -29,6 +30,8 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('laser', 'assets/laser_trap.PNG');
 
+        this.load.image('spikeOn',  'assets/spikeTrapOn.png');
+        this.load.image('spikeOff', 'assets/spikeTrapOff.png');
     }
 
     init(data) {
@@ -64,9 +67,9 @@ export default class Game extends Phaser.Scene {
         this.setupControlledUnit();
         this.setupCamera();
         this.placeExit();
+        this.setupSpikeTraps();
 
         this.handleSocketEvents();
-
 
         this.pressureCheckEvent = this.time.addEvent({
             delay: 100,
@@ -82,6 +85,9 @@ export default class Game extends Phaser.Scene {
 
     update() {
         this.controlledUnit.update();
+
+        this.hasSteppedOnSpikeTrap();
+        this.updateSpikeTrapSprites();
     }
 
     /**
@@ -113,7 +119,7 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
+            const player = new Player(this, p.x, p.y, p.playerId, this.perk, this.spikeTraps);
             this.players.set(p.playerId, player);
         });
     }
@@ -282,6 +288,103 @@ export default class Game extends Phaser.Scene {
     }
 
     /**
+     * Place SpikeTrap objects where 4s appear on the tilemap
+     */
+    setupSpikeTraps() {
+        // get all spike trap coordinates
+        this.spikeLocations = this.getCoordinatesFromTileMap(4); // array of coordinate objects
+        this.spikeTraps = []; // array of SpikeTrap objects
+        this.spikeTrapSprites = []; // array of spike trap sprites
+
+        // create SpikeTrap and sprite objects at the correct coordinates
+        for (let i = 0; i < this.spikeLocations.length; i++) {
+
+            const trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
+
+            const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
+
+            // add both to arrays so that they can be found later
+            this.spikeTraps.push(trap);
+            this.spikeTrapSprites.push(trapSprite);
+        }
+    }
+
+    /**
+     * Finds the coordinates for each location that the given number appears
+     */
+    getCoordinatesFromTileMap(tileNumber) {
+        let locations = [];
+
+        // itirate through the gameState tileMap to find coordinates of the provided number
+        for (let row = 0; row < this.gameState.tileMap.length; row++) {
+            for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
+                // value found?
+                if (this.gameState.tileMap[row][column] == tileNumber) {
+                    // translate index to coordinates
+                    let coordinates = {
+                        x: column * 32 + 16,
+                        y: row * 32 + 16
+                    };
+                    // register these coordinates
+                    locations.push(coordinates);
+                }
+            }
+        }
+        return locations;
+    }
+
+    /**
+     * Check whether player has stepped on a spike trap
+     */
+    hasSteppedOnSpikeTrap() {
+        const playerPos = this.controlledUnit.getLocation();
+
+        for (let i = 0; i < this.spikeTraps.length; i++) {
+            const spikePos = { x: this.spikeTraps[i].x, y: this.spikeTraps[i].y };
+            if (playerPos.x === spikePos.x && playerPos.y === spikePos.y) {
+                this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit);
+            }
+        }
+    }
+
+    /**
+     * Update spike trap sprites depending on state
+     */
+    updateSpikeTrapSprites() {
+        // // itirate through SpikeTrap objects
+        this.spikeTraps.forEach(st => {
+            // itirate through sprite objects
+            this.spikeTrapSprites.forEach(ss => {
+                // are st and ss at the same location?
+                if (st.x == ss.x && st.y == ss.y) {
+
+                    console.log('spikesOn '+st.spikesOn);
+
+                    // set sprite
+                    if (st.spikesOn === true) {
+                        ss.setTexture('spikeOn');
+                    } else {
+                        ss.setTexture('spikeOff');
+                    }
+                }
+            });
+        });
+
+        // itirate through spike trap sprite objects
+        // this.spikeTrapSprites.forEach(ss => {
+        //     // if sprite is at the provided coordinates
+        //     if (ss.x == x && ss.y == y) {
+        //         // set sprite
+        //         if (state === false) {
+        //             ss.setTexture('spikeOn');
+        //         } else {
+        //             ss.setTexture('spikeOff');
+        //         }
+        //     }
+        // });
+    }
+
+    /**
      * Update the enemy positions and their velocity
      */
     updateEnemyPositions() {
@@ -315,60 +418,10 @@ export default class Game extends Phaser.Scene {
         });
     }
 
-
-    /**
-     * Setup laser traps
-     */
-    setupLaserTraps() {
-        this.laserTrapData = new Map();
-        this.laserTrapGroup = this.physics.add.group();
-
-        this.gameState.laserTraps.forEach(st => {
-            const sprite = this.physics.add.sprite(st.start.x, st.start.y, 'laser');
-            sprite.id = st.trapId;
-            sprite.active = st.active;
-            this.laserTrapGroup.add(sprite);
-        });
-
-        // flickering sprite at a frequancy of every 2 seconds
-        this.timedEvent = this.time.addEvent({
-            delay: 2000,
-            callback: this.updateSpikes,
-            callbackScope: this,
-            loop: true
-        });
-    }
-
-
-    /**
-     * update laser trap state on collision
-     */
-    updateLaserTraps() {
-        this.laserTrapGroup.children.each(st => {
-            if (st.active === 0) {
-                st.active = 1;
-                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
-            } else {
-                st.active = 0;
-            }
-        });
-    }
-
-
-
-
-
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
         this.hud.changeHealth(healthChange);
-    }
-
-    /**
-     * damage caused to health when coliding with laser trap
-     */
-    dealLaserDamage() {
-        this.changeHealth(-15);
     }
 
     /**
