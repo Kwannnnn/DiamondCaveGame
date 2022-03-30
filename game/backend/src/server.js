@@ -60,6 +60,8 @@ io.on('connection', (socket) => {
         else handleDisconnect(player);
     });
 
+    socket.on('setUsername', (username) => players.get(socket.id).setUsername(username));
+
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
     socket.on('chatMessage', (message) => chatManager.handleChatMessage(player, message));
