@@ -135,17 +135,17 @@ export default class Player extends ControlledUnit {
             this.setNamePosition();
         }
 
+        // LASER TRAP
         if (tile && tile.index == 3) {
             // Call damage player method
             // Or call trap object
-            console.log('You walked on a trap');
+            console.log('You walked on a laser trap');
         }
 
+        // SPIKE TRAP
         if (tile && tile.index == 4) {
-            // Do smth else
-            console.log('You walked on tile with index 4');
+            // spike trap implementation is in SpikeTrap.js
         }
-
 
         if (movementX !== 0 || movementY !== 0) {
             this.handlePlayerMoved();
@@ -176,5 +176,12 @@ export default class Player extends ControlledUnit {
 
     setSocket(socket) {
         this.socket = socket;
+    }
+
+    getLocation() {
+        return {
+            x: this.x,
+            y: this.y
+        }
     }
 }
