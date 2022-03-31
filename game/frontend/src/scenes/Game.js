@@ -5,6 +5,8 @@ import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
+import { handlePressureDoors, setTraps } from '../helpers/Traps';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -17,17 +19,26 @@ export default class Game extends Phaser.Scene {
         this.load.image('gem', 'assets/gem.png');
         // FIXME: Add an actual enemy sprite
         this.load.image('enemy', 'assets/dirt.png');
-        // this.load.image("exit", "assets/exit.png")
-        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
+        this.load.image('exit', 'assets/exit.png');
+        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 160, frameHeight: 276 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
+
+        this.load.image('laser', 'assets/laser_trap.PNG');
+
+        // Load sprites for particles (player movement)
+        this.load.spritesheet('moveParticles', 'assets/Player moved.png', { frameWidth: 48, frameHeight: 32 });
+
+        this.load.image('spawnParticle', 'assets/visual_effects/—Pngtree—cute white clouds smoke clouds_6492845.png');
     }
 
     init(data) {
         this.collectedDiamonds = 0;
+        this.world = data.world;
+        this.stage = data.stage;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
@@ -35,7 +46,7 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
 
         console.log(this.gameState);
-        console.log(data.socket);
+        console.log(this.scene);
     }
 
     create() {
@@ -46,43 +57,87 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
+        // this.setupAnimations();
+        this.createParticles();
+
         this.setupHUD();
+        this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        setTraps(this.gameState.pressurePlateTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit(200, 200);
+        this.placeExit();
 
         this.handleSocketEvents();
 
+
+        this.pressureCheckEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.checkPressurePlates,
+            callbackScope: this,
+            loop: true,
+        });
+    }
+
+    checkPressurePlates() {
+        handlePressureDoors(this.layer, this.players);
     }
 
     update() {
-        if (this.scene.isActive(CST.SCENES.CHAT)) {
-            this.input.keyboard.enabled = false;
-           
-        } else {
-            this.input.keyboard.enabled = true;
-            this.controlledUnit.update();
-        }
-    
+        this.controlledUnit.update();
     }
 
+    // setupAnimations() {
+    //     this.anims.create({
+    //         key: 'diamondCollectedAnim',
+    //         frames: this.anims.generateFrameNumbers('diamondCollectedEffect', { start: 0, end: 6 }),
+    //         frameRate: 20,
+    //     });
+    // }
+
+    createParticles() {
+        this.diamondParticles = this.add.particles('gem');
+        this.diamondEmitter = this.diamondParticles.createEmitter({
+            speed: 200,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.3, end: 0 },
+            on: false
+        });
+
+        this.spawnParticles = this.add.particles('spawnParticle');
+        this.spawnEmitter = this.spawnParticles.createEmitter({
+            speed: 400,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.2, end: 0 },
+            on: false
+        })
+    }
     /**
      * Adds the HUD to the GameScene
      */
     setupHUD() {
-        this.scene.add('hud', HUD, true, {
-            world: 1,
-            stage: 1,
+        this.hud = this.scene.add('hud', HUD, true, {
+            stage: this.gameState.level,
             totalDiamonds: this.gameState.gems.length,
             socket: this.socket
         });
     }
 
+    /**
+     * Adds the chat room to the GameScene
+     */
+
+    setupChat() {
+        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
+            socket: this.socket
+        });
+    }
     /**
      * Creates all player objects and adds them to the players Map property
      * of the GameScene. 
@@ -94,22 +149,24 @@ export default class Game extends Phaser.Scene {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
             const player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
+
+            this.spawnParticles.emitParticleAt(p.x, p.y, 20);
         });
     }
 
     setupPerks() {
         switch (this.perk) {
-        case 'Health':
-            this.changeHealth(10);
-            break;
+            case 'Health':
+                this.changeHealth(10);
+                break;
 
-        case 'AddDiamonds':
-            this.diamondPerk();
-            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
-            break;
+            case 'AddDiamonds':
+                this.diamondPerk();
+                console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+                break;
 
-        default:
-            console.log('No team perks!');
+            default:
+                console.log('No team perks!');
         }
     }
 
@@ -181,8 +238,11 @@ export default class Game extends Phaser.Scene {
      * @param diamond the collected diamond
      */
     collectDiamond(player, diamond) {
+
         this.destroyDiamondSprite(diamond);
         this.updateCollectedDiamondsCount();
+        this.diamondParticles.emitParticleAt(diamond.x, diamond.y, 50);
+
 
         //this is a small test for the speed increase 
         /* this.increaseSpeed();
@@ -190,7 +250,9 @@ export default class Game extends Phaser.Scene {
 
         this.socket.emit('gemCollected', {
             roomId: this.lobbyID,
-            gemId: diamond.id
+            gemId: diamond.id,
+            x:diamond.x,
+            y:diamond.y
         });
     }
 
@@ -205,6 +267,7 @@ export default class Game extends Phaser.Scene {
             if (child.id === diamond) {
                 this.destroyDiamondSprite(child);
                 this.updateCollectedDiamondsCount();
+                this.diamondParticles.emitParticleAt(child.x, child.y, 20);
             }
         });
 
@@ -292,10 +355,67 @@ export default class Game extends Phaser.Scene {
         });
     }
 
+
+    /**
+     * Setup laser traps
+     */
+    setupLaserTraps() {
+        this.laserTrapData = new Map();
+        this.laserTrapGroup = this.physics.add.group();
+
+        this.gameState.laserTraps.forEach(st => {
+            const sprite = this.physics.add.sprite(st.start.x, st.start.y, 'laser');
+            sprite.id = st.trapId;
+            sprite.active = st.active;
+            this.laserTrapGroup.add(sprite);
+        });
+
+        // flickering sprite at a frequancy of every 2 seconds
+        this.timedEvent = this.time.addEvent({
+            delay: 2000,
+            callback: this.updateSpikes,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+
+    /**
+     * update laser trap state on collision
+     */
+    updateLaserTraps() {
+        this.laserTrapGroup.children.each(st => {
+            if (st.active === 0) {
+                st.active = 1;
+                this.physics.add.collider(this.controlledUnit, st, this.dealLaserDamage, this).name = 'laserTrapCollisions';
+            } else {
+                st.active = 0;
+            }
+        });
+    }
+
+
+
+
+
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
-        HUD.changeHealth(healthChange);
+        this.hud.changeHealth(healthChange);
+    }
+
+    /**
+     * damage caused to health when coliding with laser trap
+     */
+    dealLaserDamage() {
+        this.changeHealth(-15);
+    }
+
+    /**
+     * damage caused to health when coliding with laser trap
+     */
+    dealLaserDamage() {
+        this.changeHealth(-15);
     }
 
     /**
@@ -320,6 +440,7 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.y -= 32;
 
         const damage = 10;
+
         // Send message to the server
         this.socket.emit('hitByEnemy', {
             lobbyID: this.lobbyID,
@@ -333,8 +454,9 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate x for exit to be place} x 
      * @param {coordinate y for exit to be place} y 
      */
-    placeExit(x, y) {
-        this.exit = this.physics.add.sprite(x, y, 'exit');
+    placeExit() {
+        console.log(this.initialGameState);
+        this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
             console.log('collided');
             if (this.canExitScene()) {
@@ -393,12 +515,18 @@ export default class Game extends Phaser.Scene {
         p.move(args.x, args.y, args.orientation);
     }
 
+    handleCheatDetected(cheaterId) {
+        console.log('Player with id ' + cheaterId + ' has cheated!');
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
-            this.scene.remove('hud');
-            this.scene.start(CST.SCENES.PERKS, {
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.scene.pause();
+            this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,
                 username: this.username,
                 socket: this.socket,
@@ -410,9 +538,15 @@ export default class Game extends Phaser.Scene {
         });
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud
-            // HUD.changeHealth(damage);
+            this.changeHealth(-damage);
 
-            console.log('Team got damage ' + damage.damage + ' health points');
+            console.log('Team got damage ' + damage + ' health points');
         })
+
+        this.socket.on('gameOver', () => {
+            //TODO: end the game
+            console.log('Game over! You are dead!');
+        })
+        this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
     }
 }

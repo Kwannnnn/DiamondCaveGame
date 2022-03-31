@@ -1,0 +1,9 @@
+body {
+    background-color: rgb(37,37,37);
+}
+
+#game {
+    width: 100vw; 
+    height: 100vh; 
+    overflow: auto;
+}

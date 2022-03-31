@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import { CST } from '../utils/CST';
+import { usernameForm } from '../components/UsernameTextField'
 
-const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
-const usernameForm = '<input type="text" name="username" placeholder="Enter username"/>';
+const SERVER_URL = 'http://localhost:3000';
+// const usernameForm = '<label class="custom-field one">\n' +
+//     '  <input type="text" name="username" placeholder="Enter your username"/>';
 let listingEntries = [];
 let listingButtons = [];
 export default class SpectatorJoinScene extends Phaser.Scene {
@@ -76,7 +78,10 @@ export default class SpectatorJoinScene extends Phaser.Scene {
             // });
             console.log(payload);
 
-            this.showCurrentGames(payload);
+            let games = [];
+            for (let game of payload) if (game.gameActive) games.push(game);
+
+            this.showCurrentGames(games);
         });
 
         this.socket.on('runGameScene', (roomId, gameState)=>{

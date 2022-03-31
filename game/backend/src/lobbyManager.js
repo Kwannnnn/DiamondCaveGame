@@ -14,7 +14,8 @@ class LobbyManager {
         for (let room of rooms.values()) {
             const roomObject = {
                 roomId: room.id,
-                playerIds: []
+                playerIds: [],
+                gameActive: room.gameActive
             }
 
             // get ids of players in the room
