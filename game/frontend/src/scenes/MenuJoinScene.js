@@ -94,6 +94,12 @@ export default class JoinScene extends Phaser.Scene {
         this.socket.on('roomNotFound', ()=>{
             this.message.setText('The lobby ' + lobby + ' could not be found');
         });
+        this.socket.on('nameAlreadyExistForAPlayer', ()=>{
+            this.message.setText('There is already a player with the username you are trying to use');
+        });
+        this.socket.on('nameAlreadyExistForASpectator', ()=>{
+            this.message.setText('There is already a spectator with the username you are trying to use');
+        });
     }
 
     goBack() {
