@@ -66,9 +66,7 @@ io.on('connection', (socket) => {
     socket.on('finishedPerkChoosing', (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
 
     // This message is received when a player gets hit byt the enemy
-    socket.on('hitByEnemy', (args) => gameManager.handleReduceHealth(args.lobbyID, args.damage));
-
-    socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
+    socket.on('hitByEnemy', (args) => gameManager.handleHitByEnemy(args.lobbyID, args.damage));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));
 
