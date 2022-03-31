@@ -162,13 +162,7 @@ class GameManager {
                     x: 352,
                     y: 400,
                 },
-                'spikes': [{
-                    x: 600,
-                    y: 416,
-                }, {
-                    x: 600,
-                    y: 448,
-                }],
+                'spikes': [1, 2],
             }],
         };
         return gameState;

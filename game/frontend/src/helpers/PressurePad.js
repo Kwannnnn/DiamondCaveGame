@@ -1,11 +1,13 @@
 let pressurePad = [];
+let spikeTraps = [];
 
-export function setTraps(entries) {
+export function setTraps(entries, spikes) {
     pressurePad = entries;
+    spikeTraps = spikes;
 }
 
 export function handlePressureDoors(layer, players) {
-    resetDoors(layer, players);
+    resetLinkedElements(layer, players);
 
     for (const player of players.values()) {
         const plate = triggeredPressurePlate({ x: player.x, y: player.y });
@@ -16,16 +18,20 @@ export function handlePressureDoors(layer, players) {
                 const doorTile = layer.getTileAtWorldXY(trap.door.x, trap.door.y, true);
                 doorTile.index = 1;
             } else if (trap.type === 2) {
-                for (const spikeTrap of trap.spikes) {
-                    const spikeTile = layer.getTileAtWorldXY(spikeTrap.x, spikeTrap.y, true);
-                    spikeTile.index = 1;
+                for (const id of trap.spikes) {
+                    const spikeTrap = findSpikeWithId(id);
+                    spikeTrap.disableTrap();
                 }
             }
         }
     }
 }
 
-function resetDoors(layer, players) {
+function findSpikeWithId(id) {
+    return spikeTraps.find(st => st.trapId === id);
+}
+
+function resetLinkedElements(layer, players) {
     for (const trap of pressurePad) {
         // Check if any players are on the plate
         const plate = trap.plate;
@@ -46,9 +52,13 @@ function resetDoors(layer, players) {
             const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
             doorTile.index = 2;
         } else if (trap.type === 2) {
-            for (const spikeTrap of trap.spikes) {
-                const spikeTile = layer.getTileAtWorldXY(spikeTrap.x, spikeTrap.y, true);
-                spikeTile.index = 4;
+            for (const id of trap.spikes) {
+                const spikeTrap = findSpikeWithId(id);
+
+                if (!spikeTrap.enabled) {
+                    console.log(`Trap ${spikeTrap.trapId} was disabled and should be activated`);
+                    spikeTrap.enableTrap();
+                }                
             }
         }
     }
