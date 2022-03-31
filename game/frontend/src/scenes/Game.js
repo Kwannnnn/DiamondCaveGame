@@ -7,7 +7,7 @@ import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
 import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
-import SpikeTrap from '../helpers/SpikeTrap';
+import SpikeTrap from '../model/SpikeTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
