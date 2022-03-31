@@ -1,6 +1,7 @@
 // This class manages everything related to in-game events
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
+const EnemyManager = require('./enemyManager');
 const rooms = require('./model/rooms.js');
 const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
 const maps = require('./model/maps.js');
@@ -103,6 +104,29 @@ class GameManager {
     generateInitialGameState(room, map) {
         const player1 = room.players[0];
         const player2 = room.players[1];
+        const enemies = [{
+            'enemyId': 1,
+            'start': {
+                'x': 336,
+                'y': 336,
+            },
+            'path': [{
+                'x': 496,
+                'y': 336,
+            },
+            {
+                'x': 496,
+                'y': 496,
+            },
+            {
+                'x': 336,
+                'y': 496,
+            },
+            {
+                'x': 336,
+                'y': 336,
+            }],
+        }];
 
         let gameState = {
             'level': room.level,
@@ -121,29 +145,7 @@ class GameManager {
             'gemsCollected' : 0,
             'exit': map.exit,
             'gems': [...map.gems],
-            'enemies': [{
-                'enemyId': 1,
-                'start': {
-                    'x': 336,
-                    'y': 336,
-                },
-                'path': [{
-                    'x': 496,
-                    'y': 336,
-                },
-                {
-                    'x': 496,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 336,
-                }],
-            }],
+            'enemies': enemies,
             'pressurePlateTraps': [{
                 'trapId': 1,
                 'plate': {
@@ -157,6 +159,10 @@ class GameManager {
                 }
             }],
         };
+
+        room.enemyManager = new EnemyManager(enemies, room);
+
+
         return gameState;
     }
 
