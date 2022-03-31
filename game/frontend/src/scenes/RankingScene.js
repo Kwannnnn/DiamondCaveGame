@@ -45,6 +45,15 @@ export default class RankingScene extends Phaser.Scene {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
 
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
+
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
         this.backButton.on('pointerdown', () => this.goBack());
@@ -154,5 +163,12 @@ export default class RankingScene extends Phaser.Scene {
         cellContainer.getElement('player2').setText(item.player2);
         cellContainer.getElement('score').setText(item.score);
         return cellContainer;
+    }
+
+    goBack() {
+        if (this.socket !== undefined) this.socket.disconnect();
+        this.lobbyID = undefined;
+        this.playerIDs = [];
+        this.scene.start(CST.SCENES.MENU);
     }
 }

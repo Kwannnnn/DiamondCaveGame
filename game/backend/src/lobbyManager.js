@@ -3,8 +3,8 @@ const { customAlphabet } = require('nanoid');
 const Room = require('./model/room.js');
 const rooms = require('./model/rooms.js');
 class LobbyManager {
-    constructor(MAX_ROOM_SIZE) {
-        this.MAX_ROOM_SIZE = MAX_ROOM_SIZE;
+    constructor() {
+        this.MAX_ROOM_SIZE = 2;
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
 
@@ -56,7 +56,6 @@ class LobbyManager {
         // Store roomId for future use
         // Might not be needed lol
         player.roomId = room.id;
-        console.log(player.id, 'Joined', room.id);
     }
 
     handleJoinRoom(roomId, player) {
@@ -87,11 +86,11 @@ class LobbyManager {
 
 
             this.joinRoom(room, player, false);
-
             let playerIDs = [];
             for (player of room.players) {
                 playerIDs.push(player.id);
             }
+
             let data = {
                 roomId: roomId,
                 playerIDs: playerIDs
@@ -100,15 +99,58 @@ class LobbyManager {
             player.socket.emit('roomJoined', data);
 
             // broadcast to every other team member
-            player.socket.to(room.id).emit('newPlayerJoined', playerIDs);
-
-            // send game-ready-to-start game event if room is full
-            if (room.players.length == this.MAX_ROOM_SIZE) {
-                player.socket.to(roomId).emit('gameReadyToStart');
-            }
+            player.socket.to(room.id).emit('newPlayerJoined', player.id);
 
         } else {
             player.socket.emit('roomNotFound', roomId);
+        }
+    }
+
+    handleCheckGameReady(roomId, player) {
+        const room = rooms.get(roomId);
+
+        if (room) {
+            // send game-ready-to-start game event if room is full
+            console.log(room.players.length);
+            if (room.players.length === this.MAX_ROOM_SIZE) {
+                player.socket.to(room.id).emit('gameReadyToStart');
+            } // else send game-not-ready-to-start event
+            if (room.players.length !== this.MAX_ROOM_SIZE) {
+                player.socket.emit('gameNotReadyToStart');
+            }
+        }
+    }
+
+    handleLeaveRoom(roomId, player) {
+        console.log('roomId: ' + roomId);
+        const room = rooms.get(roomId);
+        if (room) {
+            // remove player from room
+            room.players = room.players.filter(p => p.id != player.id);
+            room.spectators = room.spectators.filter(p => p.id != player.id);
+        } 
+        let playerNames = [];
+        for (let p of room.players) {
+            playerNames.push(p.id);
+        }
+        // broadcast to other team member
+        room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
+        player.socket.leave(room.id);
+    }
+    
+    handlePlayerDisconnected(playerId) {
+        console.log('a player disconnected from the room')
+        for (let room of rooms.values()) {
+            if (room.players.includes(playerId)) {
+                room.players = room.players.filter(p => p.id != playerId);
+                room.spectators = room.spectators.filter(p => p.id != playerId);
+                let playerNames = [];
+                for (let p of room.players) {
+                    playerNames.push(p.id);
+                }
+                // broadcast to other team member
+                room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
+            }
         }
     }
 
@@ -125,8 +167,6 @@ class LobbyManager {
             }
             
             room.spectators.push(player);
-
-
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.id);
             player.socket.emit('runGameScene', roomId, room.gameState)
