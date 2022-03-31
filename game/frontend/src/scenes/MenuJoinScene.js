@@ -93,22 +93,25 @@ export default class JoinScene extends Phaser.Scene {
         });
 
         this.socket.on('roomJoined', (args) => {
-            this.scene.start(CST.SCENES.LOBBY, { roomId: args.roomId, username: this.username, playerIDs: args.playerIDs, socket: this.socket });
+            this.scene.start(CST.SCENES.LOBBY, { roomId: args.roomId, username: this.username, players: args.players, socket: this.socket });
         }); // jump to menu scene with data responded from server
 
         this.socket.on('alreadyInRoom', () => {
             this.message.setText('Someone by that name is already in the lobby');
         });
+
         this.socket.on('roomFull', () => {
             this.message.setText('This lobby is full');
         });
 
-        this.socket.on('roomNotFound', () => {
-            this.message.setText('The lobby ' + lobby + ' could not be found');
+        this.socket.on('roomNotFound', (lobbyId) => {
+            this.message.setText('Lobby ' + lobbyId + ' not found');
         });
+
         this.socket.on('nameAlreadyExistForAPlayer', ()=>{
             this.message.setText('There is already a player with the username you are trying to use');
         });
+
         this.socket.on('nameAlreadyExistForASpectator', ()=>{
             this.message.setText('There is already a spectator with the username you are trying to use');
         });
@@ -116,6 +119,6 @@ export default class JoinScene extends Phaser.Scene {
 
     goBack() {
         if (this.socket !== undefined) this.socket.removeAllListeners();
-        this.scene.start(CST.SCENES.MENU);
+        this.scene.run(CST.SCENES.MENU);
     }
 }
