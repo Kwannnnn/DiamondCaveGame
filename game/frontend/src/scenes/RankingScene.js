@@ -47,6 +47,8 @@ export default class RankingScene extends Phaser.Scene {
 
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+
         this.backButton.on('pointerdown', () => this.goBack());
         this.backButton.on('pointerover', () => {
             this.backButton.setTint(0x30839f);
