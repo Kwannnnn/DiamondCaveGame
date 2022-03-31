@@ -616,52 +616,24 @@ gemId;
         </td>
     </tr>
 
-<!-- this is one row -->
+
+
 
 <tr>
-    <td>
-        gameOver
-    </td>
-
-<td>
-
-```javascript
-// the id of the room as a string
-roomId:...
-```
-
-</td>
-
-<td>
-    This event indicates that the run has ended.
-</td>
-
+    <td>nameAlreadyExistForAPlayer</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
 </tr>
-<!-- this is one row -->
 
-
-<!-- this is one row -->
 
 <tr>
-    <td>
-        reduceHealth
-    </td>
-
-<td>
-
-```javascript
-// the damange to reduce as an integer
-damage:...
-```
-
-</td>
-
-<td>
-    With this event the server notifies that the team's health pool has been reduced and so corresponding actions must be taken (e.g. update health bar)
-</td>
-
+    <td>nameAlreadyExistForASpectator</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
 </tr>
-<!-- this is one row -->
+
+
+
 </table>
 
 ## Client Events

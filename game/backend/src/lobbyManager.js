@@ -76,6 +76,16 @@ class LobbyManager {
                 return;
             }
 
+
+            //validate names
+            //if the return value is false, there are duplicates
+            if (!this.validateNames(room, player)) {
+                return;
+            }
+
+
+
+
             this.joinRoom(room, player, false);
 
             let playerIDs = [];
@@ -107,6 +117,13 @@ class LobbyManager {
         const room = rooms.get(roomId);
 
         if (room) {
+
+            //validate names
+            //if the return value is false, there are duplicates
+            if (!this.validateNames(room, player)) {
+                return;
+            }
+            
             room.spectators.push(player);
 
 
@@ -119,6 +136,46 @@ class LobbyManager {
         }
     }
 
+
+    /**
+     * check names of players and spectators to prevent duplication
+     * @param room the room to check
+     * @param player the player object that represent a player or a spectator joining
+     */
+    validateNames(room, player) {
+
+        if (room.players.length != 0 || room.spectators.length != 0) {
+            //if there are already players or spectators in the room, check names
+
+            //iterate over players in the room
+            //property "id" is the unique name for players
+            for (const p of room.players) {
+                if (p.id == player.id) {
+                    player.socket.emit('nameAlreadyExistForAPlayer');
+                    return false;
+                }
+            }
+
+            //iterate over spectators in the room
+            //spectators use player model and are stored in array spectators
+            for (const s of room.spectators) {
+                if (s.id == player.id) {
+                    player.socket.emit('nameAlreadyExistForASpectator');
+                    return false;
+                }
+            }
+
+            //players or spectators exist, but after iterating over them no duplicating names found
+            return true;
+        }
+
+        //no player nor spectator exist
+        return true;
+    }
+
 }
+
+
+
 
 module.exports = LobbyManager;
