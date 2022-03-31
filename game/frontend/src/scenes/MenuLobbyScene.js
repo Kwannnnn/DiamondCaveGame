@@ -11,7 +11,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.playerList = new Map();
+        this.playersMap = new Map();  // {id : {username, text}}
         if (data === undefined) return;
         this.lobbyID = data.roomId;
         this.players = data.players;
@@ -51,10 +51,15 @@ export default class LobbyScene extends Phaser.Scene {
         });
     }
 
+    /**
+     * Sets the entries of the players Map with the data from
+     * the previous scene, and then deletes the data.players field.
+     */
     populatePlayersMap() {
         this.players.forEach(p => {
-            this.displayPlayer(p.id, p.username);
+            this.setPlayerMapEntry(p.id, p.username);
         });
+        delete this.players;
     }
 
     initBackButton() {
@@ -95,14 +100,6 @@ export default class LobbyScene extends Phaser.Scene {
         });
     }
 
-    // displayRoom(players) {
-    //     this.displayCode();
-    //     for (let [index, p] of this.players.entries()) {
-    //         const player = this.createPlayer(p.username, index + 1);
-    //         this.playerList.set(p.id, player);
-    //     }
-    // }
-
     displayError() {
         this.message.setText('Could not connect!');
     }
@@ -111,6 +108,11 @@ export default class LobbyScene extends Phaser.Scene {
         this.message.setText('Lobby Code: ' + this.lobbyID);
     }
 
+    /**
+     * Sends the chosen username to the server and asks the server
+     * to create a new room.
+     * @returns if the username is empty 
+     */
     createLobby() {
         this.username = this.usernameFormObject.getChildByName('username').value;
         if (this.username === '') {
@@ -122,6 +124,12 @@ export default class LobbyScene extends Phaser.Scene {
         this.socket.emit('createRoom');
     }
 
+    /**
+     * A helper method that creates a text GameObject to the current scene.
+     * @param {string} username the username of the user
+     * @param {number} index the index (for enumeration)
+     * @returns {Phaser.GameObjects.Text} a Text Game Object
+     */
     createPlayer(username, index) {
         return this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - index * 75), 'Player ' + index + ': ' + username, {
             color: '#FFFFFF',
@@ -129,6 +137,9 @@ export default class LobbyScene extends Phaser.Scene {
         }).setOrigin(0.5);
     }
 
+    /**
+     * Enables the start button, and its listeners.
+     */
     enableStartButton() {
         this.actionButton.clearTint();
         this.actionButton.off('pointerdown');
@@ -146,6 +157,10 @@ export default class LobbyScene extends Phaser.Scene {
         });
     }
 
+    /**
+     * Disables the start button, and removes the listeners associated with
+     * the button.
+     */
     disableStartButton() {
         this.actionButton.off('pointerdown');
         this.actionButton.off('pointerover');
@@ -153,29 +168,53 @@ export default class LobbyScene extends Phaser.Scene {
         this.actionButton.setTint(0x71797E);
     }
 
+    /**
+     * Changes the text of the action button to 'Start game'.
+     */
     displayStartButton() {
         this.actionButton.setText('Start game');
     }
 
+    /**
+     * Changes the text of the action button to 'Create Lobby' and
+     * sets the onClick listener of the button to trigger lobby creation.
+     */
     displayCreateLobbyButton() {
         this.actionButton.setText('Create Lobby');
 
         this.actionButton.on('pointerdown', () => this.createLobby());
     }
 
-    displayPlayer(id, username) {
-        this.playerList.set(id, {
+    /**
+     * Creates a new entry in the playersMap.
+     * @param {string} id the id of the new player
+     * @param {string} username the username of the new player
+     */
+    setPlayerMapEntry(id, username) {
+        this.playersMap.set(id, {
             username: username,
-            text: this.createPlayer(username, this.playerList.size + 1)
+            text: this.createPlayer(username, this.playersMap.size + 1)
         })
     }
 
+    /**
+     * Re-renders the players map.
+     */
+    rerenderPlayersMap() {
+        let index = 0;
+        for (const value of this.playersMap.values()) {
+            index++;
+            value.text.setText('Player ' + index + ': ' + value.username);
+            value.text.y = this.game.renderer.height - (350 - index * 75);
+        }
+    }
+
+
     initSocketListeners() {
         this.socket.on('roomCreated', (args) => {
-            console.log( args );
             this.lobbyID = args.roomId;
             args.players.forEach(p => {
-                this.displayPlayer(p.id, p.username);
+                this.setPlayerMapEntry(p.id, p.username);
             });
             
             this.displayCode();
@@ -186,9 +225,9 @@ export default class LobbyScene extends Phaser.Scene {
         });
 
         this.socket.on('newPlayerJoined', (player) => {
-            this.playerList.set(player.id, {
+            this.playersMap.set(player.id, {
                 username: player.username,
-                text: this.createPlayer(player.username, this.playerList.size + 1)
+                text: this.createPlayer(player.username, this.playersMap.size + 1)
             });
             // this.displayRoom(this.players);
         }); // re-render the scene if new player joins
@@ -215,14 +254,9 @@ export default class LobbyScene extends Phaser.Scene {
         });
 
         this.socket.on('playerLeft', (player) => {
-            this.playerList.get(player.id).text.destroy();
-            this.playerList.delete(player.id);
-            let index = 0;
-            for (const value of this.playerList.values()) {
-                index++;
-                value.text.setText('Player ' + index + ': ' + value.username);
-                value.text.y = this.game.renderer.height - (350 - index * 75);
-            }
+            this.playersMap.get(player.id).text.destroy();
+            this.playersMap.delete(player.id);
+            this.rerenderPlayersMap();
 
             this.disableStartButton();
         }); // re-render the scene if a player leaves

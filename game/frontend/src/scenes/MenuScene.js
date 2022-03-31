@@ -33,7 +33,7 @@ export default class MenuScene extends Phaser.Scene {
      * Connects the client to the server socket.
      */
     connect() {
-        this.socket = io(SERVER_URL, {reconnection: false });
+        this.socket = io(SERVER_URL, { reconnection: false });
     }
 
     /**
