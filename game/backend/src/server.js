@@ -43,13 +43,25 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
 
-    socket.on('leaveRoom', (roomId) => lobbyManager.handleLeaveRoom(roomId, player, io));
+    socket.on('checkGameReady', (roomId) => lobbyManager.handleCheckGameReady(roomId, player));
+
+    socket.on('leaveRoom', (roomId) => lobbyManager.handleLeaveRoom(roomId, player));
 
     socket.on('getCurrentGames', () => lobbyManager.handleGetCurrentGames(player));
 
     socket.on('joinRoomAsSpectator', (roomId) => lobbyManager.handleJoinRoomAsSpectator(roomId, player))
 
-    socket.on('disconnect', () => handleDisconnect(player));
+    socket.on('disconnecting', () => {
+        let roomId;
+        for (let value of socket.rooms.values()) {
+            if (value.length === 6) {
+                roomId = value;
+            }
+        }
+
+        if (roomId !== undefined) lobbyManager.handleLeaveRoom(roomId, player, io);
+        else handleDisconnect(player);
+    });
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
@@ -67,7 +79,7 @@ io.on('connection', (socket) => {
     // This message is received when the time for choosing perk is up
     socket.on('finishedPerkChoosing', (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
 
-    // This message is received when a player gets hit byt the enemy
+    // This message is received when a player gets hit by the enemy
     socket.on('hitByEnemy', (args) => gameManager.handleHitByEnemy(args.lobbyID, args.damage));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));

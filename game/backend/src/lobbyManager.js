@@ -55,7 +55,6 @@ class LobbyManager {
         // Store roomId for future use
         // Might not be needed lol
         player.roomId = room.id;
-        console.log(player.id, 'Joined', room.id);
     }
 
     handleJoinRoom(roomId, player) {
@@ -81,7 +80,6 @@ class LobbyManager {
                 playerIDs.push(player.id);
             }
 
-            console.log(player.socket.rooms);
             let data = {
                 roomId: roomId,
                 playerIDs: playerIDs
@@ -92,17 +90,28 @@ class LobbyManager {
             // broadcast to every other team member
             player.socket.to(room.id).emit('newPlayerJoined', player.id);
 
-            // send game-ready-to-start game event if room is full
-            if (room.players.length == this.MAX_ROOM_SIZE) {
-                player.socket.to(roomId).emit('gameReadyToStart');
-            }
-
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
     }
 
-    handleLeaveRoom(roomId, player, io) {
+    handleCheckGameReady(roomId, player) {
+        const room = rooms.get(roomId);
+
+        if (room) {
+            // send game-ready-to-start game event if room is full
+            console.log(room.players.length);
+            if (room.players.length === this.MAX_ROOM_SIZE) {
+                player.socket.to(room.id).emit('gameReadyToStart');
+            } // else send game-not-ready-to-start event
+            if (room.players.length !== this.MAX_ROOM_SIZE) {
+                player.socket.emit('gameNotReadyToStart');
+            }
+        }
+    }
+
+    handleLeaveRoom(roomId, player) {
+        console.log('roomId: ' + roomId);
         const room = rooms.get(roomId);
         if (room) {
             // remove player from room
@@ -115,8 +124,23 @@ class LobbyManager {
         }
         // broadcast to other team member
         room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
-        // io.to(room.id).emit('playerLeft', playerNames, console.log('success'));
         player.socket.leave(room.id);
+    }
+    
+    handlePlayerDisconnected(playerId) {
+        console.log('a player disconnected from the room')
+        for (let room of rooms.values()) {
+            if (room.players.includes(playerId)) {
+                room.players = room.players.filter(p => p.id != playerId);
+                room.spectators = room.spectators.filter(p => p.id != playerId);
+                let playerNames = [];
+                for (let p of room.players) {
+                    playerNames.push(p.id);
+                }
+                // broadcast to other team member
+                room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
+            }
+        }
     }
 
     handleJoinRoomAsSpectator(roomId, player) {
@@ -125,8 +149,6 @@ class LobbyManager {
 
         if (room) {
             room.spectators.push(player);
-
-
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.id);
             player.socket.emit('runGameScene', roomId, room.gameState)
