@@ -42,15 +42,16 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
 
-        this.actionButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, this.lobbyID === undefined ? 'Create Lobby' : 'Start game', {
+        this.createLobbyButton = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 100, 'Create Lobby', {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5).setInteractive();
 
-        // connect button
-        this.connectButton.on('pointerover', () => {
+        // create lobby button behavior
+        this.createLobbyButton.on('pointerover', () => {
             this.connectButton.setTint(0x30839f);
         });
+
         this.connectButton.on('pointerout', () => {
             this.connectButton.clearTint();
         });
@@ -59,8 +60,13 @@ export default class LobbyScene extends Phaser.Scene {
             this.connect(); 
         });
          
-        if (this.lobbyID !== undefined) {
-            this.connectButton.destroy();
+        if (this.lobbyID === undefined) {
+            this.actionButton.on('pointerdown', () => {
+                this.connect();
+            });
+        } else {
+            //TODO: Disable button until both players are connected
+            this.actionButton.on('pointerdown', () => this.socket.emit('gameStart', this.lobbyID));
             this.displayRoom(this.playerIDs);
             this.enableStartButton();
         }
