@@ -119,7 +119,7 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            const player = new Player(this, p.x, p.y, p.playerId, this.perk, this.spikeTraps);
+            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
             this.players.set(p.playerId, player);
         });
     }
