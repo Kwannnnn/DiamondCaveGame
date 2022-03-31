@@ -172,7 +172,7 @@ export default class RankingScene extends Phaser.Scene {
 
     goBack() {
         if (this.socket !== undefined) this.socket.removeAllListeners();
-        this.lobbyID = undefined;
-        this.playerIDs = [];
+        this.scene.stop();
+        this.scene.run(CST.SCENES.MENU);
     }
 }

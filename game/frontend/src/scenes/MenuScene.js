@@ -12,7 +12,10 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        this.connect();
+        if (this.socket === undefined) {
+            this.connect();
+        }
+        
         const MARGIN_Y = 70;
         const START_Y = this.game.renderer.height - 320;
 
@@ -39,11 +42,13 @@ export default class MenuScene extends Phaser.Scene {
      * @param {string} targetSceneKey the key of the target scene
      */
     onSceneChange(targetSceneKey) {
+        this.scene.pause();
         this.scene.start(targetSceneKey, { socket: this.socket });
     }
 
     onGetRanking(targetSceneKey) {
         this.socket.emit('getRanking');
+        this.scene.pause();
         this.scene.start(targetSceneKey, { socket: this.socket });
     }
 }

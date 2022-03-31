@@ -170,7 +170,8 @@ export default class SpectatorJoinScene extends Phaser.Scene {
 
     goBack() {
         if (this.socket !== undefined) this.socket.removeAllListeners();
-        this.scene.start(CST.SCENES.MENU);
+        this.scene.stop();
+        this.scene.run(CST.SCENES.MENU);
     }
 
 }
