@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
         else handleDisconnect(player);
     });
 
-    socket.on('setUsername', (username) => players.get(socket.id).setUsername(username));
+    socket.on('setUsername', (username) => players.get(socket.id).username = username);
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
