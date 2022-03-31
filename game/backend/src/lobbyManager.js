@@ -40,13 +40,14 @@ class LobbyManager {
 
         //add player to the room
         this.joinRoom(room, player, false);
-        let playerUsernames = [];
-        for (player of room.players) {
-            playerUsernames.push(player.username);
-        }
 
-        //send message back to player with room id and list of playerIDs
-        player.socket.emit('roomCreated', { roomId: roomId, playerIDs: playerUsernames });
+        player.socket.emit('roomCreated', {
+            roomId: roomId,
+            players: [{
+                id: player.id,
+                username: player.username
+            }]
+        }); // send message back to player with room id and list of playerIDs
     }
 
     joinRoom(room, player, isSpectator) {
@@ -83,20 +84,28 @@ class LobbyManager {
             }
 
             this.joinRoom(room, player, false);
-            let playerUsernames = [];
+            let players = [];
             for (player of room.players) {
-                playerUsernames.push(player.username);
+                const id = player.id;
+                const username = player.username;
+                players.push({
+                    id: player.id,
+                    username: player.username
+                });
             }
 
             let data = {
                 roomId: roomId,
-                playerIDs: playerUsernames
+                players: players
             };
             // send room data to the player joins the room
             player.socket.emit('roomJoined', data);
 
             // broadcast to every other team member
-            player.socket.to(room.id).emit('newPlayerJoined', player.id);
+            player.socket.to(room.id).emit('newPlayerJoined', {
+                id: player.id,
+                username: player.username
+            });
 
             // send game-ready-to-start game event if room is full
             if (room.players.length == this.MAX_ROOM_SIZE) {
@@ -105,6 +114,7 @@ class LobbyManager {
 
         } else {
             player.socket.emit('roomNotFound', roomId);
+            console.log(`[server >> ${player.id}] -- roomNotFound`);
         }
     }
 
@@ -124,20 +134,28 @@ class LobbyManager {
     }
 
     handleLeaveRoom(roomId, player) {
-        console.log('roomId: ' + roomId);
         const room = rooms.get(roomId);
-        if (room) {
-            // remove player from room
-            room.players = room.players.filter(p => p.id != player.id);
-            room.spectators = room.spectators.filter(p => p.id != player.id);
-        } 
-        let playerNames = [];
-        for (let p of room.players) {
-            playerNames.push(p.id);
+        if (room === undefined) {
+            player.socket.emit('roomNotFound', roomId);
+            return;
         }
+
+        // remove player from room
+        room.players = room.players.filter(p => p.id != player.id);
+        room.spectators = room.spectators.filter(p => p.id != player.id);
+
         // broadcast to other team member
-        room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
-        player.socket.leave(room.id);
+        if (room.players.length > 0) {
+            room.players.forEach(p => p.socket.emit('playerLeft', {
+                id: player.id,
+                username: player.username
+            }));
+            player.socket.leave(room.id);
+            player.username = undefined;
+        } else {
+            rooms.delete(roomId);
+            console.log('All players left. Room ' + roomId + ' has been deleted.')
+        }
     }
     
     handlePlayerDisconnected(playerId) {
@@ -148,7 +166,7 @@ class LobbyManager {
                 room.spectators = room.spectators.filter(p => p.id != playerId);
                 let playerNames = [];
                 for (let p of room.players) {
-                    playerNames.push(p.id);
+                    playerNames.push(p.username);
                 }
                 // broadcast to other team member
                 room.players.forEach(p => p.socket.emit('playerLeft', playerNames));
@@ -192,7 +210,7 @@ class LobbyManager {
             //iterate over players in the room
             //property "id" is the unique name for players
             for (const p of room.players) {
-                if (p.id == player.id) {
+                if (p.id == player.username) {
                     player.socket.emit('nameAlreadyExistForAPlayer');
                     return false;
                 }
@@ -201,7 +219,7 @@ class LobbyManager {
             //iterate over spectators in the room
             //spectators use player model and are stored in array spectators
             for (const s of room.spectators) {
-                if (s.id == player.id) {
+                if (s.id == player.username) {
                     player.socket.emit('nameAlreadyExistForASpectator');
                     return false;
                 }
