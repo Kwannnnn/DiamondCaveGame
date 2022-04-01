@@ -24,9 +24,10 @@ class GameManager {
             }
             const initialGameState = this.generateInitialGameState(room, map1);
             rooms.get(roomId).gameState = initialGameState;
-            console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
+            room.gameActive = true;
             this.io.to(roomId).emit('initialGameState', initialGameState);
+            room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }
 
@@ -36,6 +37,7 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
+            // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
             player.x = newPosition.x;
             player.y = newPosition.y;
             player.orientation = newPosition.orientation;
@@ -108,11 +110,13 @@ class GameManager {
             'tileMap': map.tileMap,
             'players': [{
                 'playerId': player1.id, // the id of player 1
+                'username': player1.username, // the username of player 1
                 'x': 32 + 16, // player 1 spawn x position
                 'y': 32 + 16, // player 1 spawn y position
                 'orientation': 0
             }, {
                 'playerId': player2.id, // the id of player 2
+                'username': player2.username, // the username of player 2
                 'x': 64 + 16, // player 2 spawn x position
                 'y': 32 + 16, // player 2 spawn y position
                 'orientation': 0
@@ -181,7 +185,7 @@ class GameManager {
             room.players.forEach(player => {
                 // If the iterable object is not the player who chose the perk, notify teammate
                 // If it is the player, assign the chosen perk to the object
-                if (player.id !== chosenPerk.username) {
+                if (player.username !== chosenPerk.username) {
                     console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
@@ -222,7 +226,6 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    console.log(player.id);
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
                 });
             }
@@ -234,17 +237,19 @@ class GameManager {
      * @param {roomId} id of the room that has to reduce health 
      * @param {damage} damage that has been caused to the team
      */
-    handleReduceHealth(roomId, damage) {
+    handleHitByEnemy(roomId, damage) {
         const room = rooms.get(roomId);
 
         if (room) {
             room.health -= damage;
 
-            room.players.forEach(player => {
-                // TODO add message to the protocol
-                // Message is sent to all players in room to indicate health loss
-                player.socket.emit('reduceHealth', { damage });
-            });
+            // Message is sent to all players in room to indicate health loss
+            this.io.to(room.id).emit('reduceHealth', damage);
+
+            if (room.health <= 0) {
+                this.io.to(room.id).emit('gameOver');
+                this.handleGameOver(room);
+            }
         }
     }
 
@@ -335,19 +340,23 @@ class GameManager {
             
     }
 
-    handleGameOver(roomId) {
-        const room = rooms.get(roomId);
+    handleGameOver(room) {
         const playerUsernames = room.players.map(p => p.id);
         //TODO: create an algorithm for calculating totalScore
         const totalScore = room.gameState.gemsCollected;
         const time = 6969;
 
-        const run = new Run(roomId, totalScore, time, playerUsernames);
+        const run = new Run(room.id, totalScore, time, playerUsernames);
         runs.enqueue(run);
 
         // remove room from rooms map since we dont need it anymore
-        // rooms.delete(roomId);
+        rooms.delete(room.id);
         console.log(runs.toArray());
+    }
+
+    onUpdateTime(roomId, newTime) {
+        this.io.to(roomId).emit('current-time', newTime);
+        console.log('Room ' + roomId + ': ' + newTime);
     }
 }
 

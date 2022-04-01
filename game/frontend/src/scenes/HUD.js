@@ -13,10 +13,6 @@ export default class HUD extends Phaser.Scene {
         });
 
         this.fullWidth = 179;
-
-        // Initial clock counts
-        this.minutes = 0;
-        this.seconds = 0;
     }
 
     init(data) {
@@ -28,7 +24,6 @@ export default class HUD extends Phaser.Scene {
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
         
-        // health in percentage
         this.currentHealth = 100;
     }
 
@@ -64,8 +59,9 @@ export default class HUD extends Phaser.Scene {
             .setOrigin(0, 0.0)
             .setScale(0.6)
 
-        // Value given in percentage
-        this.setHealth(this.currentHealth);
+        // At the start players have full health
+        // so difference is 0
+        this.changeHealth(0);
 
         // Create the world and stage text
         this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `Level: ${this.stage}`, {
@@ -90,13 +86,13 @@ export default class HUD extends Phaser.Scene {
         }).setOrigin(0, 0);
 
         // Create the clock
-        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, `${this.seconds}:${this.minutes}`, {
+        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, '0:00', {
             color: '#FFFFFF',
             fontSize: 40,
         }).setDepth(150);        
 
         // Clock
-        this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
+        // this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
         // Diamond collection
         CollectDiamond.on('update-count', this.updateDiamondCount, this);
@@ -114,18 +110,29 @@ export default class HUD extends Phaser.Scene {
     // Setting to +20 makes the player's health 20%
     // Changing to +20 makes the player's health equal to their current health + 20
     changeHealth(difference) {
-        this.setHealth(this.middle.displayWidth + difference);
-        this.updateHealth(difference);
+        //update health bar on the hud
+        const health = this.currentHealth + difference;
+
+        if (health <= 0) {
+            this.middle.destroy();
+            this.rightCap.destroy();
+        } else {
+            let percentage = health * 0.01;
+            if (percentage > 1) percentage = 1;
+
+            this.middle.displayWidth = this.fullWidth * percentage;
+            this.rightCap.x = this.middle.x + this.middle.displayWidth;
+        }
+        
+
+        this.currentHealth += difference;
         console.log('Teams health is: ' + this.currentHealth);
     }
 
     changeHealthAnimated(difference) {
-        this.setHealthAnimated(this.middle.displayWidth + difference);
-    }
-
-    setHealth(percentage) {
-        this.middle.displayWidth = this.fullWidth * (percentage / 100);
-        this.rightCap.x = this.middle.x + this.middle.displayWidth;
+        this.setHealthAnimated(this.currentHealth + difference);
+        this.currentHealth += difference;
+        console.log('Teams health is: ' + this.currentHealth);
     }
 
     setHealthAnimated(percentage) {
@@ -171,11 +178,18 @@ export default class HUD extends Phaser.Scene {
         }     
     }
 
-    updateHealth(health) {
-        this.currentHealth += health;
-    }
-
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
+    }
+
+    setTime(time) {
+        let minutes = Math.floor(time / 60);
+        let seconds = time - minutes * 60;
+
+        if (seconds <= 9) {
+            this.clock.setText(`${minutes}:0${seconds}`);
+        } else {
+            this.clock.setText(`${minutes}:${seconds}`);
+        }
     }
 }
