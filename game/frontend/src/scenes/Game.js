@@ -345,7 +345,7 @@ export default class Game extends Phaser.Scene {
         // create SpikeTrap and sprite objects at the correct coordinates
         for (const [index, spikeLocation] of this.spikeLocations.entries()) {
             const spikeLocationX = spikeLocation.x;
-            const spikeLocationY = spikeLocation.x;
+            const spikeLocationY = spikeLocation.y;
             const trapSprite = this.physics.add.sprite(spikeLocationX, spikeLocationY, 'spikeOn');
 
             const trap = new SpikeTrap(this, spikeLocationX, spikeLocationY, this.lobbyID, index, this.socket);
@@ -367,6 +367,7 @@ export default class Game extends Phaser.Scene {
             for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
                 // value found?
                 if (this.gameState.tileMap[row][column] == tileNumber) {
+                    console.log(`Found trap at: ${row}, ${column}`);
                     // translate index to coordinates
                     let coordinates = {
                         x: column * 32 + 16,
