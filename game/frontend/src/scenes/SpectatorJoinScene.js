@@ -70,8 +70,6 @@ export default class SpectatorJoinScene extends Phaser.Scene {
             this.actionButton.clearTint();
         });
 
-        this.handleSocketEvents();
-
         this.events.on('shutdown', () => {
             if (this.socket !== undefined) this.socket.removeAllListeners();
         });
@@ -318,36 +316,6 @@ export default class SpectatorJoinScene extends Phaser.Scene {
     //         yPosition += 55;
     //     }
     // }
-
-    handleSocketEvents() {
-        this.socket.on('connect_error', ()=>{
-            this.message.setText('Could not connect to server');
-        });
-
-        this.socket.on('currentGames', (payload) => {
-            let games = [];
-            for (const game of payload) {
-                if (game.gameActive) {
-                    games.push(game);
-                }
-            } 
-
-            this.showCurrentGames(games);
-        });
-
-        this.socket.on('runGameScene', (roomId, gameState)=>{
-            console.log(roomId);
-            console.log(gameState);
-            this.scene.start(CST.SCENES.GAME, {
-                world: 1,
-                stage: 1,
-                socket: this.socket,
-                username: this.username,
-                lobbyID: roomId,
-                initialGameState: gameState
-            });
-        });
-    }
 
     goBack() {
         if (this.socket !== undefined) this.socket.removeAllListeners();
