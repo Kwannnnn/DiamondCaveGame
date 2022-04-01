@@ -19,14 +19,13 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         });
 
         // dummy data. Uncomment and copy/paste to test scrolling
-        // also comment line 95
+        // also comment line 100
         // this.dataToDisplay = [{
-        //     roomId: 1,
+        //     roomId: '1',
         //     playerIds: ['123', '234'],
         //     gameActive: true
-        // }]
+        // },]
 
-        this.cellId = 0;
         this.socket = data.socket;
     }
 
@@ -89,6 +88,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.socket.on('connect', () => {
             console.log('Connection was successful');
         });
+
         this.socket.emit('getCurrentGames');
 
         this.socket.on('currentGames', (payload) => {
@@ -193,12 +193,18 @@ export default class SpectatorJoinScene extends Phaser.Scene {
      * - Rank, Team, Player 1, Player 2, Score
      */
     createTableItem(backgroundColor) {
+        const tableWidth = this.game.renderer.width * 0.75;
+        const idColumnWidth = tableWidth * 0.1;
+        const teamColumnWidth = tableWidth * 0.15;
+        const p1ColumnWidth = tableWidth * 0.25;
+        const p2ColumnWidth = tableWidth * 0.25;
+        const spectateColumnWidth = tableWidth * 0.25;
         var background = this.spectatorJoinScene.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor);
-        var id = this.spectatorJoinScene.add.BBCodeText(0, 0, 'ID', { fixedWidth: 40, halign: 'left', valign: 'center' });
-        var team = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: 70, halign: 'left', valign: 'center' });
-        var player1 = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: 140, halign: 'left', valign: 'center' });
-        var player2 = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: 140, halign: 'left', valign: 'center' });
-        var spectate = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Spectate', { fixedWidth: 100, halign: 'right', valign: 'center' });
+        var id = this.spectatorJoinScene.add.BBCodeText(0, 0, 'ID', { fixedWidth: idColumnWidth, halign: 'left', valign: 'center' });
+        var team = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: teamColumnWidth, halign: 'left', valign: 'center' });
+        var player1 = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: p1ColumnWidth, halign: 'left', valign: 'center' });
+        var player2 = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: p2ColumnWidth, halign: 'left', valign: 'center' });
+        var spectate = this.spectatorJoinScene.add.BBCodeText(0, 0, 'Spectate', { fixedWidth: spectateColumnWidth, halign: 'center', valign: 'center' });
 
         return this.spectatorJoinScene.add.sizer({
             width: undefined,
@@ -223,7 +229,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         }
 
         // Feed the container with the actual data
-        cellContainer.getElement('id').setText(this.cellId++);
+        cellContainer.getElement('id').setText(cell.index + 1);
         cellContainer.getElement('team').setText(item.roomId);
         cellContainer.getElement('player1').setText(item.playerIds[0]);
         cellContainer.getElement('player2').setText(item.playerIds[1] ? item.playerIds[1] : '');
@@ -240,6 +246,8 @@ export default class SpectatorJoinScene extends Phaser.Scene {
 
         return cellContainer;
     }
+
+    // old code with pagination
 
     // showCurrentGames(payload) {
     //     this.logo.destroy();
