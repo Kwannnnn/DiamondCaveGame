@@ -47,8 +47,8 @@ module.exports = {
         'y': 336
     }],
     'exit': {
-        x: 624,
-        y: 624
+        x: 592,
+        y: 592
     },
     'players': [{
         'x': 80,

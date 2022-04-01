@@ -74,12 +74,12 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        this.setupSpikeTraps();
         setTraps(this.gameState.pressurePlateTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit();
-        this.setupSpikeTraps();
+        this.placeExit(this.gameState.exit.x, this.gameState.exit.y);
 
         this.handleSocketEvents();
 
@@ -500,11 +500,10 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate x for exit to be place} x 
      * @param {coordinate y for exit to be place} y 
      */
-    placeExit() {
-        console.log(this.initialGameState);
-        this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
+    placeExit(x, y) {
+        this.exit = this.physics.add.sprite(x, y, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            console.log('collided');
+            console.log('At exit location');
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
