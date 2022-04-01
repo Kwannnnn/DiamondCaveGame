@@ -298,11 +298,12 @@ export default class Game extends Phaser.Scene {
         this.spikeTrapSprites = []; // array of spike trap sprites
 
         // create SpikeTrap and sprite objects at the correct coordinates
-        for (let i = 0; i < this.spikeLocations.length; i++) {
+        for (const [index, spikeLocation] of this.spikeLocations.entries()) {
+            const spikeLocationX = spikeLocation.x;
+            const spikeLocationY = spikeLocation.x;
+            const trapSprite = this.physics.add.sprite(spikeLocationX, spikeLocationY, 'spikeOn');
 
-            const trapSprite = this.physics.add.sprite(this.spikeLocations[i].x, this.spikeLocations[i].y, 'spikeOn');
-
-            const trap = new SpikeTrap(this, this.spikeLocations[i].x, this.spikeLocations[i].y, this.lobbyID, i, this.socket);
+            const trap = new SpikeTrap(this, spikeLocationX, spikeLocationY, this.lobbyID, index, this.socket);
 
             // add both to arrays so that they can be found later
             this.spikeTraps.push(trap);
@@ -338,13 +339,11 @@ export default class Game extends Phaser.Scene {
      * Check whether player has stepped on a spike trap
      */
     hasSteppedOnSpikeTrap() {
-        const playerPos = this.controlledUnit.getLocation();
-
         // itirate over SpikeTrap objects
         for (let i = 0; i < this.spikeTraps.length; i++) {
             const spikePos = { x: this.spikeTraps[i].x, y: this.spikeTraps[i].y };
             // see if positions overlap
-            if (playerPos.x === spikePos.x && playerPos.y === spikePos.y) {
+            if (this.controlledUnit.x === spikePos.x && this.controlledUnit.y === spikePos.y) {
                 // call method to deal damage if possible
                 this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit);
             }

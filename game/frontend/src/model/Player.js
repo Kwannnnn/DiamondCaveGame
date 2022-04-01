@@ -178,11 +178,4 @@ export default class Player extends ControlledUnit {
     setSocket(socket) {
         this.socket = socket;
     }
-
-    getLocation() {
-        return {
-            x: this.x,
-            y: this.y
-        }
-    }
 }
