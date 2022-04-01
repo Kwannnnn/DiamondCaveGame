@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { CST } from '../utils/CST';
 import { usernameForm } from '../components/UsernameTextField'
 
-const SERVER_URL = 'http://localhost:3000';
 // const usernameForm = '<label class="custom-field one">\n' +
 //     '  <input type="text" name="username" placeholder="Enter your username"/>';
 let listingEntries = [];
@@ -10,19 +9,17 @@ let listingButtons = [];
 export default class SpectatorJoinScene extends Phaser.Scene {
     constructor() {
         super({
-            key: CST.SCENES.SPECTATORJOIN
+            key: CST.SCENES.SPECTATE
         });
     }
 
-    init() {
-        this.events.on('shutdown', () => {
-            if (this.socket !== undefined) this.socket.removeAllListeners();
-        });
+    init(data) {
+        this.socket = data.socket;
     }
 
     create() {
         this.logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
 
@@ -48,54 +45,17 @@ export default class SpectatorJoinScene extends Phaser.Scene {
             this.actionButton.clearTint();
         });
 
-        // this.socket.on('currentPlays', () => {
-        //     this.scene.start(CST.SCENES.ACTIVEGAMES, {
-        //         world: 1,
-        //         stage: 1,
-        //         socket: this.socket,
-        //         username: this.username,
-        //         lobbyID: lobbyID,
-        //         initialGameState: payload
-        //     });
-        // });
+        this.handleSocketEvents();
+
+        this.events.on('shutdown', () => {
+            if (this.socket !== undefined) this.socket.removeAllListeners();
+        });
     }
 
     connect() {
         this.username = this.usernameForm.getChildByName('username').value;
-        this.socket = io(SERVER_URL, { query: 'username=' + this.username, reconnection: false });
-        this.socket.on('connect_error', ()=>{
-            this.message.setText('Could not connect to server');
-        });
-        this.socket.on('connect', ()=>{
-            console.log('Connection was successful');
-        });
+        this.socket.emit('setUsername', this.username);
         this.socket.emit('getCurrentGames');
-
-        this.socket.on('currentGames', (payload) => {
-            // console.log(payload);
-            // this.scene.start(CST.SCENES.ACTIVEGAMES,{
-            //     plays:payload
-            // });
-            console.log(payload);
-
-            let games = [];
-            for (let game of payload) if (game.gameActive) games.push(game);
-
-            this.showCurrentGames(games);
-        });
-
-        this.socket.on('runGameScene', (roomId, gameState)=>{
-            console.log(roomId);
-            console.log(gameState);
-            this.scene.start(CST.SCENES.GAME, {
-                world: 1,
-                stage: 1,
-                socket: this.socket,
-                username: this.username,
-                lobbyID: roomId,
-                initialGameState: gameState
-            });
-        });
     }
 
     showCurrentGames(payload) {
@@ -174,9 +134,40 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         }
     }
 
+    handleSocketEvents() {
+        this.socket.on('connect_error', ()=>{
+            this.message.setText('Could not connect to server');
+        });
+
+        this.socket.on('currentGames', (payload) => {
+            let games = [];
+            for (const game of payload) {
+                if (game.gameActive) {
+                    games.push(game);
+                }
+            } 
+
+            this.showCurrentGames(games);
+        });
+
+        this.socket.on('runGameScene', (roomId, gameState)=>{
+            console.log(roomId);
+            console.log(gameState);
+            this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: 1,
+                socket: this.socket,
+                username: this.username,
+                lobbyID: roomId,
+                initialGameState: gameState
+            });
+        });
+    }
+
     goBack() {
-        if (this.socket !== undefined) this.socket.disconnect();
-        this.scene.start(CST.SCENES.MENU);
+        if (this.socket !== undefined) this.socket.removeAllListeners();
+        this.scene.stop();
+        this.scene.run(CST.SCENES.MENU);
     }
 
 }

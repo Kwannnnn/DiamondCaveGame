@@ -25,8 +25,15 @@ the logic of the game in a correct manner.
 {
     // The id of the created room as a string
     roomId: ...,
-    // An array of connected player usernames as strings
-    playerIDs: [...]
+    // An array of connected players for that room
+    players: [
+        {
+            // the unique id of the player
+            id: ..., 
+            // the username of the player
+            username: ... 
+        }
+    ]
 }
 ```
 
@@ -55,8 +62,12 @@ roomId;
 <p>
 
 ```javascript
-// A list of current usernames in the room
-playerNames;
+{
+    // The unique name of the player that left the room
+    id: ...,
+    // The username of the player that left the room
+    username: ...
+}
 ```
 
 </p>
@@ -74,8 +85,12 @@ playerNames;
 <p>
 
 ```javascript
-// The username of the player that joined the room
-playerId;
+{
+    // The unique name of the player that joined the room
+    id: ...,
+    // The username of the player that joined the room
+    username: ...
+}
 ```
 
 </p>
@@ -674,6 +689,23 @@ gemId;
         <th>Event</th>
         <th>Payload</th>
         <th>Description</th>
+    </tr>
+    <tr>
+        <td>setUsername</td>
+        <td>
+<p>
+
+```javascript
+// The username of the player as a string
+username;
+```
+
+</p>
+</td>
+        <td>
+            A message sent whenever a client chooses their username whenever
+            creating a room/joining a room/is going to spectate.
+        </td>
     </tr>
     <tr>
         <td>createRoom</td>

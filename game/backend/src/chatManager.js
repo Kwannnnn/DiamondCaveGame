@@ -19,13 +19,15 @@ class ChatManager {
             }
         }
         const data = {
-            sender: player.id,
+            sender: player.username,
             message: message
         };
 
         if (!spectator) this.io.to(player.roomId).emit('chatMessage', data); // Not a spectator
         else {
-            for (let roomSpectator of rooms.get(player.roomId).spectators) roomSpectator.socket.emit('chatMessage', data); // Is a spectator
+            for (let roomSpectator of rooms.get(player.roomId).spectators) {
+                roomSpectator.socket.emit('chatMessage', data); // Is a spectator
+            }
         }
         console.log('Sent message from "' + player.id + '": ' + message);
     }

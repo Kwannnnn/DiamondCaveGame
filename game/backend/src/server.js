@@ -21,7 +21,7 @@ const io = socket(httpServer, {
     }
 });
 
-const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
+const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE, io);
 const gameManager = new gManager(io);
 const chatManager = new cManager(io);
 
@@ -29,11 +29,8 @@ const chatManager = new cManager(io);
 debugPage.sendDebugWebPage(app);
 
 io.on('connection', (socket) => {
-    // generate new unique id for the player
-    let username = socket.request._query['username'];
-    if (username === undefined) return;
-    // console.log(socket.request._query['username']);
-    const player = new Player(username, socket);
+    const player = new Player(socket.id, socket);
+    console.log('Connection ' + socket.id);
 
     handleConnect(player);
 
@@ -42,8 +39,6 @@ io.on('connection', (socket) => {
     socket.on('createRoom', () => lobbyManager.handleCreateRoom(player));
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
-
-    socket.on('checkGameReady', (roomId) => lobbyManager.handleCheckGameReady(roomId, player));
 
     socket.on('leaveRoom', (roomId) => lobbyManager.handleLeaveRoom(roomId, player));
 
@@ -62,6 +57,8 @@ io.on('connection', (socket) => {
         if (roomId !== undefined) lobbyManager.handleLeaveRoom(roomId, player, io);
         else handleDisconnect(player);
     });
+
+    socket.on('setUsername', (username) => players.get(socket.id).username = username);
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
