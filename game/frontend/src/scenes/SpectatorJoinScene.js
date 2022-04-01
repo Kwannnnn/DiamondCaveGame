@@ -15,10 +15,6 @@ export default class SpectatorJoinScene extends Phaser.Scene {
 
     init(data) {
         this.socket = data.socket;
-
-        this.events.on('shutdown', () => {
-            if (this.socket !== undefined) this.socket.removeAllListeners();
-        });
     }
 
     create() {
@@ -50,11 +46,16 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         });
 
         this.handleSocketEvents();
+
+        this.events.on('shutdown', () => {
+            if (this.socket !== undefined) this.socket.removeAllListeners();
+        });
     }
 
     connect() {
         this.username = this.usernameForm.getChildByName('username').value;
         this.socket.emit('setUsername', this.username);
+        this.socket.emit('getCurrentGames');
     }
 
     showCurrentGames(payload) {
@@ -137,11 +138,6 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.socket.on('connect_error', ()=>{
             this.message.setText('Could not connect to server');
         });
-
-        this.socket.on('connect', ()=>{
-            console.log('Connection was successful');
-        });
-        this.socket.emit('getCurrentGames');
 
         this.socket.on('currentGames', (payload) => {
             let games = [];
