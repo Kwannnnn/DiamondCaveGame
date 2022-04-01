@@ -40,8 +40,6 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
 
-    socket.on('checkGameReady', (roomId) => lobbyManager.handleCheckGameReady(roomId, player));
-
     socket.on('leaveRoom', (roomId) => lobbyManager.handleLeaveRoom(roomId, player));
 
     socket.on('getCurrentGames', () => lobbyManager.handleGetCurrentGames(player));

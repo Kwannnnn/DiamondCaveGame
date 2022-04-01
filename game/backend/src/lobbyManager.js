@@ -118,21 +118,6 @@ class LobbyManager {
         }
     }
 
-    handleCheckGameReady(roomId, player) {
-        const room = rooms.get(roomId);
-
-        if (room) {
-            // send game-ready-to-start game event if room is full
-            console.log(room.players.length);
-            if (room.players.length === this.MAX_ROOM_SIZE) {
-                player.socket.to(room.id).emit('gameReadyToStart');
-            } // else send game-not-ready-to-start event
-            if (room.players.length !== this.MAX_ROOM_SIZE) {
-                player.socket.emit('gameNotReadyToStart');
-            }
-        }
-    }
-
     handleLeaveRoom(roomId, player) {
         const room = rooms.get(roomId);
         if (room === undefined) {
