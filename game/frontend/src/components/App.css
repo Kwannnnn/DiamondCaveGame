@@ -3,9 +3,9 @@
     background: none;
     border: 2px solid #ddd;
     border-radius: 10px;
-    padding: 8px 12px;
+    padding: 12px 20px;
     transition: border-color 0.3s ease;
-    font-size: 20px;
+    font-size: 32px;
     color:white;
 }
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

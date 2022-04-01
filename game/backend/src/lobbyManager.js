@@ -3,7 +3,8 @@ const { customAlphabet } = require('nanoid');
 const Room = require('./model/room.js');
 const rooms = require('./model/rooms.js');
 class LobbyManager {
-    constructor() {
+    constructor(MAX_ROOM_SIZE, io) {
+        this.io = io;
         this.MAX_ROOM_SIZE = 2;
         this.nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     }
@@ -33,7 +34,7 @@ class LobbyManager {
         const roomId = this.nanoid(6);
 
         // create new room
-        let room = new Room(roomId);
+        let room = new Room(roomId, this.io);
 
         // add it to rooms map
         rooms.set(roomId, room);

@@ -20,8 +20,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(this.game.renderer.width / 1.5, this.game.renderer.height * 0.15, 'logo').setDepth(1).setScale(0.8);
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
 
         this.initBackButton();
         this.initHeader();
@@ -77,12 +76,16 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     initHeader() {
-        this.message = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Choose your username');
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Choose your username', {
+            color: '#FFFFFF',
+            fontSize: 88,
+            fontFamily: 'Helvetica'
+        }).setOrigin(0.5);
         this.message.setShadow(4, 4, 'rgba(0,0,0,0.9)', 5);
     }
 
     initUsernameForm() {
-        this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
+        this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 2 * 90).createFromHTML(usernameForm);
     }
 
     initActionButton() {
@@ -132,7 +135,7 @@ export default class LobbyScene extends Phaser.Scene {
      * @returns {Phaser.GameObjects.Text} a Text Game Object
      */
     createPlayer(username, index) {
-        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height - (350 - index * 75), 'Player ' + index + ': ' + username, {
+        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + ((1 + index) * 90), 'Player ' + index + ': ' + username, {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5);
@@ -206,7 +209,7 @@ export default class LobbyScene extends Phaser.Scene {
         for (const value of this.playersMap.values()) {
             index++;
             value.text.setText('Player ' + index + ': ' + value.username);
-            value.text.y = this.game.renderer.height - (350 - index * 75);
+            value.text.y = this.game.renderer.height / 2 + ((1 + index) * 90);
         }
     }
 

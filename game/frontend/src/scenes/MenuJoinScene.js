@@ -19,7 +19,7 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
 
@@ -31,23 +31,22 @@ export default class JoinScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2.5, 'Join a room', {
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Join a room', {
             color: '#FFFFFF',
-            fontSize: 60,
+            fontSize: 88,
             fontFamily: 'Helvetica'
         }).setOrigin(0.5);
-        this.message.setShadow(4, 4, 'rgba(0,0,0,0.9)', 5);
 
-        this.secondMessage = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 60, 'Enter the lobby code sent by your friend,\n and choose a username to play with.', {
+        this.secondMessage = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 90, 'Enter the lobby code sent by your friend,\n and choose a username to play with.', {
             color: '#FFFFFF',
-            fontSize: 20,
+            fontSize: 24,
             fontFamily: 'Helvetica',
         }).setOrigin(0.5);
 
-        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 2.3 * 60).createFromHTML(lobbyCodeForm).setOrigin(0.5);
-        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 3.2 * 60).createFromHTML(usernameForm).setOrigin(0.5);
+        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 2.3 * 90).createFromHTML(lobbyCodeForm).setOrigin(0.5);
+        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 3.2 * 90).createFromHTML(usernameForm).setOrigin(0.5);
 
-        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 5 * 60, 'join_button')
+        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height / 2 + 4.5 * 90, 'join_button')
             .setInteractive()
             .on('pointerdown', () => {
                 this.join();

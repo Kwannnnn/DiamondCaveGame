@@ -548,5 +548,6 @@ export default class Game extends Phaser.Scene {
             console.log('Game over! You are dead!');
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+        this.socket.on('current-time', (time) => this.hud.setTime(time));
     }
 }

@@ -45,7 +45,7 @@ export default class RankingScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
         this.backButton.on('pointerdown', () => this.goBack());
@@ -69,7 +69,7 @@ export default class RankingScene extends Phaser.Scene {
         
         var gridTable = this.rankingScene.add.gridTable({
             x: this.game.renderer.width / 2,
-            y: this.game.renderer.height / 2 + 190,
+            y: this.game.renderer.height / 2 + 3 * 90,
             width: this.game.renderer.width / 2.25,
             height: this.game.renderer.width / 5,
             scrollMode: 0, // 0 - vertical, 1 - horizontal

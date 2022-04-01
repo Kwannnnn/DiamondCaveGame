@@ -21,7 +21,7 @@ const io = socket(httpServer, {
     }
 });
 
-const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
+const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE, io);
 const gameManager = new gManager(io);
 const chatManager = new cManager(io);
 
