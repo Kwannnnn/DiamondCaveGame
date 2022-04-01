@@ -20,7 +20,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
+        this.add.image(this.game.renderer.width / 1.5, this.game.renderer.height * 0.15, 'logo').setDepth(1).setScale(0.8);
         this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
 
         this.initBackButton();
@@ -78,6 +78,7 @@ export default class LobbyScene extends Phaser.Scene {
 
     initHeader() {
         this.message = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Choose your username');
+        this.message.setShadow(4, 4, 'rgba(0,0,0,0.9)', 5);
     }
 
     initUsernameForm() {

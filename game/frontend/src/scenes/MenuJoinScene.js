@@ -19,7 +19,6 @@ export default class JoinScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
         this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
 
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
@@ -32,15 +31,23 @@ export default class JoinScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 350, 'Disconnected', {
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2.5, 'Join a room', {
             color: '#FFFFFF',
-            fontSize: 60
+            fontSize: 60,
+            fontFamily: 'Helvetica'
+        }).setOrigin(0.5);
+        this.message.setShadow(4, 4, 'rgba(0,0,0,0.9)', 5);
+
+        this.secondMessage = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 60, 'Enter the lobby code sent by your friend,\n and choose a username to play with.', {
+            color: '#FFFFFF',
+            fontSize: 20,
+            fontFamily: 'Helvetica',
         }).setOrigin(0.5);
 
-        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 300).createFromHTML(lobbyCodeForm);
-        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 250).createFromHTML(usernameForm);
+        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 2.3 * 60).createFromHTML(lobbyCodeForm).setOrigin(0.5);
+        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 3.2 * 60).createFromHTML(usernameForm).setOrigin(0.5);
 
-        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 150, 'join_button')
+        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height / 2.5 + 5 * 60, 'join_button')
             .setInteractive()
             .on('pointerdown', () => {
                 this.join();
@@ -64,7 +71,7 @@ export default class JoinScene extends Phaser.Scene {
         this.username = this.usernameForm.getChildByName('username').value;
 
         if (lobby === '') {
-            this.message.setText('Please enter the lobby code');
+            this.message.setText('Please enter a lobby code');
             return;
         }
 
@@ -87,11 +94,6 @@ export default class JoinScene extends Phaser.Scene {
     }
     
     handleSocketEvents() {
-        // TODO: Remove this. It is not necessary anymore!
-        this.socket.on('connect_error', () => {
-            this.message.setText('Could not connect to server');
-        });
-
         this.socket.on('roomJoined', (args) => {
             this.scene.start(CST.SCENES.LOBBY, { roomId: args.roomId, username: this.username, players: args.players, socket: this.socket });
         }); // jump to menu scene with data responded from server
@@ -119,6 +121,7 @@ export default class JoinScene extends Phaser.Scene {
 
     goBack() {
         if (this.socket !== undefined) this.socket.removeAllListeners();
+        this.scene.stop();
         this.scene.run(CST.SCENES.MENU);
     }
 }
