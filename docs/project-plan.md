@@ -288,7 +288,7 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-02 | The server does not record the game state, which allows arbitrary data to be sent by clients without any integrity verification | H | 8 | Done |
 | PB-03 | Colliding with a trap causes the damage event to fire repeatedly | N | 4 | Done |
 | PB-04 | The game can be started with one player, causing a server crash | H | 4 | Done |
-| PB-05 | WASD cannot by typed in chat | H | 5 | Done |
+| PB-05 | WASD cannot be typed in chat | H | 5 | Done |
 | PB-06 | Spectator list can overflow, obscuring entries | H | 5 | Done |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
 | PB-08 | Health has to be on the server side | H | - | Done |
