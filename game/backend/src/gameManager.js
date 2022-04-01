@@ -69,35 +69,37 @@ class GameManager {
     }
 
     handleCollectDiamond(player, diamond) {
-        if (player.x === diamond.x && player.y === diamond.y) {
-            console.log('Player ' + player.x + ' ' + player.y);
-            console.log('Diamond ' + diamond.x + ' ' + diamond.y);
-            const roomId = diamond.roomId;
-            const room = rooms.get(roomId);
-            const gems = rooms.get(roomId).gameState.gems;
-            if (room) {
-                // Update the game state of the room
+        if (player.x !== diamond.x && player.y !== diamond.y) {
+            player.socket.emit('cheatDetected', player.id);
+            return;
+        }
+
+        const room = rooms.get(diamond.roomId);
+        if (room == undefined) {
+            player.socket.emit('roomNotFound', diamond.roomId);
+            return;
+        }
+
+        const gems = room.gameState.gems;
+        // Update the game state of the room
+        
+        for (const [index, gem] of gems.entries()) {
+            if (gem.gemId === diamond.gemId) {
                 // TODO: Change the status of the gem, instead of
                 // deleting it completely
-                for (let i = 0; i < gems.length; i++) {
-                    if (gems[i].gemId === diamond.gemId) {
-                        gems.splice(i, 1);
-                    }
-                }
-                rooms.get(roomId).gemsCollected++;
-                console.log('Gems collected: ' + rooms.get(roomId).gemsCollected);
-                // Notify teammate about collected diamond
-                player.socket.to(roomId).emit('gemCollected', diamond.gemId);
-
-                room.spectators.forEach(spectator => {
-                    spectator.socket.emit('gemCollected', diamond.gemId);
-                });
-            } else {
-                player.socket.emit('roomNotFound', roomId);
+                gems.splice(index, 1);
+                room.gemsCollected++;
+                console.log(`[${room.id}] Gems collected: ${room.gemsCollected}`);
+                break;
             }
-        } else {
-            player.socket.emit('cheatDetected', player.id);
         }
+        
+        // Notify teammate about collected diamond
+        player.socket.to(room.id).emit('gemCollected', diamond.gemId);
+
+        room.spectators.forEach(spectator => {
+            spectator.socket.emit('gemCollected', diamond.gemId);
+        });
     }
 
     generateInitialGameState(room, map) {
