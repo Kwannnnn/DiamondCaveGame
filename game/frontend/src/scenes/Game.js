@@ -32,6 +32,15 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('spikeOn',  'assets/spikeTrapOn.png');
         this.load.image('spikeOff', 'assets/spikeTrapOff.png');
+        // Load sprites for particles (player movement)
+        this.load.spritesheet('moveParticles', 'assets/Player moved.png', { frameWidth: 48, frameHeight: 32 });
+
+        this.load.image('spawnParticle', 'assets/visual_effects/—Pngtree—cute white clouds smoke clouds_6492845.png');
+
+        // Sounds effects
+        this.load.audio('gameEnter', ['assets/sound_effects/entering_the_game.mp3']);
+        this.load.audio('diamondCollect', ['assets/sound_effects/diamond-collected.mp3']);
+        this.load.audio('stepTrap', ['assets/sound_effects/step-on-trap.mp3']);
     }
 
     init(data) {
@@ -56,6 +65,10 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
+        // this.setupAnimations();
+        this.createParticles();
+
+        this.setupAudio();
         this.setupHUD();
         this.setupChat();
         this.setupPlayers();
@@ -77,6 +90,8 @@ export default class Game extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         });
+
+        this.gameEnterSound.play();
     }
 
     checkPressurePlates() {
@@ -88,6 +103,15 @@ export default class Game extends Phaser.Scene {
 
         this.hasSteppedOnSpikeTrap();
         this.updateSpikeTrapSprites();
+    }
+
+    /**
+     * Setup audio
+     */
+    setupAudio() {
+        this.collectDiamondSound = this.sound.add('diamondCollect');
+        this.gameEnterSound = this.sound.add('gameEnter');
+        this.stepTrap = this.sound.add('stepTrap');
     }
 
     /**
@@ -212,9 +236,7 @@ export default class Game extends Phaser.Scene {
         this.destroyDiamondSprite(diamond);
         this.updateCollectedDiamondsCount();
 
-        //this is a small test for the speed increase 
-        /* this.increaseSpeed();
-        console.log('current delay:'+this.delay); */
+        this.collectDiamondSound.play();
 
         this.socket.emit('gemCollected', {
             roomId: this.lobbyID,
