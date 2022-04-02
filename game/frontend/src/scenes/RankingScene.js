@@ -126,12 +126,18 @@ export default class RankingScene extends Phaser.Scene {
      * - Rank, Team, Player 1, Player 2, Score
      */
     createTableItem(backgroundColor) {
+        const tableWidth = this.game.renderer.width * 0.75;
+        const rankColumnWidth = tableWidth * 0.1;
+        const teamColumnWidth = tableWidth * 0.15;
+        const p1ColumnWidth = tableWidth * 0.25;
+        const p2ColumnWidth = tableWidth * 0.25;
+        const scoreColumnWidth = tableWidth * 0.25;
         var background = this.rankingScene.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor);
-        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', { fixedWidth: 40, halign:'right', valign:'center' });
-        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: 70, halign:'left', valign:'center' });
-        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: 100, halign:'left', valign:'center' });
-        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: 100, halign:'left', valign:'center' });
-        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', { fixedWidth: 70, halign:'right', valign:'center' });
+        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', { fixedWidth: rankColumnWidth, halign:'left', valign:'center' });
+        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: teamColumnWidth, halign:'left', valign:'center' });
+        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: p1ColumnWidth, halign:'left', valign:'center' });
+        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: p2ColumnWidth, halign:'left', valign:'center' });
+        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', { fixedWidth: scoreColumnWidth, halign:'center', valign:'center' });
 
         return this.rankingScene.add.sizer({
             width: undefined,
