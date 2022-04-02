@@ -61,6 +61,7 @@ export default class SpikeTrap {
     // invert the spikesOn variable
     swapState() {
         this.spikesOn = !this.spikesOn;
+        console.log('spike with id ' + this.trapId + ' is now ' + this.spikesOn);
     }
 
     enableTrap() {
