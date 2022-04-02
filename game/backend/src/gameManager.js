@@ -151,23 +151,15 @@ class GameManager {
             }],
             'pressurePlateTraps': [{
                 'trapId': 1,
-                'type': 1,
                 'plate': {
                     x: 400,
                     y: 400,
+                    pressed: false,
                 },
                 'door': {
                     x: 600,
                     y: 400
                 }
-            }, {
-                'trapId': 2,
-                'type': 2,
-                'plate': {
-                    x: 352,
-                    y: 400,
-                },
-                'spikes': [1, 2],
             }],
         };
         return gameState;

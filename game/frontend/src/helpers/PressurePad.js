@@ -1,37 +1,24 @@
 let pressurePad = [];
-let spikeTraps = [];
 
-export function setTraps(entries, spikes) {
+export function setTraps(entries) {
     pressurePad = entries;
-    spikeTraps = spikes;
 }
 
 export function handlePressureDoors(layer, players) {
-    resetLinkedElements(layer, players);
+    resetDoors(layer, players);
 
     for (const player of players.values()) {
         const plate = triggeredPressurePlate({ x: player.x, y: player.y });
         if (plate != null) {
             const trap = getTrapForPlate(plate);
-
-            if (trap.type === 1) {
-                const doorTile = layer.getTileAtWorldXY(trap.door.x, trap.door.y, true);
-                doorTile.index = 1;
-            } else if (trap.type === 2) {
-                for (const id of trap.spikes) {
-                    const spikeTrap = findSpikeWithId(id);
-                    spikeTrap.disableTrap();
-                }
-            }
+    
+            let doorTile = layer.getTileAtWorldXY(trap.door.x, trap.door.y, true);
+            doorTile.index = 1;
         }
     }
 }
 
-function findSpikeWithId(id) {
-    return spikeTraps.find(st => st.trapId === id);
-}
-
-function resetLinkedElements(layer, players) {
+function resetDoors(layer, players) {
     for (const trap of pressurePad) {
         // Check if any players are on the plate
         const plate = trap.plate;
@@ -47,20 +34,9 @@ function resetLinkedElements(layer, players) {
             continue;
         }
 
-        if (trap.type === 1) {
-            const door = trap.door;
-            const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
-            doorTile.index = 2;
-        } else if (trap.type === 2) {
-            for (const id of trap.spikes) {
-                const spikeTrap = findSpikeWithId(id);
-
-                if (!spikeTrap.enabled) {
-                    console.log(`Trap ${spikeTrap.trapId} was disabled and should be activated`);
-                    spikeTrap.enableTrap();
-                }                
-            }
-        }
+        const door = trap.door;
+        const doorTile = layer.getTileAtWorldXY(door.x, door.y, true);
+        //doorTile.index = 2;
     }
 }
 
