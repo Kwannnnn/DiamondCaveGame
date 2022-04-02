@@ -64,8 +64,8 @@ module.exports = {
             'trapId': 0,
             'type': 2,
             'plate': {
-                'x': 1276,
-                'y': 208
+                'x': 1104,
+                'y': 176
             },
             'spikes': [
                 0,
@@ -75,11 +75,11 @@ module.exports = {
                 8
             ]
         }, {
-            'trapId': 0,
+            'trapId': 1,
             'type': 2,
             'plate': {
-                'x': 400,
-                'y': 400
+                'x': 368,
+                'y': 368
             },
             'spikes': [
                 4,
