@@ -75,7 +75,7 @@ export default class Game extends Phaser.Scene {
         this.setupDiamondLocations();
         this.setupEnemies();
         this.setupSpikeTraps();
-        setTraps(this.gameState.pressurePlateTraps);
+        setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
