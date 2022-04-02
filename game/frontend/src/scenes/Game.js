@@ -32,6 +32,15 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('spikeOn',  'assets/spikeTrapOn.png');
         this.load.image('spikeOff', 'assets/spikeTrapOff.png');
+        // Load sprites for particles (player movement)
+        this.load.spritesheet('moveParticles', 'assets/Player moved.png', { frameWidth: 48, frameHeight: 32 });
+
+        this.load.image('spawnParticle', 'assets/visual_effects/—Pngtree—cute white clouds smoke clouds_6492845.png');
+
+        // Sounds effects
+        this.load.audio('gameEnter', ['assets/sound_effects/entering_the_game.mp3']);
+        this.load.audio('diamondCollect', ['assets/sound_effects/diamond-collected.mp3']);
+        this.load.audio('stepTrap', ['assets/sound_effects/step-on-trap.mp3']);
     }
 
     init(data) {
@@ -56,6 +65,10 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
+        // this.setupAnimations();
+        this.createParticles();
+
+        this.setupAudio();
         this.setupHUD();
         this.setupChat();
         this.setupPlayers();
@@ -77,6 +90,8 @@ export default class Game extends Phaser.Scene {
             callbackScope: this,
             loop: true,
         });
+
+        this.gameEnterSound.play();
     }
 
     checkPressurePlates() {
@@ -89,6 +104,36 @@ export default class Game extends Phaser.Scene {
         this.hasSteppedOnSpikeTrap();
         this.updateSpikeTrapSprites();
     }
+
+    /**
+     * Setup audio
+     */
+    setupAudio() {
+        this.collectDiamondSound = this.sound.add('diamondCollect');
+        this.gameEnterSound = this.sound.add('gameEnter');
+        this.stepTrap = this.sound.add('stepTrap');
+    }
+
+    createParticles() {
+        this.diamondParticles = this.add.particles('gem');
+        this.diamondEmitter = this.diamondParticles.createEmitter({
+            speed: 200,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.3, end: 0 },
+            on: false
+        });
+
+        this.spawnParticles = this.add.particles('spawnParticle');
+        this.spawnEmitter = this.spawnParticles.createEmitter({
+            speed: 400,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.2, end: 0 },
+            on: false
+        })
+    }
+
 
     /**
      * Adds the HUD to the GameScene
@@ -121,6 +166,7 @@ export default class Game extends Phaser.Scene {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
             const player = new Player(this, p.x, p.y, p.playerId, p.username, this.perk);
             this.players.set(p.playerId, player);
+            this.spawnParticles.emitParticleAt(p.x, p.y, 20);
         });
     }
 
@@ -211,8 +257,10 @@ export default class Game extends Phaser.Scene {
     collectDiamond(player, diamond) {
         this.destroyDiamondSprite(diamond);
         this.updateCollectedDiamondsCount();
+        this.diamondParticles.emitParticleAt(diamond.x, diamond.y, 50);
 
-        console.log('gem id ' + diamond.id);
+        this.collectDiamondSound.play()
+
         this.socket.emit('collectGem', {
             roomId: this.lobbyID,
             gemId: diamond.id
@@ -230,6 +278,7 @@ export default class Game extends Phaser.Scene {
             if (child.id === gemId) {
                 this.destroyDiamondSprite(child);
                 this.updateCollectedDiamondsCount();
+                this.diamondParticles.emitParticleAt(child.x, child.y, 20);
             }
         });
 

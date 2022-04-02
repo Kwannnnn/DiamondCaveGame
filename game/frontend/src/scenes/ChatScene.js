@@ -14,10 +14,12 @@ export default class ChatScene extends Phaser.Scene {
     }
 
     preload() {
-
+        this.load.audio('message', ['assets/sound_effects/message-sent-or-received.mp3']);
     }
 
     create() {
+        this.messageSound = this.sound.add('message');
+
         this.chatInput = this.add.existing(new InputText(this, 150, 620, 270, 30, {
             id: 'chat',
             type: 'text',
@@ -87,18 +89,20 @@ export default class ChatScene extends Phaser.Scene {
         this.enterKey.on('down', (event) => {
             if (this.chatInput.text != '') {
                 this.socket.emit('chatMessage', this.chatInput.text);
+                this.messageSound.play();
                 this.chatInput.text = '';
             }
         });
 
         // display the messages in chat box
         this.socket.on('chatMessage', (data) => {
+            this.messageSound.play();
             const { sender, message } = data;     
             let chatMessage = sender + ': ' + message;
             this.chatMessages.push(chatMessage);
             this.chatMessages.push('\n');
             this.chat.setText(this.chatMessages);
-        })
+        });
     }
 
     update() {
