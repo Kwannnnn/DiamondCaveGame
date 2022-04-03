@@ -54,7 +54,6 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
 
         console.log(this.gameState);
-        console.log(this.scene);
     }
 
     create() {
@@ -582,6 +581,24 @@ export default class Game extends Phaser.Scene {
             });
             this.socket.removeAllListeners();
         });
+        this.socket.on('playerChoosePerks', () => {
+            this.scene.pause();
+            this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
+        }) // handle player choosing perks for spectator mode
+        this.socket.on('nextMap', (args) => {
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.socket.removeAllListeners();
+            this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: 2,  
+                username: this.username,
+                initialGameState: args.gameState,
+                lobbyID: this.lobbyID,
+                socket: this.socket,
+                perk: args.perk
+            });
+        }) // changing scene for spectator mode
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud
             this.changeHealth(-damage);

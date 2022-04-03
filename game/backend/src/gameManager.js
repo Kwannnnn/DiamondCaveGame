@@ -171,7 +171,11 @@ class GameManager {
         if (room) {
             room.players.forEach(player => {
                 player.socket.emit('choosePerks', perks);
-            });
+            }); // player mode
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('playerChoosePerks');
+            }); // spectator mode
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
@@ -229,7 +233,11 @@ class GameManager {
 
                 room.players.forEach(player => {
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
-                });
+                }); // player mode
+
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                }); // spectator mode
             }
         }
     }
