@@ -6,7 +6,8 @@ class Room {
         this.health = 100,
         this.spectators = [],
         this.gameState = {},
-        this.gemsCollected = 0;
+        this.gemsCollected = 0,
+        this.gameActive = false;
     }
 }
 
