@@ -13,10 +13,6 @@ export default class HUD extends Phaser.Scene {
         });
 
         this.fullWidth = 179;
-
-        // Initial clock counts
-        this.minutes = 0;
-        this.seconds = 0;
     }
 
     init(data) {
@@ -90,13 +86,13 @@ export default class HUD extends Phaser.Scene {
         }).setOrigin(0, 0);
 
         // Create the clock
-        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, `${this.seconds}:${this.minutes}`, {
+        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, '0:00', {
             color: '#FFFFFF',
             fontSize: 40,
         }).setDepth(150);        
 
         // Clock
-        this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
+        // this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
         // Diamond collection
         CollectDiamond.on('update-count', this.updateDiamondCount, this);
@@ -182,5 +178,16 @@ export default class HUD extends Phaser.Scene {
 
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
+    }
+
+    setTime(time) {
+        let minutes = Math.floor(time / 60);
+        let seconds = time - minutes * 60;
+
+        if (seconds <= 9) {
+            this.clock.setText(`${minutes}:0${seconds}`);
+        } else {
+            this.clock.setText(`${minutes}:${seconds}`);
+        }
     }
 }
