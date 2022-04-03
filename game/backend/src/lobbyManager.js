@@ -139,6 +139,8 @@ class LobbyManager {
             player.socket.leave(room.id);
             player.username = undefined;
         } else {
+            rooms.get(roomId).stopTime();
+            rooms.get(roomId).enemyManager.disableUpdate();
             rooms.delete(roomId);
             console.log('All players left. Room ' + roomId + ' has been deleted.')
         }

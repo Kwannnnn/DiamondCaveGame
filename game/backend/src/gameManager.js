@@ -165,7 +165,7 @@ class GameManager {
             }],
         };
 
-        room.enemyManager = new EnemyManager(enemies, room);
+        room.enemyManager = new EnemyManager(enemies, room, this.io, this);
 
 
         return gameState;
@@ -175,6 +175,7 @@ class GameManager {
         const room = rooms.get(roomID);
     
         if (room) {
+            room.enemyManager.disableUpdate();
             room.players.forEach(player => {
                 player.socket.emit('choosePerks', perks);
             });
@@ -364,7 +365,6 @@ class GameManager {
 
     onUpdateTime(roomId, newTime) {
         this.io.to(roomId).emit('current-time', newTime);
-        console.log('Room ' + roomId + ': ' + newTime);
     }
 }
 

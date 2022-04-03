@@ -311,26 +311,12 @@ export default class Game extends Phaser.Scene {
      * Spawn in all initial enemies and start the overall movement event
      */
     setupEnemies() {
-        this.enemyData = new Map();
         this.enemies = this.physics.add.group();
 
         this.gameState.enemies.forEach(e => {
             let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy');
             sprite.id = e.enemyId;
             this.enemies.add(sprite);
-
-            this.enemyData.set(e.enemyId, {
-                'path': e.path,
-                'target': 0,
-            });
-        });
-
-        // Start a timer to check the enemy positions
-        this.timedEvent = this.time.addEvent({
-            delay: 100,
-            callback: this.updateEnemyPositions,
-            callbackScope: this,
-            loop: true
         });
     }
 
@@ -417,38 +403,10 @@ export default class Game extends Phaser.Scene {
         });
     }
 
-    /**
-     * Update the enemy positions and their velocity
-     */
-    updateEnemyPositions() {
-        this.enemies.children.each(e => {
-            if (this.enemyData.get(e.id).path.length > 0) {
-                const { id, x, y } = e;
-                const { velocity } = e.body;
-
-                const data = this.enemyData.get(id);
-                let targetLocation = data.path[data.target];
-
-                if (velocity.x === 0 && velocity.y === 0) {
-                    const { velocityX, velocityY } = determineVelocity({ x, y }, targetLocation);
-                    e.body.setVelocity(velocityX, velocityY);
-                }
-
-                // Check if we are at, or have passed our current target position.
-                if (isAtOrPastTarget({ x, y }, targetLocation, velocity)) {
-                    e.body.setVelocity(0, 0);
-                    // Set the enemy to the actual target position to handle moving too far
-                    e.x = targetLocation.x;
-                    e.y = targetLocation.y;
-
-                    // Update the new target index, loops at the end of the path array.
-                    data.target = (data.target + 1) >= data.path.length ? 0 : data.target + 1;
-                    targetLocation = data.path[data.target];
-                }
-
-                this.enemyData.set(id, data);
-            }
-        });
+    updateEnemyPosition(enemyUpdateData) {
+        const enemy = this.findEnemy(enemyUpdateData.enemyId);
+        enemy.x = enemyUpdateData.x;
+        enemy.y = enemyUpdateData.y;
     }
 
     // Restore health to the player
@@ -485,13 +443,7 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
-        const damage = 10;
-
-        // Send message to the server
-        this.socket.emit('hitByEnemy', {
-            lobbyID: this.lobbyID,
-            damage: damage
-        });
+        //FIXME: This pushback isn't visible to other clients
 
     }
 
@@ -565,9 +517,19 @@ export default class Game extends Phaser.Scene {
         console.log('Player with id ' + cheaterId + ' has cheated!');
     }
 
+    findEnemy(enemyId) {
+        let found = null;
+        this.enemies.children.each(e => {
+            if (e.id == enemyId) found = e;
+        });
+        return found;
+        
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
+        this.socket.on('enemyMoved', (args) => this.updateEnemyPosition(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);

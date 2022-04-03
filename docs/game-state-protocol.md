@@ -288,6 +288,31 @@ roomId;
             a player position has been changed.
         </td>
     </tr>
+<tr>
+    <td>enemyMoved</td>
+<td>
+<p>
+
+```javascript
+{
+    // the ID of the enemy that moved
+    enemyId: ...,
+
+    // the new x position of the enemy
+    x: ...,
+
+    // the new y position of the enemy
+    y: ...
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room that
+            an enemy's position has changed.
+        </td>
+    </tr>
     <tr>
         <td>gemCollected</td>
 <td>
