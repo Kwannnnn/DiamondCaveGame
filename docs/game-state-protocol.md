@@ -322,6 +322,17 @@ perks:;
         </td>
     </tr>
     <tr>
+        <td>playerChoosePerks</td>
+<td>
+<p>
+
+</p>
+</td>
+        <td>
+            With this event the server emit an event to all spectators that the players are now choosing their perks.
+        </td>
+    </tr>
+    <tr>
         <td>teammatePerkChoice</td>
 <td>
 <p>
@@ -344,8 +355,12 @@ teammatePerk:;
 <p>
 
 ```javascript
-// the name of the chosen perk as a string
-perk:;
+{
+    // the chosen perk as a string
+    perk: ...,
+    // the game state of the next map
+    gameState: ...,
+}
 ```
 
 </p>
@@ -355,7 +370,31 @@ perk:;
             the perk chosen for the next game.
         </td>
     </tr>
-    <tr>
+
+<tr>
+        <td>nextMap</td>
+<td>
+<p>
+
+```javascript
+{
+    // the chosen perk as a string
+    perk: ...,
+    // the game state of the next map
+    gameState: ...,
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room about
+            the perk chosen for the next game.
+        </td>
+    </tr>
+
+
+<tr>
         <td>chatMessage</td>
 <td>
 <p>
