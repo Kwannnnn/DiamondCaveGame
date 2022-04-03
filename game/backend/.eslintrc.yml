@@ -16,7 +16,6 @@ rules:
   indent:
     - error
     - 4
-    - SwitchCase: 1
   no-dupe-else-if:
     - error
   no-duplicate-imports: error
