@@ -1,5 +1,6 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
 import SelectHealingPerk from '../events/HealingPerkEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
@@ -107,6 +108,8 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+
+        LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }
 
 
@@ -166,7 +169,7 @@ export default class HUD extends Phaser.Scene {
         } else {
             // console.log(this.collectedDiamonds);
             this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
-        }        
+        }
     }
 
     updateHealth(health) {
@@ -175,5 +178,9 @@ export default class HUD extends Phaser.Scene {
 
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
+    }
+
+    notifyToWaitForSecondPlayerToLeave() {
+        this.diamondCounter.setText('Wait for the second player!');
     }
 }

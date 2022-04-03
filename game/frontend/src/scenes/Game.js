@@ -3,6 +3,7 @@ import { CST } from '../utils/CST';
 
 import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
@@ -475,6 +476,7 @@ export default class Game extends Phaser.Scene {
      * Should be triggered when player tries to leave the map alone
      */
     handleSingleMapLeaving() {
+        LeaveMapEvent.emit('wait-for-player');
         console.log('You cannot leave the map alone');
     }
 
