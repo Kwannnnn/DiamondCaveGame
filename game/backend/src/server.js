@@ -21,7 +21,7 @@ const io = socket(httpServer, {
     }
 });
 
-const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE, io);
+const lobbyManager = new lManager(process.env.MAX_ROOM_SIZE);
 const gameManager = new gManager(io);
 const chatManager = new cManager(io);
 
@@ -29,8 +29,11 @@ const chatManager = new cManager(io);
 debugPage.sendDebugWebPage(app);
 
 io.on('connection', (socket) => {
-    const player = new Player(socket.id, socket);
-    console.log('Connection ' + socket.id);
+    // generate new unique id for the player
+    let username = socket.request._query['username'];
+    if (username === undefined) return;
+    // console.log(socket.request._query['username']);
+    const player = new Player(username, socket);
 
     handleConnect(player);
 
@@ -40,25 +43,11 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (roomId) => lobbyManager.handleJoinRoom(roomId, player));
 
-    socket.on('leaveRoom', (roomId) => lobbyManager.handleLeaveRoom(roomId, player));
-
     socket.on('getCurrentGames', () => lobbyManager.handleGetCurrentGames(player));
 
     socket.on('joinRoomAsSpectator', (roomId) => lobbyManager.handleJoinRoomAsSpectator(roomId, player))
 
-    socket.on('disconnecting', () => {
-        let roomId;
-        for (let value of socket.rooms.values()) {
-            if (value.length === 6) {
-                roomId = value;
-            }
-        }
-
-        if (roomId !== undefined) lobbyManager.handleLeaveRoom(roomId, player, io);
-        else handleDisconnect(player);
-    });
-
-    socket.on('setUsername', (username) => players.get(socket.id).username = username);
+    socket.on('disconnect', () => handleDisconnect(player));
 
     socket.on('gameStart', (roomId) => gameManager.handleGameStart(player, roomId));
 
@@ -68,20 +57,24 @@ io.on('connection', (socket) => {
 
     socket.on('gemCollected', (diamond) => gameManager.handleCollectDiamond(player, diamond));
 
+    // TODO Should be added to the protocol
     socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
 
+    // TODO Should be added to the protocol
     // This message is received every time player clicks on perk (choses perk)
     socket.on('chosenPerk', (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));
 
+    // TODO Should be added to the protocol
     // This message is received when the time for choosing perk is up
     socket.on('finishedPerkChoosing', (lobbyID) => gameManager.handleFinalPerkDecision(lobbyID));
 
-    // This message is received when a player gets hit by the enemy
-    socket.on('hitByEnemy', (args) => gameManager.handleHitByEnemy(args.lobbyID, args.damage));
+    // TODO Should be added to the protocol
+    // This message is received when a player gets hit byt the enemy
+    socket.on('hitByEnemy', (args) => gameManager.handleReduceHealth(args.lobbyID, args.damage));
+
+    socket.on('gameOver', (roomId) => gameManager.handleGameOver(roomId));
     
     socket.on('getRanking', () => gameManager.handleGetRanking(player));
-
-    socket.on('developerSpawn', (mapInfo) => gameManager.handleDeveloperSpawnOnTheMap(mapInfo, player));
 });
 
 function handleConnect(player) {
