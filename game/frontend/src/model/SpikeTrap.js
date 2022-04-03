@@ -1,4 +1,3 @@
-
 // A SpikeTrap object will be spawned at every location that there is a 3 in the tileMap
 
 let immunePlayers = []; // array of Player objects
@@ -22,15 +21,17 @@ export default class SpikeTrap {
     }
 
     // handle what happens when a player steps on the trap
-    steppedOnSpikeTrap(player) {
+    steppedOnSpikeTrap(player, lobbyId) {
         // make sure trap is on and player can even be hit
         if (this.spikesOn && !immunePlayers.includes(player) && this.enabled) {
             this.damageCooldown(player);
 
+            const spikeDamage = 10;
+
             // emit so that damage taken is registered in the server
             this.socket.emit('hitByEnemy', {
-                lobbyId: this.lobbyId,
-                damage: 10
+                lobbyID: lobbyId,
+                damage: spikeDamage
             });
             console.log('spike dealt damage to player');
         }
@@ -39,7 +40,7 @@ export default class SpikeTrap {
     // every x amount of time that spikes switch from dealing damage to not and vice versa
     startSpikeCycle() {
         if (this.enabled) {
-            this.spikeCycle = setInterval(this.swapState.bind(this), 2000);
+            this.spikeCycle = setInterval(this.swapState.bind(this), 1000);
         }
     }
 
@@ -48,7 +49,7 @@ export default class SpikeTrap {
         this.makePlayerImmune(player);
 
         // this makes the player vulnerable again after the given time
-        setTimeout(this.removeImmunity, 1000, player);
+        setTimeout(this.removeImmunity, 100, player);
     }
 
     getLocation() {
