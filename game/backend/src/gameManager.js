@@ -1,4 +1,5 @@
 // This class manages everything related to in-game events
+const map3 = require('./maps/map3.js');
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
