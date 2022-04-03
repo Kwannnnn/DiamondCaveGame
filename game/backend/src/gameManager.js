@@ -24,10 +24,17 @@ class GameManager {
                 return;
             }
             const initialGameState = this.generateInitialGameState(room, map2);
-            rooms.get(roomId).gameState = initialGameState;
-            // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
+            room.gameState = initialGameState;
             room.gameActive = true;
-            this.io.to(roomId).emit('initialGameState', initialGameState);
+
+            const payload = {
+                initialGameState: initialGameState,
+                health: room.health,
+                spectatorsCount: room.spectators.length,
+                gemsCollected: room.gemsCollected,
+                time: room.time
+            }
+            this.io.to(roomId).emit('initialGameState', payload);
             room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }

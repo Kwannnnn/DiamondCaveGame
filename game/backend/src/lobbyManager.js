@@ -175,7 +175,15 @@ class LobbyManager {
             room.spectators.push(player);
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.username);
-            player.socket.emit('runGameScene', roomId, room.gameState)
+
+            const payload = {
+                initialGameState: room.gameState,
+                health: room.health,
+                spectatorsCount: room.spectators.length,
+                gemsCollected: room.gemsCollected,
+                time: room.time
+            }
+            player.socket.emit('runGameScene', roomId, payload)
             console.log('Spectator ' + player.id + ' joined room ' + roomId);
             player.roomId = room.id;
         } else {

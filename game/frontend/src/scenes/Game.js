@@ -44,7 +44,6 @@ export default class Game extends Phaser.Scene {
     }
 
     init(data) {
-        this.collectedDiamonds = 0;
         this.world = data.world;
         this.stage = data.stage;
         this.socket = data.socket;
@@ -52,6 +51,11 @@ export default class Game extends Phaser.Scene {
         this.username = data.username;
         this.gameState = data.initialGameState;
         this.perk = data.perk;
+        this.health = data.health;
+        this.spectatorsCount = data.spectatorsCount,
+        this.collectedDiamonds = data.gemsCollected;
+        this.currentTime = data.time
+        this.totalDiamonds = this.collectedDiamonds + this.gameState.gems.length;
 
         console.log(this.gameState);
     }
@@ -140,7 +144,11 @@ export default class Game extends Phaser.Scene {
     setupHUD() {
         this.hud = this.scene.add('hud', HUD, true, {
             stage: this.gameState.level,
-            totalDiamonds: this.gameState.gems.length,
+            totalDiamonds: this.totalDiamonds,
+            health: this.health,
+            spectatorsCount: this.spectatorsCount,
+            gemsCollected: this.collectedDiamonds,
+            time: this.currentTime,
             socket: this.socket
         });
     }
@@ -611,6 +619,9 @@ export default class Game extends Phaser.Scene {
             console.log('Game over! You are dead!');
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
-        this.socket.on('current-time', (time) => this.hud.setTime(time));
+        this.socket.on('current-time', (time) => {
+            this.hud.setTime(time)
+            console.log(time);
+        });
     }
 }
