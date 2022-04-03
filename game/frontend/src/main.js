@@ -12,7 +12,8 @@ import {
     RankingScene,
     ChatScene,
     DeveloperScene,
-    HUD
+    HUD,
+    GameOverScene
 } from './scenes';
 
 let WIDTH = window.screen.availWidth;
@@ -36,6 +37,7 @@ const config = {
         SpectatorJoinScene,
         RankingScene,
         DeveloperScene,
+        GameOverScene
     ],
     parent: 'game',
     type: Phaser.AUTO,
