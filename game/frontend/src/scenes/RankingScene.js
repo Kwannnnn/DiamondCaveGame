@@ -10,26 +10,28 @@ export default class RankingScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.dataToDisplay = [{
-            rank: 1,
-            team: 'A1B2C3',
-            player1: 'test1',
-            player2: 'test2',
-            score: '32767',
-        }, {
-            rank: 2,
-            team: '373737',
-            player1: 'aaa',
-            player2: 'bbb',
-            score: '37',
-        }, {
-            rank: 3,
-            team: '000000',
-            player1: 'Aaaaaaaaaaaaaaaaaaaa',
-            player2: 'a',
-            score: '1',
-        }];
+        this.dataToDisplay = [];
+        // this.dataToDisplay = [{
+        //     rank: 1,
+        //     team: 'A1B2C3',
+        //     player1: 'test1',
+        //     player2: 'test2',
+        //     score: '32767',
+        // }, {
+        //     rank: 2,
+        //     team: '373737',
+        //     player1: 'aaa',
+        //     player2: 'bbb',
+        //     score: '37',
+        // }, {
+        //     rank: 3,
+        //     team: '000000',
+        //     player1: 'Aaaaaaaaaaaaaaaaaaaa',
+        //     player2: 'a',
+        //     score: '1',
+        // }];
         // this.dataToDisplay = data.ranklist;
+        this.socket = data.socket;
     }
 
     preload() {
@@ -43,13 +45,31 @@ export default class RankingScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
+
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
 
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
+        
         var gridTable = this.rankingScene.add.gridTable({
             x: this.game.renderer.width / 2,
-            y: this.game.renderer.height / 2 + 190,
+            y: this.game.renderer.height / 2 + 3 * 90,
             width: this.game.renderer.width / 2.25,
             height: this.game.renderer.width / 5,
             scrollMode: 0, // 0 - vertical, 1 - horizontal
@@ -64,6 +84,8 @@ export default class RankingScene extends Phaser.Scene {
             items: this.dataToDisplay // the array of data objects
         })
             .layout()
+
+        this.handleSocketEvents();
     }
 
     setupBackground() {
@@ -76,7 +98,7 @@ export default class RankingScene extends Phaser.Scene {
             thumb: this.rankingScene.add.roundRectangle(0, 0, 0, 0, 13, CST.COLORS.RANKLIST_TERNARY),
         }
     }
-
+    
     setupTable() {
         return {
             cellWidth: undefined, // if undefined, cell will take remaining 
@@ -140,5 +162,17 @@ export default class RankingScene extends Phaser.Scene {
         cellContainer.getElement('player2').setText(item.player2);
         cellContainer.getElement('score').setText(item.score);
         return cellContainer;
+    }
+
+    handleSocketEvents() {
+        this.socket.on('rankList', (rankList) => {
+            this.dataToDisplay = rankList;
+        });
+    }
+
+    goBack() {
+        if (this.socket !== undefined) this.socket.removeAllListeners();
+        this.scene.stop();
+        this.scene.run(CST.SCENES.MENU);
     }
 }

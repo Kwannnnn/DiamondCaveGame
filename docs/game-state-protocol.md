@@ -14,7 +14,7 @@ the logic of the game in a correct manner.
     <tr>
         <th>Event</th>
         <th>Payload</th>
-        <th>Descriotion</th>
+        <th>Description</th>
     </tr>
     <tr>
         <td>roomCreated</td>
@@ -25,8 +25,15 @@ the logic of the game in a correct manner.
 {
     // The id of the created room as a string
     roomId: ...,
-    // An array of connected player usernames as strings
-    playerIDs: [...]
+    // An array of connected players for that room
+    players: [
+        {
+            // the unique id of the player
+            id: ..., 
+            // the username of the player
+            username: ... 
+        }
+    ]
 }
 ```
 
@@ -48,14 +55,42 @@ roomId;
 </td>
         <td>Sent whenever a user has been successfully joined a room.</td>
     </tr>
-    <tr>
+
+<tr>
+        <td>playerLeft</td>
+<td>
+<p>
+
+```javascript
+{
+    // The unique name of the player that left the room
+    id: ...,
+    // The username of the player that left the room
+    username: ...
+}
+```
+
+</p>
+</td>
+        <td>
+            Notifies all players in the lobby that a new player has left
+            the game room.
+        </td>
+    </tr>
+
+
+<tr>
         <td>newPlayerJoined</td>
 <td>
 <p>
 
 ```javascript
-// The username of the player that joined the room
-playerId;
+{
+    // The unique name of the player that joined the room
+    id: ...,
+    // The username of the player that joined the room
+    username: ...
+}
 ```
 
 </p>
@@ -67,19 +102,32 @@ playerId;
     </tr>
     <tr>
         <td>gameReadyToStart</td>
-        <td>-</td>
+        <td></td>
         <td>
             Indicates that the room has the required amount of players to begin
             the game.
         </td>
     </tr>
     <tr>
+        <td>gameNotReadyToStart</td>
+        <td></td>
+        <td>
+            Indicates that the room does not have the required amount of players to begin
+            the game.
+        </td>
+    </tr>
+
+<tr>
         <td>initialGameState</td>
 <td>
+
+
 <p>
 
 ```javascript
 {
+    // The current level of the team in the game
+    level: ..., 
     tileMap: [
         [2,2,2,2],
         [2,1,1,2],
@@ -136,7 +184,19 @@ playerId;
             // }
             path: [] 
         }, ...
-    ]
+    ], 
+        laserTraps: 
+    [{
+        //identifier for the trap
+        trapId: 4,
+        //spawn location for the trap
+        start: {
+            x: 200,
+            y: 200,
+        },
+        active: 0,
+    }, ...
+    ],
 }
 ```
 
@@ -480,6 +540,31 @@ playerId: ...,
 
 </tr>
 
+<tr>
+
+<td>
+    DeveloperGamestate
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // Game state object with tilemap, players location and gems
+        ititialGameState: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the game state of the map a developer has chosen 
+</td>
+
+</tr>
+
 </table>
 
 ### Possible errors
@@ -576,6 +661,25 @@ gemId;
             boundires, and/or orientation facing south-west.
         </td>
     </tr>
+
+
+
+
+<tr>
+    <td>nameAlreadyExistForAPlayer</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
+</tr>
+
+
+<tr>
+    <td>nameAlreadyExistForASpectator</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
+</tr>
+
+
+
 </table>
 
 ## Client Events
@@ -587,12 +691,30 @@ gemId;
         <th>Description</th>
     </tr>
     <tr>
+        <td>setUsername</td>
+        <td>
+<p>
+
+```javascript
+// The username of the player as a string
+username;
+```
+
+</p>
+</td>
+        <td>
+            A message sent whenever a client chooses their username whenever
+            creating a room/joining a room/is going to spectate.
+        </td>
+    </tr>
+    <tr>
         <td>createRoom</td>
         <td>-</td>
         <td>
             A message sent whenever a client wants to create a new game room.
         </td>
     </tr>
+<!-- this is one row -->
     <tr>
         <td>joinRoom</td>
 <td>
@@ -608,6 +730,43 @@ roomId;
         <td>
             Sent whenever a client tries to join a game room. Payload contains
             a string representing the id of the room.
+        </td>
+    </tr>
+
+<!-- this is one row -->
+<tr>
+        <td>checkGameReady</td>    
+        <td>
+            <p>
+                
+```javascript
+// The room id of the room to check
+roomId;
+```
+
+</p>
+        </td>
+
+<td>
+    Sent to check if the game is ready to start.
+</td>
+
+</tr>
+<!-- this is one row -->
+<tr>
+        <td>leaveRoom</td>
+<td>
+<p>
+
+```javascript
+// The id of the room as a string
+roomId;
+```
+
+</p>
+</td>
+        <td>
+            Sent when a client leaves a game room.
         </td>
     </tr>
 
@@ -784,28 +943,7 @@ message:
 </td>
 
 </tr>
-<!-- this is one row -->
 
-<tr>
-    <td>
-        gameOver
-    </td>
-
-<td>
-
-```javascript
-// the id of the room as a string
-roomId:...
-```
-
-</td>
-
-<td>
-    This event indicates that the run has ended.
-</td>
-
-</tr>
-<!-- this is one row -->
 
 <tr>
 
@@ -906,6 +1044,32 @@ roomId:...
 
 <td>
     Indicates that player hit the enemy and sends all information to reduce health of the team 
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    developerSpawn
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // map id developer wants to spawn
+        mapID: ...,
+
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the chosen id of the map developer wants to spawn on 
 </td>
 
 </tr>

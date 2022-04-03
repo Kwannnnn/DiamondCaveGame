@@ -6,10 +6,11 @@ export const CST = {
         JOIN: 'JOIN',
         GAME: 'GAME',
         PERKS: 'PERKS',
-        ACTIVEGAMES: 'ACTIVEGAMES',
-        SPECTATORJOIN: 'SPECTATORJOIN',
+        SPECTATE: 'SPECTATE',
         RANKING: 'RANKING',
-        CHAT: 'CHAT'
+        CHAT: 'CHAT',
+        DEV: 'DEV',
+        HUD: 'HUD'
     },
     COLORS: {
         RANKLIST_PRIMARY: 0x4e342e,
