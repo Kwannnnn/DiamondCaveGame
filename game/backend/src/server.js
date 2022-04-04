@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 
     socket.on('collectGem', (args) => gameManager.handleCollectDiamond(player, args.roomId, args.gemId));
 
-    socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(roomID));
+    socket.on('reachedEnd', (roomID) => gameManager.handleReachingMapEnd(player, roomID));
 
     // This message is received every time player clicks on perk (choses perk)
     socket.on('chosenPerk', (chosenPerk) => gameManager.handlePerkChoice(chosenPerk));

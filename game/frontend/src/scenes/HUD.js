@@ -1,5 +1,6 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
 import SelectHealingPerk from '../events/HealingPerkEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
@@ -103,6 +104,8 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+
+        LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }
 
 
@@ -182,6 +185,10 @@ export default class HUD extends Phaser.Scene {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
     }
 
+    notifyToWaitForSecondPlayerToLeave() {
+        this.diamondCounter.setText('Wait for the second player!');
+    }
+
     setTime(time) {
         let minutes = Math.floor(time / 60);
         let seconds = time - minutes * 60;
@@ -191,5 +198,6 @@ export default class HUD extends Phaser.Scene {
         } else {
             this.clock.setText(`${minutes}:${seconds}`);
         }
+
     }
 }
