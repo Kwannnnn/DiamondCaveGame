@@ -3,6 +3,7 @@ import { CST } from '../utils/CST';
 
 import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
@@ -564,6 +565,14 @@ export default class Game extends Phaser.Scene {
         console.log('Player with id ' + cheaterId + ' has cheated!');
     }
 
+    /**
+     * Should be triggered when player tries to leave the map alone
+     */
+    handleSingleMapLeaving() {
+        LeaveMapEvent.emit('wait-for-player');
+        console.log('You cannot leave the map alone');
+    }
+
     handleSocketEvents() {
         this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
@@ -611,6 +620,10 @@ export default class Game extends Phaser.Scene {
             console.log('Game over! You are dead!');
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+
+        this.socket.on('waitForTeammate', () => this.handleSingleMapLeaving());
+
         this.socket.on('current-time', (time) => this.hud.setTime(time));
+
     }
 }
