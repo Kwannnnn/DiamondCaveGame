@@ -142,7 +142,8 @@ export default class Game extends Phaser.Scene {
         this.hud = this.scene.add('hud', HUD, true, {
             stage: this.gameState.level,
             totalDiamonds: this.gameState.gems.length,
-            socket: this.socket
+            socket: this.socket,
+            health: this.gameState.health
         });
     }
 
@@ -384,7 +385,7 @@ export default class Game extends Phaser.Scene {
             // see if positions overlap
             if (this.controlledUnit.x === spikePos.x && this.controlledUnit.y === spikePos.y) {
                 // call method to deal damage if possible
-                this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit);
+                this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit, this.lobbyID);
             }
         }
     }
