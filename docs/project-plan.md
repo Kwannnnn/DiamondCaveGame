@@ -277,6 +277,7 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 | BI-01 | Create map 1 | M | 7 | - |
 | BI-02 | Create map 2 | M | 7 | - |
 | BI-03 | Create map 3 | M | 7 | - |
+| BI-04 | Create map 4 | M | 7 | - |
 
 ---
 
@@ -294,7 +295,7 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-08 | Health has to be on the server side | H | - | Done |
 | PB-09 | Spectators not seeing game state updates | H | - | Done |
 | PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | In progress |
-| PB-11 | Chat does not work for spectators at all | H | 5 | Not started |
+| PB-11 | Chat does not work for spectators at all | H | 5 | Done |
 | PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H | 4 | In progress |
 | PB-13 | When user joins a lobby and goes back, he is still part of the lobby. Same counts for creating room and going back | H | 5 | In progress |
 | PB-14 | Diamond collection does not sync the collected diamonds between players | N | 5 | In progress |
@@ -307,3 +308,5 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | In progress |
 | PB-23 | After the players choose a perk, the spectator does not see the map change | H | 5 | In progress |
 | PB-24 | Spectator does not get the current game state, but an initial game state on joining a room | H | 5 | In progress |
+| PB-25 | The game never ends | H | 6 | Done |
+| PB-26 | After perks scene health is reset to 100 | H | 5 | In progress |
