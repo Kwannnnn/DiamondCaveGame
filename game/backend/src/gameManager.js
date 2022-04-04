@@ -1,4 +1,5 @@
 // This class manages everything related to in-game events
+const map3 = require('./maps/map3.js');
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
 const EnemyManager = require('./enemyManager');
@@ -23,7 +24,7 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room, map1);
+            const initialGameState = this.generateInitialGameState(room, map2);
             rooms.get(roomId).gameState = initialGameState;
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
@@ -107,65 +108,25 @@ class GameManager {
     generateInitialGameState(room, map) {
         const player1 = room.players[0];
         const player2 = room.players[1];
-        const enemies = [{
-            'enemyId': 1,
-            'start': {
-                'x': 336,
-                'y': 336,
-            },
-            'path': [{
-                'x': 496,
-                'y': 336,
-            },
-            {
-                'x': 496,
-                'y': 496,
-            },
-            {
-                'x': 336,
-                'y': 496,
-            },
-            {
-                'x': 336,
-                'y': 336,
-            }],
-        }];
+
+        const playerData = map.players;
+        playerData[0].playerId = player1.id;
+        playerData[0].username = player1.username;
+        playerData[1].playerId = player2.id;
+        playerData[1].username = player2.username;
 
         let gameState = {
             'level': room.level,
             'tileMap': map.tileMap,
-            'players': [{
-                'playerId': player1.id, // the id of player 1
-                'username': player1.username, // the username of player 1
-                'x': 32 + 16, // player 1 spawn x position
-                'y': 32 + 16, // player 1 spawn y position
-                'orientation': 0
-            }, {
-                'playerId': player2.id, // the id of player 2
-                'username': player2.username, // the username of player 2
-                'x': 64 + 16, // player 2 spawn x position
-                'y': 32 + 16, // player 2 spawn y position
-                'orientation': 0
-            }],
+            'players': playerData,
             'gemsCollected' : 0,
             'exit': map.exit,
             'gems': [...map.gems],
-            'enemies': enemies,
-            'pressurePlateTraps': [{
-                'trapId': 1,
-                'plate': {
-                    x: 400,
-                    y: 400,
-                    pressed: false,
-                },
-                'door': {
-                    x: 600,
-                    y: 400
-                }
-            }],
+            'enemies': [...map.enemies],
+            'pressurePlateTraps': [...map.pressurePlateTraps],
         };
 
-        room.enemyManager = new EnemyManager(enemies, room, this.io, this);
+        room.enemyManager = new EnemyManager([...map.enemies], room, this.io, this);
 
 
         return gameState;
@@ -178,7 +139,11 @@ class GameManager {
             room.enemyManager.disableUpdate();
             room.players.forEach(player => {
                 player.socket.emit('choosePerks', perks);
-            });
+            }); // player mode
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('playerChoosePerks');
+            }); // spectator mode
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
@@ -236,7 +201,11 @@ class GameManager {
 
                 room.players.forEach(player => {
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
-                });
+                }); // player mode
+
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                }); // spectator mode
             }
         }
     }

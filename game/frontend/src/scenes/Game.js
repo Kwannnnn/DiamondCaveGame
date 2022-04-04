@@ -54,7 +54,6 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
 
         console.log(this.gameState);
-        console.log(this.scene);
     }
 
     create() {
@@ -75,12 +74,12 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
-        setTraps(this.gameState.pressurePlateTraps);
+        this.setupSpikeTraps();
+        setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit();
-        this.setupSpikeTraps();
+        this.placeExit(this.gameState.exit.x, this.gameState.exit.y);
 
         this.handleSocketEvents();
 
@@ -220,7 +219,7 @@ export default class Game extends Phaser.Scene {
     setupCamera() {
         if (this.controlledUnit) {
             this.cameras.main.startFollow(this.controlledUnit);
-            this.cameras.main.setBounds(-400, -400, 1880, 1320);
+            this.cameras.main.setBounds(-400, -400, 1920, 1440);
         }
     }
 
@@ -332,7 +331,7 @@ export default class Game extends Phaser.Scene {
         // create SpikeTrap and sprite objects at the correct coordinates
         for (const [index, spikeLocation] of this.spikeLocations.entries()) {
             const spikeLocationX = spikeLocation.x;
-            const spikeLocationY = spikeLocation.x;
+            const spikeLocationY = spikeLocation.y;
             const trapSprite = this.physics.add.sprite(spikeLocationX, spikeLocationY, 'spikeOn');
 
             const trap = new SpikeTrap(this, spikeLocationX, spikeLocationY, this.lobbyID, index, this.socket);
@@ -354,6 +353,7 @@ export default class Game extends Phaser.Scene {
             for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
                 // value found?
                 if (this.gameState.tileMap[row][column] == tileNumber) {
+                    console.log(`Found trap at: ${row}, ${column}`);
                     // translate index to coordinates
                     let coordinates = {
                         x: column * 32 + 16,
@@ -452,11 +452,10 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate x for exit to be place} x 
      * @param {coordinate y for exit to be place} y 
      */
-    placeExit() {
-        console.log(this.initialGameState);
-        this.exit = this.physics.add.sprite(688, 48, 'exit').setScale(0.5);
+    placeExit(x, y) {
+        this.exit = this.physics.add.sprite(x, y, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            console.log('collided');
+            console.log('At exit location');
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
@@ -544,6 +543,24 @@ export default class Game extends Phaser.Scene {
             });
             this.socket.removeAllListeners();
         });
+        this.socket.on('playerChoosePerks', () => {
+            this.scene.pause();
+            this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
+        }) // handle player choosing perks for spectator mode
+        this.socket.on('nextMap', (args) => {
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.socket.removeAllListeners();
+            this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: 2,  
+                username: this.username,
+                initialGameState: args.gameState,
+                lobbyID: this.lobbyID,
+                socket: this.socket,
+                perk: args.perk
+            });
+        }) // changing scene for spectator mode
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud
             this.changeHealth(-damage);
