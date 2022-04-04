@@ -604,7 +604,7 @@ export default class Game extends Phaser.Scene {
             this.changeHealth(-damage);
 
             console.log('Team got damage ' + damage + ' health points');
-        })
+        });
 
         this.socket.on('gameOver', () => {
             //TODO: end the game
@@ -613,7 +613,7 @@ export default class Game extends Phaser.Scene {
             this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
             this.scene.start(CST.SCENES.GAMEOVER);
-        })
+        });
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
         this.socket.on('current-time', (time) => this.hud.setTime(time));
     }

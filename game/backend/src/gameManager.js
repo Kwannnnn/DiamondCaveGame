@@ -321,7 +321,10 @@ class GameManager {
         runs.enqueue(run);
 
         // remove room from rooms map since we dont need it anymore
+        rooms.get(room.id).stopTime();
         rooms.delete(room.id);
+        console.log(room.id + ' was deleted!');
+        console.log('Does exist: ' + rooms.has(room.id));
         console.log(runs.toArray());
     }
 
