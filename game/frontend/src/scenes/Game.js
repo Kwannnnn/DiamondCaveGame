@@ -219,7 +219,7 @@ export default class Game extends Phaser.Scene {
     setupCamera() {
         if (this.controlledUnit) {
             this.cameras.main.startFollow(this.controlledUnit);
-            this.cameras.main.setBounds(-400, -400, 1880, 1320);
+            this.cameras.main.setBounds(-400, -400, 1920, 1440);
         }
     }
 
