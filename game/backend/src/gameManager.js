@@ -13,6 +13,8 @@ const Room = require('./model/room.js');
 class GameManager {
     constructor(io) {
         this.io = io;
+
+        this.mapsArray = [map2, map3];
     }
 
     handleGameStart(player, roomId) {
@@ -194,7 +196,7 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map3) });
                 }); // player mode
 
                 room.spectators.forEach(spectator => {
