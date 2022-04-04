@@ -309,4 +309,5 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-23 | After the players choose a perk, the spectator does not see the map change | H | 5 | In progress |
 | PB-24 | Spectator does not get the current game state, but an initial game state on joining a room | H | 5 | In progress |
 | PB-25 | The game never ends | H | 6 | Done |
-| PB-26 | After perks scene health is reset to 100 | H | 5 | In progress |
+| PB-26 | After perks scene health is reset to 100 | H | 5 | Done |
+| PB-27 | Timer sounds doesn't go away after perks scene | H | 3 | In progress |
