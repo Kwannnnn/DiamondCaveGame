@@ -13,8 +13,6 @@ const Room = require('./model/room.js');
 class GameManager {
     constructor(io) {
         this.io = io;
-
-        this.mapsArray = [map2, map3];
     }
 
     handleGameStart(player, roomId) {
