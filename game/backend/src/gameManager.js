@@ -20,8 +20,6 @@ class GameManager {
     handleGameStart(player, roomId) {
         const room = rooms.get(roomId);
 
-        console.log('111 ' + room);
-
         if (room) {
             if (room.players.length !== 2) {
                 player.socket.emit('roomNotReady');
