@@ -141,7 +141,8 @@ export default class Game extends Phaser.Scene {
         this.hud = this.scene.add('hud', HUD, true, {
             stage: this.gameState.level,
             totalDiamonds: this.gameState.gems.length,
-            socket: this.socket
+            socket: this.socket,
+            health: this.gameState.health
         });
     }
 

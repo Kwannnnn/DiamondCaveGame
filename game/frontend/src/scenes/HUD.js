@@ -23,8 +23,7 @@ export default class HUD extends Phaser.Scene {
         this.socket = data.socket;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
-        
-        this.currentHealth = 100;
+        this.currentHealth = data.health;
     }
 
     preload() {
@@ -34,7 +33,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('health', 'assets/healthOverlay.png');
         this.load.image('gem', 'assets/gem.png');
         this.load.image('timer-bg', 'assets/window_message_box.png');
-        
     }
 
     create() {

@@ -20,6 +20,8 @@ class GameManager {
     handleGameStart(player, roomId) {
         const room = rooms.get(roomId);
 
+        console.log('111 ' + room);
+
         if (room) {
             if (room.players.length !== 2) {
                 player.socket.emit('roomNotReady');
@@ -120,7 +122,8 @@ class GameManager {
             'level': room.level,
             'tileMap': map.tileMap,
             'players': playerData,
-            'gemsCollected' : 0,
+            'gemsCollected': 0,
+            'health': room.health,
             'exit': map.exit,
             'gems': [...map.gems],
             'enemies': [...map.enemies],
