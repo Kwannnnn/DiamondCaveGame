@@ -609,9 +609,9 @@ export default class Game extends Phaser.Scene {
         this.socket.on('gameOver', () => {
             //TODO: end the game
             // console.log('Game over! You are dead!');
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
-            this.scene.pause(CST.SCENES.HUD);
-            this.scene.pause(CST.SCENES.CHAT);
             this.scene.start(CST.SCENES.GAMEOVER);
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
