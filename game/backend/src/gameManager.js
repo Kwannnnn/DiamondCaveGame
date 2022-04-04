@@ -23,7 +23,7 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room, map2);
+            const initialGameState = this.generateInitialGameState(room, map1);
             rooms.get(roomId).gameState = initialGameState;
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
