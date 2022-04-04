@@ -70,10 +70,10 @@ class GameManager {
     }
 
     handleCollectDiamond(player, diamond) {
-        if (player.x !== diamond.x && player.y !== diamond.y) {
-            player.socket.emit('cheatDetected', player.id);
-            return;
-        }
+        // if (player.x !== diamond.x && player.y !== diamond.y) {
+        //     player.socket.emit('cheatDetected', player.id);
+        //     return;
+        // }
 
         const room = rooms.get(diamond.roomId);
         if (room == undefined) {
