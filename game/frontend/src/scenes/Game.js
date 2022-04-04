@@ -3,6 +3,7 @@ import { CST } from '../utils/CST';
 
 import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
 import ChatScene from './ChatScene';
@@ -259,13 +260,11 @@ export default class Game extends Phaser.Scene {
         this.updateCollectedDiamondsCount();
         this.diamondParticles.emitParticleAt(diamond.x, diamond.y, 50);
 
-        this.collectDiamondSound.play();
+        this.collectDiamondSound.play()
 
-        this.socket.emit('gemCollected', {
+        this.socket.emit('collectGem', {
             roomId: this.lobbyID,
-            gemId: diamond.id,
-            x:diamond.x,
-            y:diamond.y
+            gemId: diamond.id
         });
     }
 
@@ -274,10 +273,10 @@ export default class Game extends Phaser.Scene {
      * event on the web socket.
      * @param diamond the diamond that has been collected
      */
-    handleDiamondCollected(diamond) {
+    handleDiamondCollected(gemId) {
         // Iterate through diamond physics group to remove matching diamond
         this.diamonds.children.each((child) => {
-            if (child.id === diamond) {
+            if (child.id === gemId) {
                 this.destroyDiamondSprite(child);
                 this.updateCollectedDiamondsCount();
                 this.diamondParticles.emitParticleAt(child.x, child.y, 20);
@@ -295,15 +294,9 @@ export default class Game extends Phaser.Scene {
 
         this.gameState.gems.forEach(g => {
             let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+            sprite.setScale(0.2);
+            sprite.id = g.gemId;
             this.diamonds.add(sprite);
-        });
-
-        let id = 1;
-        // Scope each diamond
-        this.diamonds.children.iterate(function (child) {
-            child.setScale(0.2);
-            child.id = id;
-            id++;
         });
     }
 
@@ -565,8 +558,16 @@ export default class Game extends Phaser.Scene {
         console.log('Player with id ' + cheaterId + ' has cheated!');
     }
 
+    /**
+     * Should be triggered when player tries to leave the map alone
+     */
+    handleSingleMapLeaving() {
+        LeaveMapEvent.emit('wait-for-player');
+        console.log('You cannot leave the map alone');
+    }
+
     handleSocketEvents() {
-        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
+        this.socket.on('gemCollected', (gemId) => this.handleDiamondCollected(gemId));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
             this.scene.remove(CST.SCENES.HUD);
@@ -612,6 +613,10 @@ export default class Game extends Phaser.Scene {
             console.log('Game over! You are dead!');
         })
         this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+
+        this.socket.on('waitForTeammate', () => this.handleSingleMapLeaving());
+
         this.socket.on('current-time', (time) => this.hud.setTime(time));
+
     }
 }

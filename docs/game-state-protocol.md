@@ -878,7 +878,7 @@ roomId;
         </td>
     </tr>
     <tr>
-        <td>collectDiamond</td>
+        <td>collectGem</td>
 <td>
 <p>
 
