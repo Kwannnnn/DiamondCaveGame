@@ -1,4 +1,5 @@
 // This class manages everything related to in-game events
+const map3 = require('./maps/map3.js');
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
@@ -22,12 +23,12 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room, map1);
+            const initialGameState = this.generateInitialGameState(room, map2);
             rooms.get(roomId).gameState = initialGameState;
-            console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
             this.io.to(roomId).emit('initialGameState', initialGameState);
+            room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }
 
@@ -37,6 +38,7 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
+            // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
             player.x = newPosition.x;
             player.y = newPosition.y;
             player.orientation = newPosition.orientation;
@@ -69,93 +71,58 @@ class GameManager {
     }
 
     handleCollectDiamond(player, diamond) {
-        if (player.x === diamond.x && player.y === diamond.y) {
-            console.log('Player ' + player.x + ' ' + player.y);
-            console.log('Diamond ' + diamond.x + ' ' + diamond.y);
-            const roomId = diamond.roomId;
-            const room = rooms.get(roomId);
-            const gems = rooms.get(roomId).gameState.gems;
-            if (room) {
-                // Update the game state of the room
+        if (player.x !== diamond.x && player.y !== diamond.y) {
+            player.socket.emit('cheatDetected', player.id);
+            return;
+        }
+
+        const room = rooms.get(diamond.roomId);
+        if (room == undefined) {
+            player.socket.emit('roomNotFound', diamond.roomId);
+            return;
+        }
+
+        const gems = room.gameState.gems;
+        // Update the game state of the room
+        
+        for (const [index, gem] of gems.entries()) {
+            if (gem.gemId === diamond.gemId) {
                 // TODO: Change the status of the gem, instead of
                 // deleting it completely
-                for (let i = 0; i < gems.length; i++) {
-                    if (gems[i].gemId == diamond.gemId) {
-                        gems.splice(i, 1);
-                    }
-                }
-                rooms.get(roomId).gemsCollected++;
-                console.log('Gems collected: ' + rooms.get(roomId).gemsCollected);
-                // Notify teammate about collected diamond
-                player.socket.to(roomId).emit('gemCollected', diamond.gemId);
-
-                room.spectators.forEach(spectator => {
-                    spectator.socket.emit('gemCollected', diamond.gemId);
-                });
-            } else {
-                player.socket.emit('roomNotFound', roomId);
+                gems.splice(index, 1);
+                room.gemsCollected++;
+                console.log(`[${room.id}] Gems collected: ${room.gemsCollected}`);
+                break;
             }
-        } else {
-            player.socket.emit('cheatDetected', player.id);
         }
+        
+        // Notify teammate about collected diamond
+        player.socket.to(room.id).emit('gemCollected', diamond.gemId);
+
+        room.spectators.forEach(spectator => {
+            spectator.socket.emit('gemCollected', diamond.gemId);
+        });
     }
 
     generateInitialGameState(room, map) {
         const player1 = room.players[0];
         const player2 = room.players[1];
 
+        const playerData = map.players;
+        playerData[0].playerId = player1.id;
+        playerData[0].username = player1.username;
+        playerData[1].playerId = player2.id;
+        playerData[1].username = player2.username;
+
         let gameState = {
             'level': room.level,
             'tileMap': map.tileMap,
-            'players': [{
-                'playerId': player1.id, // the id of player 1
-                'x': 32 + 16, // player 1 spawn x position
-                'y': 32 + 16, // player 1 spawn y position
-                'orientation': 0
-            }, {
-                'playerId': player2.id, // the id of player 2
-                'x': 64 + 16, // player 2 spawn x position
-                'y': 32 + 16, // player 2 spawn y position
-                'orientation': 0
-            }],
+            'players': playerData,
             'gemsCollected' : 0,
             'exit': map.exit,
             'gems': [...map.gems],
-            'enemies': [{
-                'enemyId': 1,
-                'start': {
-                    'x': 336,
-                    'y': 336,
-                },
-                'path': [{
-                    'x': 496,
-                    'y': 336,
-                },
-                {
-                    'x': 496,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 336,
-                }],
-            }],
-            'pressurePlateTraps': [{
-                'trapId': 1,
-                'plate': {
-                    x: 400,
-                    y: 400,
-                    pressed: false,
-                },
-                'door': {
-                    x: 600,
-                    y: 400
-                }
-            }],
+            'enemies': [...map.enemies],
+            'pressurePlateTraps': [...map.pressurePlateTraps],
         };
         return gameState;
     }
@@ -192,7 +159,7 @@ class GameManager {
             room.players.forEach(player => {
                 // If the iterable object is not the player who chose the perk, notify teammate
                 // If it is the player, assign the chosen perk to the object
-                if (player.id !== chosenPerk.username) {
+                if (player.username !== chosenPerk.username) {
                     console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
@@ -233,9 +200,12 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    console.log(player.id);
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
-                });
+                }); // player mode
+
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                }); // spectator mode
             }
         }
     }
@@ -360,6 +330,11 @@ class GameManager {
         // remove room from rooms map since we dont need it anymore
         rooms.delete(room.id);
         console.log(runs.toArray());
+    }
+
+    onUpdateTime(roomId, newTime) {
+        this.io.to(roomId).emit('current-time', newTime);
+        console.log('Room ' + roomId + ': ' + newTime);
     }
 }
 

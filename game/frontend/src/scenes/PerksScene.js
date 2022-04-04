@@ -33,9 +33,14 @@ export default class PerkMenu extends Phaser.Scene {
         this.load.image('bloodStoneChosen', 'assets/perk_sprites/BloodStone_Chosen.png');
         this.load.image('heartChosen', 'assets/perk_sprites/Heart_Chosen.png');
         this.load.image('speedBootsChosen', 'assets/perk_sprites/SpeedBoots_Chosen.png');
+
+        this.load.audio('choosePerk', ['assets/sound_effects/choosing-perk-tik.mp3']);
     }
 
     create() {
+        this.choosePerkSound = this.sound.add('choosePerk');
+        this.choosePerkSound.play();
+
         this.setupChat();
         // Set background to black and add title
         new Header(this, this.game.renderer.width / 2, 200, 'Choose a perk');
