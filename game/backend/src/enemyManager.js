@@ -17,7 +17,7 @@ class EnemyManager {
     }
 
     moveEnemy(enemy) {
-        if (enemy.targetIndex === undefined) enemy.targetIndex = 0;
+        if (enemy.targetIndex === undefined || enemy.targetIndex === enemy.path.length) enemy.targetIndex = 0;
         if (enemy.x === undefined) enemy.x = enemy.start.x;
         if (enemy.y === undefined) enemy.y = enemy.start.y;
         
