@@ -119,6 +119,7 @@ class GameManager {
             'tileMap': map.tileMap,
             'players': playerData,
             'gemsCollected' : 0,
+            'health': room.health,
             'exit': map.exit,
             'gems': [...map.gems],
             'enemies': [...map.enemies],
