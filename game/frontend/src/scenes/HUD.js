@@ -1,140 +1,97 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
 import SelectHealingPerk from '../events/HealingPerkEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
+const MARGIN_X = 32;
+const MARGIN_Y = 16;
 let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
-            key: 'hud'
+            key: CST.SCENES.HUD
         });
 
-        this.fullWidth = 200;
-        this.healthBarX = 50;
-        this.healthBarY = 40;
-
-        // Initial clock counts
-        this.minutes = 0;
-        this.seconds = 0;
+        this.fullWidth = 179;
     }
 
     init(data) {
         this.chatOn = false;
         this.chatMessages = [];
 
-        this.world = data.world;
         this.stage = data.stage;
         this.socket = data.socket;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
-        
-        // health in percentage
-        this.currentHealth = 100;
+        this.currentHealth = data.health;
     }
 
     preload() {
         //preloading assets for life-pool
-        this.load.image('left-cap', 'assets/barHorizontal_green_left.png')
-        this.load.image('middle', 'assets/barHorizontal_green_mid.png')
-        this.load.image('right-cap', 'assets/barHorizontal_green_right.png')
-
-        this.load.image('left-cap-shadow', 'assets/barHorizontal_shadow_left.png')
-        this.load.image('middle-shadow', 'assets/barHorizontal_shadow_mid.png')
-        this.load.image('right-cap-shadow', 'assets/barHorizontal_shadow_right.png')
-        
-        //preloading assets for chat
-        this.load.image('chat', 'assets/comment-message.png');
-        this.load.html('form', 'assets/pages/form.html');
-
-        // //preloading rexUI plugin
-        // this.load.scenePlugin({
-        //     key: 'rexuiplugin',
-        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
-        //     sceneKey: 'rexUI'
-        // });
+        this.load.image('middle', 'assets/barHorizontal.png');
+        this.load.image('right-cap', 'assets/barHorizontal_right.png');
+        this.load.image('health', 'assets/healthOverlay.png');
+        this.load.image('gem', 'assets/gem.png');
+        this.load.image('timer-bg', 'assets/window_message_box.png');
     }
 
     create() {
-        // background shadow
-        this.leftShadowCap = this.add.image(this.healthBarX, this.healthBarY, 'left-cap-shadow')
-            .setOrigin(0, 0.5)
+        this.healthBarNew = this.add.image(MARGIN_X, MARGIN_Y, 'health')
+            .setOrigin(0, 0)
+            .setScale(0.2)
+            .setDepth(100);
 
-        this.middleShadowCap = this.add.image(this.healthBarX + this.leftShadowCap.width, this.healthBarY, 'middle-shadow')
-            .setOrigin(0, 0.5)
+        this.gem = this.add.image(MARGIN_X, 3 * MARGIN_Y, 'gem')
+            .setOrigin(0, 0)
+            .setScale(0.2)
+            .setDepth(100);
 
-        this.rightShadowCap = this.add.image(this.healthBarX + this.middleShadowCap.displayWidth, this.healthBarY, 'right-cap-shadow')
-            .setOrigin(0, 0.5)
+        this.timerBg = this.add.image(this.game.renderer.width / 2, MARGIN_Y, 'timer-bg')
+            .setDepth(100);
 
-        this.leftCap = this.add.image(this.healthBarX, this.healthBarY, 'left-cap')
-            .setOrigin(0, 0.5)
+        this.middle = this.add.image(1.5 * MARGIN_X, MARGIN_Y + 4, 'middle')
+            .setOrigin(0, 0.0)
+            .setScale(0.6)
 
-        this.middle = this.add.image(this.healthBarX + this.leftCap.width, this.healthBarY, 'middle')
-            .setOrigin(0, 0.5)
+        this.rightCap = this.add.image(1.5 * MARGIN_X + this.middle.displayWidth, MARGIN_Y + 4, 'right-cap')
+            .setOrigin(0, 0.0)
+            .setScale(0.6)
 
-        this.rightCap = this.add.image(this.healthBarX + this.middle.displayWidth, this.healthBarY, 'right-cap')
-            .setOrigin(0, 0.5)
-
-        
-
-        // Value given in percentage
-        this.setHealth(this.currentHealth);
+        // At the start players have full health
+        // so difference is 0
+        this.changeHealth(0);
 
         // Create the world and stage text
-        this.gamestage = this.add.text(1000, 25, `World: ${this.world}-${this.stage}`, {
+        this.gamestage = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 2.5 * MARGIN_Y, `Level: ${this.stage}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(1, 1);
 
         // Create the numberOfSpectstors and stage text
-        this.numberOfSpectators = this.add.text(35, 80, ` Number of spectators: ${numberOfSpectators}`, {
+        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${numberOfSpectators}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(1, 1);
+
         this.socket.on('newSpectatorJoined', ()=>{
             numberOfSpectators += 1; console.log('Success ' + numberOfSpectators); this.updateNumberOfSpectators(numberOfSpectators);
         })
 
         // Create the Diamond counter
-        this.diamondCounter = this.add.text(600, 25, `Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`, {
+        this.diamondCounter = this.add.text(MARGIN_X + 32, 3 * MARGIN_Y + 2, `${this.collectedDiamonds}/${this.totalDiamonds}`, {
             color: '#FFFFFF',
-            fontSize: 40,
-        });
+            fontSize: 20,
+        }).setOrigin(0, 0);
 
         // Create the clock
-        this.clock = this.add.text(300, 25, `Time: ${this.seconds}:${this.minutes}`, {
+        this.clock = this.add.text(this.game.renderer.width / 2 - 36, MARGIN_Y, '0:00', {
             color: '#FFFFFF',
             fontSize: 40,
-        });
-
-        // Create chat interface
-        // chat icon
-        this.chatButton = this.add.sprite(40, 680, 'chat')
-            .setDepth(1)
-            .setOrigin(0.5)
-            .setScale(1.5)
-            .setInteractive();
-        // chat input
-        this.chatButton.on('pointerdown', () => {
-            // open chatbox
-            if (!this.chatOn) { 
-                this.scene.add(CST.SCENES.CHAT, ChatScene, true, { socket: this.socket });
-                this.chatOn = !this.chatOn;
-            } else {
-                // close chatbox
-                this.scene.remove(CST.SCENES.CHAT);
-                this.chatOn = !this.chatOn;
-            }
-        });
-        this.chatButton.on('pointerover', () => {
-            this.chatButton.setTint(0x30839f);
-        });
-        this.chatButton.on('pointerout', () => {
-            this.chatButton.clearTint();
-        });
+        }).setDepth(150);        
 
         // Clock
-        this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
+        // this.time.addEvent({ delay: 1000, callback: this.updateClock, callbackScope: this, loop: true });
 
         // Diamond collection
         CollectDiamond.on('update-count', this.updateDiamondCount, this);
@@ -145,24 +102,38 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+
+        LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }
+
 
     // The difference between setting and changing health is that changing is relative, while setting is absolute
     // Setting to +20 makes the player's health 20%
     // Changing to +20 makes the player's health equal to their current health + 20
     changeHealth(difference) {
-        this.setHealth(this.middle.displayWidth + difference);
-        this.updateHealth(difference);
+        //update health bar on the hud
+        const health = this.currentHealth + difference;
+
+        if (health <= 0) {
+            this.middle.destroy();
+            this.rightCap.destroy();
+        } else {
+            let percentage = health * 0.01;
+            if (percentage > 1) percentage = 1;
+
+            this.middle.displayWidth = this.fullWidth * percentage;
+            this.rightCap.x = this.middle.x + this.middle.displayWidth;
+        }
+        
+
+        this.currentHealth += difference;
         console.log('Teams health is: ' + this.currentHealth);
     }
 
     changeHealthAnimated(difference) {
-        this.setHealthAnimated(this.middle.displayWidth + difference);
-    }
-
-    setHealth(percentage) {
-        this.middle.displayWidth = this.fullWidth * (percentage / 100);
-        this.rightCap.x = this.middle.x + this.middle.displayWidth;
+        this.setHealthAnimated(this.currentHealth + difference);
+        this.currentHealth += difference;
+        console.log('Teams health is: ' + this.currentHealth);
     }
 
     setHealthAnimated(percentage) {
@@ -173,7 +144,6 @@ export default class HUD extends Phaser.Scene {
             ease: Phaser.Math.Easing.Sine.Out,
             onUpdate: () => {
                 this.rightCap.x = this.middle.x + this.middle.displayWidth
-                this.leftCap.visible = this.middle.displayWidth > 0
                 this.middle.visible = this.middle.displayWidth > 0
                 this.rightCap.visible = this.middle.displayWidth > 0
             }
@@ -183,31 +153,49 @@ export default class HUD extends Phaser.Scene {
     // Update time and clock
     updateClock() {
         this.seconds++;
+
         if (this.seconds === 60) {
             this.minutes++;
             this.seconds = 0;
         }
 
-        this.clock.setText(`Time: ${this.minutes}:${this.seconds}`);
+        if (this.seconds <= 9) {
+            this.clock.setText(`${this.minutes}:0${this.seconds}`);
+        } else {
+            this.clock.setText(`${this.minutes}:${this.seconds}`);
+        }
     }
 
     updateDiamondCount(count) {
         this.collectedDiamonds = count;
+        this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
+
 
         if (this.collectedDiamonds === this.totalDiamonds) {
-            this.diamondCounter.setText('Go to next map!');
-        } else {
-            // console.log(this.collectedDiamonds);
-            this.diamondCounter.setText(`Gems: ${this.collectedDiamonds}/${this.totalDiamonds}`);
-        }        
-    }
-
-    updateHealth(health) {
-        this.currentHealth += health;
+            this.add.text(this.game.renderer.width / 2 + 140, MARGIN_Y + 100, 'Go to next map!', {
+                color: '#FFFFFF',
+                fontSize: 30,
+            }).setOrigin(1, 1)
+        }     
     }
 
     updateNumberOfSpectators(numberOfSpectators) {
-        this.numberOfSpectators.setText(` Number of spectators: ${numberOfSpectators}`);
+        this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
     }
 
+    notifyToWaitForSecondPlayerToLeave() {
+        this.diamondCounter.setText('Wait for the second player!');
+    }
+
+    setTime(time) {
+        let minutes = Math.floor(time / 60);
+        let seconds = time - minutes * 60;
+
+        if (seconds <= 9) {
+            this.clock.setText(`${minutes}:0${seconds}`);
+        } else {
+            this.clock.setText(`${minutes}:${seconds}`);
+        }
+
+    }
 }

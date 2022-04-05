@@ -10,26 +10,28 @@ export default class RankingScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.dataToDisplay = [{
-            rank: 1,
-            team: 'A1B2C3',
-            player1: 'test1',
-            player2: 'test2',
-            score: '32767',
-        }, {
-            rank: 2,
-            team: '373737',
-            player1: 'aaa',
-            player2: 'bbb',
-            score: '37',
-        }, {
-            rank: 3,
-            team: '000000',
-            player1: 'Aaaaaaaaaaaaaaaaaaaa',
-            player2: 'a',
-            score: '1',
-        }];
+        this.dataToDisplay = [];
+        // this.dataToDisplay = [{
+        //     rank: 1,
+        //     team: 'A1B2C3',
+        //     player1: 'test1',
+        //     player2: 'test2',
+        //     score: '32767',
+        // }, {
+        //     rank: 2,
+        //     team: '373737',
+        //     player1: 'aaa',
+        //     player2: 'bbb',
+        //     score: '37',
+        // }, {
+        //     rank: 3,
+        //     team: '000000',
+        //     player1: 'Aaaaaaaaaaaaaaaaaaaa',
+        //     player2: 'a',
+        //     score: '1',
+        // }];
         // this.dataToDisplay = data.ranklist;
+        this.socket = data.socket;
     }
 
     preload() {
@@ -43,13 +45,31 @@ export default class RankingScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.renderer.width / 2, this.game.renderer.height * 0.25, 'logo').setDepth(1);
-        this.add.image(0, 0, 'title_bg').setOrigin(0).setDepth(0);
+        this.add.image(this.game.renderer.width / 2, 0, 'title_bg').setOrigin(0.5, 0).setDepth(0);
+
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
 
         var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
         
+        this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
+        this.backButton.on('pointerdown', () => this.goBack());
+        this.backButton.on('pointerover', () => {
+            this.backButton.setTint(0x30839f);
+        });
+        this.backButton.on('pointerout', () => {
+            this.backButton.clearTint();
+        });
+        
         var gridTable = this.rankingScene.add.gridTable({
             x: this.game.renderer.width / 2,
-            y: this.game.renderer.height / 2 + 190,
+            y: this.game.renderer.height / 2 + 3 * 90,
             width: this.game.renderer.width / 2.25,
             height: this.game.renderer.width / 5,
             scrollMode: 0, // 0 - vertical, 1 - horizontal
@@ -64,6 +84,8 @@ export default class RankingScene extends Phaser.Scene {
             items: this.dataToDisplay // the array of data objects
         })
             .layout()
+
+        this.handleSocketEvents();
     }
 
     setupBackground() {
@@ -76,7 +98,7 @@ export default class RankingScene extends Phaser.Scene {
             thumb: this.rankingScene.add.roundRectangle(0, 0, 0, 0, 13, CST.COLORS.RANKLIST_TERNARY),
         }
     }
-
+    
     setupTable() {
         return {
             cellWidth: undefined, // if undefined, cell will take remaining 
@@ -104,12 +126,18 @@ export default class RankingScene extends Phaser.Scene {
      * - Rank, Team, Player 1, Player 2, Score
      */
     createTableItem(backgroundColor) {
+        const tableWidth = this.game.renderer.width * 0.75;
+        const rankColumnWidth = tableWidth * 0.1;
+        const teamColumnWidth = tableWidth * 0.15;
+        const p1ColumnWidth = tableWidth * 0.25;
+        const p2ColumnWidth = tableWidth * 0.25;
+        const scoreColumnWidth = tableWidth * 0.25;
         var background = this.rankingScene.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor);
-        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', { fixedWidth: 40, halign:'right', valign:'center' });
-        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: 70, halign:'left', valign:'center' });
-        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: 100, halign:'left', valign:'center' });
-        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: 100, halign:'left', valign:'center' });
-        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', { fixedWidth: 70, halign:'right', valign:'center' });
+        var rank = this.rankingScene.add.BBCodeText(0, 0, 'Rank', { fixedWidth: rankColumnWidth, halign:'left', valign:'center' });
+        var team = this.rankingScene.add.BBCodeText(0, 0, 'Team', { fixedWidth: teamColumnWidth, halign:'left', valign:'center' });
+        var player1 = this.rankingScene.add.BBCodeText(0, 0, 'Player 1', { fixedWidth: p1ColumnWidth, halign:'left', valign:'center' });
+        var player2 = this.rankingScene.add.BBCodeText(0, 0, 'Player 2', { fixedWidth: p2ColumnWidth, halign:'left', valign:'center' });
+        var score = this.rankingScene.add.BBCodeText(0, 0, 'Score', { fixedWidth: scoreColumnWidth, halign:'center', valign:'center' });
 
         return this.rankingScene.add.sizer({
             width: undefined,
@@ -140,5 +168,17 @@ export default class RankingScene extends Phaser.Scene {
         cellContainer.getElement('player2').setText(item.player2);
         cellContainer.getElement('score').setText(item.score);
         return cellContainer;
+    }
+
+    handleSocketEvents() {
+        this.socket.on('rankList', (rankList) => {
+            this.dataToDisplay = rankList;
+        });
+    }
+
+    goBack() {
+        if (this.socket !== undefined) this.socket.removeAllListeners();
+        this.scene.stop();
+        this.scene.run(CST.SCENES.MENU);
     }
 }

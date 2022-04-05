@@ -1,10 +1,14 @@
 // This class manages everything related to in-game events
+const map3 = require('./maps/map3.js');
+const map2 = require('./maps/map2.js');
+const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
 const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
-
+const maps = require('./model/maps.js');
 
 const Run = require('./model/run.js');
 const runs = require('./model/runs.js');
+const Room = require('./model/room.js');
 
 class GameManager {
     constructor(io) {
@@ -19,11 +23,12 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room);
+            const initialGameState = this.generateInitialGameState(room, map2);
             rooms.get(roomId).gameState = initialGameState;
-            console.log(rooms.get(roomId).gameState);
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
+            room.gameActive = true;
             this.io.to(roomId).emit('initialGameState', initialGameState);
+            room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }
 
@@ -33,6 +38,7 @@ class GameManager {
         
         if (room) {
             // Update the game state of room
+            // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
             player.x = newPosition.x;
             player.y = newPosition.y;
             player.orientation = newPosition.orientation;
@@ -64,130 +70,78 @@ class GameManager {
         player.socket.emit('rankList', runs.toArray());
     }
 
-    handleCollectDiamond(player, diamond) {
-        const roomId = diamond.roomId;
+    handleCollectDiamond(player, roomId, gemId) {
+        // if (player.x === diamond.x && player.y === diamond.y) {
+        //     console.log('Player ' + player.x + ' ' + player.y);
+        //     console.log('Diamond ' + diamond.x + ' ' + diamond.y);
         const room = rooms.get(roomId);
-        const gems = rooms.get(roomId).gameState.gems;
+        const gems = room.gameState.gems;
         if (room) {
             // Update the game state of the room
             // TODO: Change the status of the gem, instead of
             // deleting it completely
             for (let i = 0; i < gems.length; i++) {
-                if (gems[i].gemId == diamond.gemId) {
+                if (gems[i].gemId == gemId) {
                     gems.splice(i, 1);
-                    room.gemsCollected++;
                 }
             }
+
+            room.gemsCollected++;
+            console.log('Gems collected: ' + room.gemsCollected);
             // Notify teammate about collected diamond
-            player.socket.to(roomId).emit('gemCollected', diamond.gemId);
+            player.socket.to(roomId).emit('gemCollected', gemId);
 
             room.spectators.forEach(spectator => {
-                spectator.socket.emit('gemCollected', diamond.gemId);
+                spectator.socket.emit('gemCollected', gemId);
             });
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
+        // } else {
+        //     player.socket.emit('cheatDetected', player.id);
+        // }
     }
 
-    generateInitialGameState(room) {
+    generateInitialGameState(room, map) {
         const player1 = room.players[0];
         const player2 = room.players[1];
 
+        const playerData = map.players;
+        playerData[0].playerId = player1.id;
+        playerData[0].username = player1.username;
+        playerData[1].playerId = player2.id;
+        playerData[1].username = player2.username;
+
         let gameState = {
-            'tileMap': [
-                [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 2, 2, 2, 2, 2, 3, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-            ],
-            'players': [{
-                'playerId': player1.id, // the id of player 1
-                'x': 32 + 16, // player 1 spawn x position
-                'y': 32 + 16, // player 1 spawn y position
-                'orientation': 0
-            }, {
-                'playerId': player2.id, // the id of player 2
-                'x': 64 + 16, // player 2 spawn x position
-                'y': 64 + 16, // player 2 spawn y position
-                'orientation': 0
-            }],
-
+            'level': room.level,
+            'tileMap': map.tileMap,
+            'players': playerData,
             'gemsCollected' : 0,
-
-            'gems': [{
-                'gemId': 1,
-                'x': 112, // gem spawn x position
-                'y': 48 // gem spawn y position
-            },
-            {
-                'gemId': 2,
-                'x': 178, // gem spawn x position
-                'y': 80 // gem spawn y position
-            },
-            {
-                'gemId': 3,
-                'x': 240, // gem spawn x position
-                'y': 112 // gem spawn y position
-            },
-            {
-                'gemId': 4,
-                'x': 304, // gem spawn x position
-                'y': 144 // gem spawn y position
-            },
-            {
-                'gemId': 5,
-                'x': 368, // gem spawn x position
-                'y': 176 // gem spawn y position
-            }],
-            'enemies': [{
-                'enemyId': 1,
-                'start': {
-                    'x': 336,
-                    'y': 336,
-                },
-                'path': [{
-                    'x': 496,
-                    'y': 336,
-                },
-                {
-                    'x': 496,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 496,
-                },
-                {
-                    'x': 336,
-                    'y': 336,
-                }],
-            }],
+            'exit': map.exit,
+            'gems': [...map.gems],
+            'enemies': [...map.enemies],
+            'pressurePlateTraps': [...map.pressurePlateTraps],
         };
         return gameState;
     }
 
-    handleReachingMapEnd(roomID) {
+    handleReachingMapEnd(player, roomID) {
         const room = rooms.get(roomID);
     
         if (room) {
-            room.players.forEach(player => {
-                player.socket.emit('choosePerks', perks);
-            });
+
+            // Check if two players reached the end, or only one
+            if (!room.playersReachedEnd) {
+                room.playersReachedEnd = 1;
+                player.socket.emit('waitForTeammate');
+            } else if (room.playersReachedEnd == 1) {
+                room.players.forEach(player => {
+                    player.socket.emit('choosePerks', perks);
+                });
+
+                room.playersReachedEnd = 0;
+            }
+            
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
@@ -203,7 +157,7 @@ class GameManager {
             room.players.forEach(player => {
                 // If the iterable object is not the player who chose the perk, notify teammate
                 // If it is the player, assign the chosen perk to the object
-                if (player.id !== chosenPerk.username) {
+                if (player.username !== chosenPerk.username) {
                     console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
                     
                     // TODO Should be added to the protocol
@@ -236,6 +190,7 @@ class GameManager {
         const room = rooms.get(lobbyID);
 
         if (room) {
+            room.level += 1;
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 console.log(room.players[0].perkChoice);
@@ -243,9 +198,12 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    console.log(player.id);
-                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room) });
-                });
+                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                }); // player mode
+
+                room.spectators.forEach(spectator => {
+                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                }); // spectator mode
             }
         }
     }
@@ -255,33 +213,136 @@ class GameManager {
      * @param {roomId} id of the room that has to reduce health 
      * @param {damage} damage that has been caused to the team
      */
-    handleReduceHealth(roomId, damage) {
+    handleHitByEnemy(roomId, damage) {
         const room = rooms.get(roomId);
 
         if (room) {
             room.health -= damage;
 
-            room.players.forEach(player => {
-                // TODO add message to the protocol
-                // Message is sent to all players in room to indicate health loss
-                player.socket.emit('reduceHealth', { damage });
-            });
+            // Message is sent to all players in room to indicate health loss
+            this.io.to(room.id).emit('reduceHealth', damage);
+
+            if (room.health <= 0) {
+                this.io.to(room.id).emit('gameOver');
+                this.handleGameOver(room);
+            }
         }
     }
 
-    handleGameOver(roomId) {
-        const room = rooms.get(roomId);
+    // Intersting way of handling developers joining the room (can be even called retarded)
+    handleDeveloperSpawnOnTheMap(mapInfo, player) {
+        // TODO get the room with developers' room id
+        let room = rooms.get('dev'); // ROOM ID of development room
+        if (!room) {
+            room = new Room('dev');
+            rooms.set('dev', room)
+        }
+        room.players.push(player);
+        
+        if (room.players.length > 1) {
+            room.players.forEach(developer => {
+                let gameState = {
+                    'tileMap': maps.get(parseInt(mapInfo.mapId)).tilemap,
+                    'players': [{
+                        'playerId': room.players[0], // the id of player 1
+                        'x': 32 + 16, // player 1 spawn x position
+                        'y': 32 + 16, // player 1 spawn y position
+                        'orientation': 0
+                    }, {
+                        'playerId': room.players[1], // the id of player 2
+                        'x': 64 + 16, // player 2 spawn x position
+                        'y': 64 + 16, // player 2 spawn y position
+                        'orientation': 0
+                    }],
+            
+                    'gemsCollected' : 0,
+            
+                    'gems': [{
+                        'gemId': 1,
+                        'x': 112, // gem spawn x position
+                        'y': 48 // gem spawn y position
+                    },
+                    {
+                        'gemId': 2,
+                        'x': 178, // gem spawn x position
+                        'y': 80 // gem spawn y position
+                    },
+                    {
+                        'gemId': 3,
+                        'x': 240, // gem spawn x position
+                        'y': 112 // gem spawn y position
+                    },
+                    {
+                        'gemId': 4,
+                        'x': 304, // gem spawn x position
+                        'y': 144 // gem spawn y position
+                    },
+                    {
+                        'gemId': 5,
+                        'x': 368, // gem spawn x position
+                        'y': 176 // gem spawn y position
+                    }],
+                    'enemies': [{
+                        'enemyId': 1,
+                        'start': {
+                            'x': 336,
+                            'y': 336,
+                        },
+                        'path': [{
+                            'x': 496,
+                            'y': 336,
+                        },
+                        {
+                            'x': 496,
+                            'y': 496,
+                        },
+                        {
+                            'x': 336,
+                            'y': 496,
+                        },
+                        {
+                            'x': 336,
+                            'y': 336,
+                        }],
+                    }],
+                    'laserTraps': [{
+                        'trapId': 1,
+                        'direction':0,
+                        'range':2,
+                        'start': {
+                            'x': 336,
+                            'y': 336,
+                        }
+                    }]
+
+                };
+
+                // TODO update protocol
+                developer.socket.emit('developerGamestate', {
+                    initialGameState: JSON.stringify(gameState)
+                });
+            })
+        }
+            
+    }
+
+    handleGameOver(room) {
         const playerUsernames = room.players.map(p => p.id);
         //TODO: create an algorithm for calculating totalScore
         const totalScore = room.gameState.gemsCollected;
         const time = 6969;
 
-        const run = new Run(roomId, totalScore, time, playerUsernames);
+        const run = new Run(room.id, totalScore, time, playerUsernames);
         runs.enqueue(run);
 
         // remove room from rooms map since we dont need it anymore
-        // rooms.delete(roomId);
+        rooms.delete(room.id);
         console.log(runs.toArray());
+    }
+
+    onUpdateTime(roomId, newTime) {
+        this.io.to(roomId).emit('current-time', newTime);
+        console.log('Room ' + roomId + ': ' + newTime);
     }
 }
 
