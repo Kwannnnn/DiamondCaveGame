@@ -87,7 +87,7 @@ class GameManager {
 
         if (room) {
 
-            for (const gem of gems) {
+            for (let gem of gems) {
                 if (gem.gemId === gemId && gemId >= 0) {
                     // TODO: Change the status of the gem, instead of
                     // deleting it completely

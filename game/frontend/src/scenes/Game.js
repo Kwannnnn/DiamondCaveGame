@@ -100,11 +100,14 @@ export default class Game extends Phaser.Scene {
     }
 
     getCollectedDiamondsCurrentMap(gems) {
-        gems.forEach(gem => {
-            if (gem.gemId === -1) {
+        console.log(gems);
+        for (let i = 0; i < gems.length; i++) {
+            const gem = gems[i];
+            if (gem.id === -1) {
                 this.collectedDiamonds++;
+                this.destroyDiamondSprite(this.diamonds.children.get('id',i));
             }
-        })
+        }
     }
 
     checkPressurePlates() {
@@ -308,10 +311,12 @@ export default class Game extends Phaser.Scene {
         this.diamonds = this.physics.add.group();
 
         this.gameState.gems.forEach(g => {
-            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
-            sprite.setScale(0.2);
-            sprite.id = g.gemId;
-            this.diamonds.add(sprite);
+            if (g.gemId > -1) {
+                let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+                sprite.setScale(0.2);
+                sprite.id = g.gemId;
+                this.diamonds.add(sprite);
+            }
         });
     }
 
