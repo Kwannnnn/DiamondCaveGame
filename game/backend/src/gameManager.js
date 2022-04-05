@@ -122,6 +122,7 @@ class GameManager {
             'gems': [...map.gems],
             'enemies': [...map.enemies],
             'pressurePlateTraps': [...map.pressurePlateTraps],
+            'laserTraps': [...map.laserTraps],
         };
         return gameState;
     }

@@ -181,4 +181,10 @@ module.exports = {
             'y': 208,
         }],
     }],
+    'laserTraps': [{
+        'x': 304,
+        'y': 112,
+        'direction': 3,
+        'range': 2,
+    }],
 };

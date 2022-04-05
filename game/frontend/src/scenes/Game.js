@@ -9,6 +9,7 @@ import HUD from './HUD';
 import ChatScene from './ChatScene';
 import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
 import SpikeTrap from '../model/SpikeTrap';
+import LaserTrap from '../model/LaserTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -30,6 +31,7 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser', 'assets/laser_trap.PNG');
+        this.load.image('beam', 'assets/laser_beam.png');
 
         this.load.image('spikeOn',  'assets/spikeTrapOn.png');
         this.load.image('spikeOff', 'assets/spikeTrapOff.png');
@@ -75,6 +77,7 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        this.setupLaserTraps();
         this.setupSpikeTraps();
         setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         // this.placeExit(200, 300);
@@ -103,6 +106,7 @@ export default class Game extends Phaser.Scene {
 
         this.hasSteppedOnSpikeTrap();
         this.updateSpikeTrapSprites();
+        this.hasSteppedInLaserBeam();
     }
 
     /**
@@ -325,6 +329,30 @@ export default class Game extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    }
+
+    /**
+     * Setup the laser traps
+     */
+    setupLaserTraps() {
+        this.laserTraps = [];
+
+        for (const [id, laserDetails] of this.gameState.laserTraps.entries()) {
+            const { x, y, direction, range } = laserDetails;
+
+            const laserTrap = new LaserTrap(id, x, y, direction, range, this.socket);
+            laserTrap.generateBeamSprites(this);
+            this.laserTraps.push(laserTrap);
+        }
+    }
+
+    /**
+     * Check if the player has stepped into a laserbeam
+     */
+    hasSteppedInLaserBeam() {
+        for (const laserTrap of this.laserTraps) {
+            laserTrap.steppedInLaser(this.controlledUnit, this.lobbyID);
+        }
     }
 
     /**
