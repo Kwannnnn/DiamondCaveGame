@@ -3,7 +3,7 @@ const map3 = require('./maps/map3.js');
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
-const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
+const perks = ['Movement Speed', 'Health', 'Time Reduction'];
 const maps = require('./model/maps.js');
 
 const Run = require('./model/run.js');
@@ -116,7 +116,8 @@ class GameManager {
             'level': room.level,
             'tileMap': map.tileMap,
             'players': playerData,
-            'gemsCollected' : 0,
+            'gemsCollected': 0,
+            'health': room.health,
             'exit': map.exit,
             'gems': [...map.gems],
             'enemies': [...map.enemies],
@@ -196,6 +197,16 @@ class GameManager {
                 console.log(room.players[0].perkChoice);
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
+
+                switch (perkNameWithoutSpace) {
+                    case 'Health':
+                        room.health += 20;
+                        break;
+
+                    case 'TimeReduction':
+                        room.time -= 30;
+                        break;
+                }
 
                 room.players.forEach(player => {
                     player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });

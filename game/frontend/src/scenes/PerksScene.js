@@ -116,7 +116,7 @@ export default class PerkMenu extends Phaser.Scene {
                 return isSelected ? 'speedBootsChosen' : 'speedBoots';
             case 'Health':
                 return isSelected ? 'heartChosen' : 'heart';
-            case 'Add Diamonds':
+            case 'Time Reduction':
                 return isSelected ? 'bloodStoneChosen' : 'bloodStone';
             default:
                 console.error('Unknown perk');
