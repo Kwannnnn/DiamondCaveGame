@@ -105,7 +105,6 @@ export default class Game extends Phaser.Scene {
             const gem = gems[i];
             if (gem.id === -1) {
                 this.collectedDiamonds++;
-                this.destroyDiamondSprite(this.diamonds.children.get('id',i));
             }
         }
     }
