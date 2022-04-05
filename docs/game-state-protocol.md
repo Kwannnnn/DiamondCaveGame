@@ -126,78 +126,93 @@ roomId;
 
 ```javascript
 {
+    // the health of the team
+    health: ...,
+
+    // the number of spectators
+    spectatorsCount: ...,
+
+    // the total number of gems collected so far
+    gemsCollected: ...,
+
+    // current running time of the room
+    time: ...,
+
     // The current level of the team in the game
-    level: ..., 
-    tileMap: [
-        [2,2,2,2],
-        [2,1,1,2],
-        [2,1,1,2],
-        [2,2,2,2]
-    ],
-    players: [
-        {
-            // the username of the player
-            playerId: ...,
+    initialGameState: {
+        level: ..., 
+        tileMap: [
+            [2,2,2,2],
+            [2,1,1,2],
+            [2,1,1,2],
+            [2,2,2,2]
+        ],
+        players: [
+            {
+                // the username of the player
+                playerId: ...,
 
-            // player spawn x position
-            x: ...,
+                // player spawn x position
+                x: ...,
 
-            // player spawn y position
-            y: ...,
+                // player spawn y position
+                y: ...,
 
-            // The direction the player is facing
-            // 0 - right, 180 - left
-            // 90 - up, 270 - down
-            orientation: ...
-        }, ...
-    ],
-    
-    gemsCollected:...,
+                // The direction the player is facing
+                // 0 - right, 180 - left
+                // 90 - up, 270 - down
+                orientation: ...
+            }, ...
+        ],
+        
+        gemsCollected:...,
 
-    gems: [
-        {
-            // a unique identifier for a gem
-            gemId: ...,
+        gems: [
+            {
+                // a unique identifier for a gem
+                gemId: ...,
 
-            // gem spawn x position
-            x: ...,
+                // gem spawn x position
+                x: ...,
 
-            // gem spawn y position
-            y: ...
-        }, ...
-    ],
-    enemies: [
-        {
-            // a unique identifier for an enemy
-            enemyId: ...,
+                // gem spawn y position
+                y: ...
+            }, ...
+        ],
+        enemies: [
+            {
+                // a unique identifier for an enemy
+                enemyId: ...,
 
-            // Enemy starting position
-            start: {
-                x: 336,
-                y: 336,
-            },
-            
-            // The path the enemy will travel
-            // path: {
-            //     x: 496,
-            //     y: 336,
-            // }
-            path: [] 
-        }, ...
-    ], 
+                // Enemy starting position
+                start: {
+                    x: 336,
+                    y: 336,
+                },
+                
+                // The path the enemy will travel
+                // path: {
+                //     x: 496,
+                //     y: 336,
+                // }
+                path: [] 
+            }, ...
+        ], 
         laserTraps: 
-    [{
-        //identifier for the trap
-        trapId: 4,
-        //spawn location for the trap
-        start: {
-            x: 200,
-            y: 200,
-        },
-        active: 0,
-    }, ...
-    ],
+        [{
+            //identifier for the trap
+            trapId: 4,
+            //spawn location for the trap
+            start: {
+                x: 200,
+                y: 200,
+            },
+            active: 0,
+        }, ...
+        ],
+    }
 }
+    
 ```
 
 </p>
@@ -223,10 +238,96 @@ roomId;
 
 ```javascript
 {
-    // the id of the room the client is joining
+    // the id of the room to spectate
     roomId: ...,
-    // the current game state as an object (for structure see "initialGameState")
-    gameState: ...,
+
+    payload: {
+        // the health of the team
+        health: ...,
+
+        // the number of spectators
+        spectatorsCount: ...,
+
+        // the total number of gems collected so far
+        gemsCollected: ...,
+
+        // current running time of the room
+        time: ...,
+
+        // The current level of the team in the game
+        initialGameState: {
+            level: ..., 
+            tileMap: [
+                [2,2,2,2],
+                [2,1,1,2],
+                [2,1,1,2],
+                [2,2,2,2]
+            ],
+            players: [
+                {
+                    // the username of the player
+                    playerId: ...,
+
+                    // player spawn x position
+                    x: ...,
+
+                    // player spawn y position
+                    y: ...,
+
+                    // The direction the player is facing
+                    // 0 - right, 180 - left
+                    // 90 - up, 270 - down
+                    orientation: ...
+                }, ...
+            ],
+            
+            gemsCollected:...,
+
+            gems: [
+                {
+                    // a unique identifier for a gem
+                    gemId: ...,
+
+                    // gem spawn x position
+                    x: ...,
+
+                    // gem spawn y position
+                    y: ...
+                }, ...
+            ],
+            enemies: [
+                {
+                    // a unique identifier for an enemy
+                    enemyId: ...,
+
+                    // Enemy starting position
+                    start: {
+                        x: 336,
+                        y: 336,
+                    },
+                    
+                    // The path the enemy will travel
+                    // path: {
+                    //     x: 496,
+                    //     y: 336,
+                    // }
+                    path: [] 
+                }, ...
+            ], 
+            laserTraps: 
+            [{
+                //identifier for the trap
+                trapId: 4,
+                //spawn location for the trap
+                start: {
+                    x: 200,
+                    y: 200,
+                },
+                active: 0,
+            }, ...
+            ],
+        }
+    }
 }
 ```
 
@@ -378,10 +479,94 @@ teammatePerk:;
 
 ```javascript
 {
+    // the health of the team
+    health: ...,
+
+    // the number of spectators
+    spectatorsCount: ...,
+
+    // the total number of gems collected so far
+    gemsCollected: ...,
+
+    // current running time of the room
+    time: ...,
+
     // the chosen perk as a string
     perk: ...,
-    // the game state of the next map
-    gameState: ...,
+    
+    // The current level of the team in the game
+    initialGameState: {
+        level: ..., 
+        tileMap: [
+            [2,2,2,2],
+            [2,1,1,2],
+            [2,1,1,2],
+            [2,2,2,2]
+        ],
+        players: [
+            {
+                // the username of the player
+                playerId: ...,
+
+                // player spawn x position
+                x: ...,
+
+                // player spawn y position
+                y: ...,
+
+                // The direction the player is facing
+                // 0 - right, 180 - left
+                // 90 - up, 270 - down
+                orientation: ...
+            }, ...
+        ],
+        
+        gemsCollected:...,
+
+        gems: [
+            {
+                // a unique identifier for a gem
+                gemId: ...,
+
+                // gem spawn x position
+                x: ...,
+
+                // gem spawn y position
+                y: ...
+            }, ...
+        ],
+        enemies: [
+            {
+                // a unique identifier for an enemy
+                enemyId: ...,
+
+                // Enemy starting position
+                start: {
+                    x: 336,
+                    y: 336,
+                },
+                
+                // The path the enemy will travel
+                // path: {
+                //     x: 496,
+                //     y: 336,
+                // }
+                path: [] 
+            }, ...
+        ], 
+        laserTraps: 
+        [{
+            //identifier for the trap
+            trapId: 4,
+            //spawn location for the trap
+            start: {
+                x: 200,
+                y: 200,
+            },
+            active: 0,
+        }, ...
+        ],
+    }
 }
 ```
 
