@@ -54,9 +54,9 @@ export default class Game extends Phaser.Scene {
         this.perk = data.perk;
         this.health = data.health;
         this.spectatorsCount = data.spectatorsCount,
-        this.collectedDiamonds = data.gemsCollected;
+        this.collectedDiamonds = 0;
         this.currentTime = data.time
-        this.totalDiamonds = this.collectedDiamonds + this.gameState.gems.length;
+        this.totalDiamonds = this.gameState.gems.length;
 
         console.log(this.gameState);
     }
@@ -73,18 +73,19 @@ export default class Game extends Phaser.Scene {
         this.createParticles();
 
         this.setupAudio();
-        this.setupHUD();
         this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
+        this.getCollectedDiamondsCurrentMap(this.gameState.gems)
         this.setupEnemies();
         this.setupSpikeTraps();
         setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit(this.gameState.exit.x, this.gameState.exit.y);
+        this.placeExit(this.gameState.exit.x, this.gameState.exit.y);        
+        this.setupHUD();
 
         this.handleSocketEvents();
 
@@ -96,6 +97,16 @@ export default class Game extends Phaser.Scene {
         });
 
         this.gameEnterSound.play();
+    }
+
+    getCollectedDiamondsCurrentMap(gems) {
+        gems.forEach(gem => {
+            console.log("ass");
+            if (gem.gemId === -1) {
+                console.log("asses");
+                this.collectedDiamonds++;
+            }
+        })
     }
 
     checkPressurePlates() {
@@ -253,6 +264,7 @@ export default class Game extends Phaser.Scene {
      */
     updateCollectedDiamondsCount() {
         this.collectedDiamonds++;
+        console.log(this.collectedDiamonds);
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
     }
 
@@ -264,10 +276,7 @@ export default class Game extends Phaser.Scene {
      */
     collectDiamond(player, diamond) {
         this.destroyDiamondSprite(diamond);
-        this.updateCollectedDiamondsCount();
         this.diamondParticles.emitParticleAt(diamond.x, diamond.y, 50);
-
-        this.collectDiamondSound.play()
 
         this.socket.emit('collectGem', {
             roomId: this.lobbyID,
@@ -285,6 +294,7 @@ export default class Game extends Phaser.Scene {
         this.diamonds.children.each((child) => {
             if (child.id === gemId) {
                 this.destroyDiamondSprite(child);
+                this.collectDiamondSound.play()
                 this.updateCollectedDiamondsCount();
                 this.diamondParticles.emitParticleAt(child.x, child.y, 20);
             }
@@ -594,18 +604,22 @@ export default class Game extends Phaser.Scene {
             this.scene.pause();
             this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
         }) // handle player choosing perks for spectator mode
-        this.socket.on('nextMap', (args) => {
+        this.socket.on('nextMap', (payload) => {
+            console.log(payload);
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
             this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,
-                stage: 2,  
-                username: this.username,
-                initialGameState: args.gameState,
-                lobbyID: this.lobbyID,
+                stage: payload.stage,  
                 socket: this.socket,
-                perk: args.perk
+                username: this.username,
+                lobbyID: this.lobbyID,
+                initialGameState: payload.initialGameState,
+                health: payload.health,
+                spectatorsCount: payload.spectatorsCount,
+                gemsCollected: payload.gemsCollected,
+                time: payload.time
             });
         }) // changing scene for spectator mode
         this.socket.on('reduceHealth', (damage) => {

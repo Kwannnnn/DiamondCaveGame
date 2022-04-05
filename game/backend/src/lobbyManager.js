@@ -178,6 +178,7 @@ class LobbyManager {
 
             const payload = {
                 initialGameState: room.gameState,
+                stage: room.level,
                 health: room.health,
                 spectatorsCount: room.spectators.length,
                 gemsCollected: room.gemsCollected,

@@ -107,7 +107,7 @@ export default class SpectatorJoinScene extends Phaser.Scene {
         this.socket.on('runGameScene', (roomId, payload) => {
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,
-                stage: 1,
+                stage: payload.stage,
                 socket: this.socket,
                 username: this.username,
                 lobbyID: roomId,
