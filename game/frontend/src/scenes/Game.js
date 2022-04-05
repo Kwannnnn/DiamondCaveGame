@@ -101,9 +101,7 @@ export default class Game extends Phaser.Scene {
 
     getCollectedDiamondsCurrentMap(gems) {
         gems.forEach(gem => {
-            console.log("ass");
             if (gem.gemId === -1) {
-                console.log("asses");
                 this.collectedDiamonds++;
             }
         })
