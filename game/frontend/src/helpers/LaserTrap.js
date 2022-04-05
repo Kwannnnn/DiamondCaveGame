@@ -19,6 +19,10 @@ export function withinBeam(player, laserTrap) {
     return withinX && withinY;
 }
 
+export function isLaserTrapTile(index) {
+    return index == 3 || index == 7 || index == 8 || index == 9;
+}
+
 function calculateBeamLengthX(direction, range) {
     switch (direction) {
         case 0:
