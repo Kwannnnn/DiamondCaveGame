@@ -1,5 +1,6 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
 import SelectHealingPerk from '../events/HealingPerkEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
@@ -23,8 +24,7 @@ export default class HUD extends Phaser.Scene {
         this.socket = data.socket;
         this.collectedDiamonds = 0;
         this.totalDiamonds = data.totalDiamonds;
-        
-        this.currentHealth = 100;
+        this.currentHealth = data.health;
     }
 
     preload() {
@@ -34,7 +34,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('health', 'assets/healthOverlay.png');
         this.load.image('gem', 'assets/gem.png');
         this.load.image('timer-bg', 'assets/window_message_box.png');
-        
     }
 
     create() {
@@ -103,6 +102,8 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+
+        LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }
 
 
@@ -167,17 +168,23 @@ export default class HUD extends Phaser.Scene {
 
     updateDiamondCount(count) {
         this.collectedDiamonds = count;
+        this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
+
 
         if (this.collectedDiamonds === this.totalDiamonds) {
-            this.diamondCounter.setText('Go to next map!');
-        } else {
-            // console.log(this.collectedDiamonds);
-            this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
-        }        
+            this.add.text(this.game.renderer.width / 2 + 140, MARGIN_Y + 100, 'Go to next map!', {
+                color: '#FFFFFF',
+                fontSize: 30,
+            }).setOrigin(1, 1)
+        }     
     }
 
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
+    }
+
+    notifyToWaitForSecondPlayerToLeave() {
+        this.diamondCounter.setText('Wait for the second player!');
     }
 
     setTime(time) {
@@ -189,5 +196,6 @@ export default class HUD extends Phaser.Scene {
         } else {
             this.clock.setText(`${minutes}:${seconds}`);
         }
+
     }
 }

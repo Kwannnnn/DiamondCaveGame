@@ -9,3 +9,4 @@ export { default as RankingScene } from './RankingScene';
 export { default as DeveloperScene } from './DeveloperScene';
 //export { default as ActiveGamesScene } from './ActiveGamesScene';
 export { default as ChatScene } from './ChatScene';
+export { default as GameOverScene } from './GameOverScene';
