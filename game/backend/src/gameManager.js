@@ -77,38 +77,36 @@ class GameManager {
         player.socket.emit('rankList', runs.toArray());
     }
 
-    handleCollectDiamond(player, diamond) {
-        if (player.x !== diamond.x && player.y !== diamond.y) {
-            player.socket.emit('cheatDetected', player.id);
-            return;
-        }
-
-        const room = rooms.get(diamond.roomId);
-        if (room == undefined) {
-            player.socket.emit('roomNotFound', diamond.roomId);
-            return;
-        }
-
+    handleCollectDiamond(player, roomId, gemId) {
+        // if (player.x === diamond.x && player.y === diamond.y) {
+        //     console.log('Player ' + player.x + ' ' + player.y);
+        //     console.log('Diamond ' + diamond.x + ' ' + diamond.y);
+        const room = rooms.get(roomId);
         const gems = room.gameState.gems;
-        // Update the game state of the room
-        
-        for (const [index, gem] of gems.entries()) {
-            if (gem.gemId === diamond.gemId) {
-                // TODO: Change the status of the gem, instead of
-                // deleting it completely
-                gems.splice(index, 1);
-                room.gemsCollected++;
-                console.log(`[${room.id}] Gems collected: ${room.gemsCollected}`);
-                break;
+        if (room) {
+            // Update the game state of the room
+            // TODO: Change the status of the gem, instead of
+            // deleting it completely
+            for (let i = 0; i < gems.length; i++) {
+                if (gems[i].gemId == gemId) {
+                    gems.splice(i, 1);
+                }
             }
-        }
-        
-        // Notify teammate about collected diamond
-        player.socket.to(room.id).emit('gemCollected', diamond.gemId);
 
-        room.spectators.forEach(spectator => {
-            spectator.socket.emit('gemCollected', diamond.gemId);
-        });
+            room.gemsCollected++;
+            console.log('Gems collected: ' + room.gemsCollected);
+            // Notify teammate about collected diamond
+            player.socket.to(roomId).emit('gemCollected', gemId);
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('gemCollected', gemId);
+            });
+        } else {
+            player.socket.emit('roomNotFound', roomId);
+        }
+        // } else {
+        //     player.socket.emit('cheatDetected', player.id);
+        // }
     }
 
     generateInitialGameState(room, map) {
@@ -126,6 +124,7 @@ class GameManager {
             'tileMap': map.tileMap,
             'players': playerData,
             'gemsCollected' : 0,
+            'health': room.health,
             'exit': map.exit,
             'gems': [...map.gems],
             'enemies': [...map.enemies],
@@ -134,17 +133,23 @@ class GameManager {
         return gameState;
     }
 
-    handleReachingMapEnd(roomID) {
+    handleReachingMapEnd(player, roomID) {
         const room = rooms.get(roomID);
     
         if (room) {
-            room.players.forEach(player => {
-                player.socket.emit('choosePerks', perks);
-            }); // player mode
 
-            room.spectators.forEach(spectator => {
-                spectator.socket.emit('playerChoosePerks');
-            }); // spectator mode
+            // Check if two players reached the end, or only one
+            if (!room.playersReachedEnd) {
+                room.playersReachedEnd = 1;
+                player.socket.emit('waitForTeammate');
+            } else if (room.playersReachedEnd == 1) {
+                room.players.forEach(player => {
+                    player.socket.emit('choosePerks', perks);
+                });
+
+                room.playersReachedEnd = 0;
+            }
+            
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
@@ -329,7 +334,10 @@ class GameManager {
         runs.enqueue(run);
 
         // remove room from rooms map since we dont need it anymore
+        rooms.get(room.id).stopTime();
         rooms.delete(room.id);
+        console.log(room.id + ' was deleted!');
+        console.log('Does exist: ' + rooms.has(room.id));
         console.log(runs.toArray());
     }
 
