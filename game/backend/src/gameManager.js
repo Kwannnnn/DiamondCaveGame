@@ -23,7 +23,7 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room, map2);
+            const initialGameState = this.generateInitialGameState(room, room.maps[room.currentMap]);
             rooms.get(roomId).gameState = initialGameState;
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
@@ -192,6 +192,7 @@ class GameManager {
 
         if (room) {
             room.level += 1;
+            room.nextMap();
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 console.log(room.players[0].perkChoice);
@@ -199,11 +200,11 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 room.players.forEach(player => {
-                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, room.maps[room.currentMap]) });
                 }); // player mode
 
                 room.spectators.forEach(spectator => {
-                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, map2) });
+                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, room.maps[room.currentMap]) });
                 }); // spectator mode
             }
         }

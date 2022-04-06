@@ -84,6 +84,7 @@ export default class PerkMenu extends Phaser.Scene {
         // Wait for final perk to be sent from server (now it only listens to movement perk)
         this.socket.on('perkForNextGame', (args) => {
             this.scene.remove(CST.SCENES.CHAT);
+            this.choosePerkSound.destroy();
             this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,

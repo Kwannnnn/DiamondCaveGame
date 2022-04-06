@@ -222,6 +222,7 @@ export default class Game extends Phaser.Scene {
         if (this.controlledUnit) {
             this.cameras.main.startFollow(this.controlledUnit);
             this.cameras.main.setBounds(-400, -400, 1920, 1440);
+            this.cameras.main.setZoom(2);
         }
     }
 
@@ -479,7 +480,7 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
-        const damage = 10;
+        const damage = 30;
 
         // Send message to the server
         this.socket.emit('hitByEnemy', {
