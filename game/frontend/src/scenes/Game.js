@@ -480,7 +480,7 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
-        const damage = 10;
+        const damage = 30;
 
         // Send message to the server
         this.socket.emit('hitByEnemy', {
