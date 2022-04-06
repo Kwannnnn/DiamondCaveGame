@@ -9,6 +9,7 @@ import HUD from './HUD';
 import ChatScene from './ChatScene';
 import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
 import SpikeTrap from '../model/SpikeTrap';
+import LaserTrap from '../model/LaserTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -30,6 +31,7 @@ export default class Game extends Phaser.Scene {
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
 
         this.load.image('laser', 'assets/laser_trap.PNG');
+        this.load.image('beam', 'assets/laser_beam.png');
 
         this.load.image('spikeOn',  'assets/spikeTrapOn.png');
         this.load.image('spikeOff', 'assets/spikeTrapOff.png');
@@ -75,6 +77,7 @@ export default class Game extends Phaser.Scene {
         this.setupPerks();
         this.setupDiamondLocations();
         this.setupEnemies();
+        this.setupLaserTraps();
         this.setupSpikeTraps();
         setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         // this.placeExit(200, 300);
@@ -102,7 +105,7 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.update();
 
         this.hasSteppedOnSpikeTrap();
-        this.updateSpikeTrapSprites();
+        this.hasSteppedInLaserBeam();
     }
 
     /**
@@ -329,25 +332,45 @@ export default class Game extends Phaser.Scene {
     }
 
     /**
+     * Setup the laser traps
+     */
+    setupLaserTraps() {
+        this.laserTraps = [];
+
+        for (const [id, laserDetails] of this.gameState.laserTraps.entries()) {
+            const { x, y, direction, range } = laserDetails;
+
+            const laserTrap = new LaserTrap(id, x, y, direction, range, this.socket);
+            laserTrap.generateBeamSprites(this);
+            this.laserTraps.push(laserTrap);
+        }
+    }
+
+    /**
+     * Check if the player has stepped into a laserbeam
+     */
+    hasSteppedInLaserBeam() {
+        for (const laserTrap of this.laserTraps) {
+            laserTrap.steppedInLaser(this.controlledUnit, this.lobbyID);
+        }
+    }
+
+    /**
      * Place SpikeTrap objects where 4s appear on the tilemap
      */
     setupSpikeTraps() {
         // get all spike trap coordinates
         this.spikeLocations = this.getCoordinatesFromTileMap(4); // array of coordinate objects
         this.spikeTraps = []; // array of SpikeTrap objects
-        this.spikeTrapSprites = []; // array of spike trap sprites
 
         // create SpikeTrap and sprite objects at the correct coordinates
-        for (const [index, spikeLocation] of this.spikeLocations.entries()) {
-            const spikeLocationX = spikeLocation.x;
-            const spikeLocationY = spikeLocation.y;
-            const trapSprite = this.physics.add.sprite(spikeLocationX, spikeLocationY, 'spikeOn');
-
-            const trap = new SpikeTrap(this, spikeLocationX, spikeLocationY, this.lobbyID, index, this.socket);
+        for (const [id, spikeLocation] of this.spikeLocations.entries()) {
+            const { x, y } = spikeLocation;
+            const trapSprite = this.physics.add.sprite(x, y, 'spikeOn');
+            const trap = new SpikeTrap(id, x, y, this.socket, trapSprite);
 
             // add both to arrays so that they can be found later
             this.spikeTraps.push(trap);
-            this.spikeTrapSprites.push(trapSprite);
         }
     }
 
@@ -380,36 +403,17 @@ export default class Game extends Phaser.Scene {
      * Check whether player has stepped on a spike trap
      */
     hasSteppedOnSpikeTrap() {
-        // itirate over SpikeTrap objects
-        for (let i = 0; i < this.spikeTraps.length; i++) {
-            const spikePos = { x: this.spikeTraps[i].x, y: this.spikeTraps[i].y };
-            // see if positions overlap
+        for (const spikeTrap of this.spikeTraps) {
+            const spikePos = {
+                x: spikeTrap.x,
+                y: spikeTrap.y,
+            };
+
+            // Check if player overlaps spikeTrap
             if (this.controlledUnit.x === spikePos.x && this.controlledUnit.y === spikePos.y) {
-                // call method to deal damage if possible
-                this.spikeTraps[i].steppedOnSpikeTrap(this.controlledUnit, this.lobbyID);
+                spikeTrap.steppedOnSpikeTrap(this.controlledUnit, this.lobbyID);
             }
         }
-    }
-
-    /**
-     * Update spike trap sprites depending on state
-     */
-    updateSpikeTrapSprites() {
-        // // itirate through SpikeTrap objects
-        this.spikeTraps.forEach(st => {
-            // itirate through sprite objects
-            this.spikeTrapSprites.forEach(ss => {
-                // are st and ss at the same location?
-                if (st.x == ss.x && st.y == ss.y) {
-                    // set sprite
-                    if (st.spikesOn === true) {
-                        ss.setTexture('spikeOn');
-                    } else {
-                        ss.setTexture('spikeOff');
-                    }
-                }
-            });
-        });
     }
 
     /**
