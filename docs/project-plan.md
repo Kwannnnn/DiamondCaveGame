@@ -311,3 +311,4 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-25 | The game never ends | H | 6 | Done |
 | PB-26 | After perks scene health is reset to 100 | H | 5 | Done |
 | PB-27 | Timer sounds doesn't go away after perks scene | H | 3 | In progress |
+| PB-28 | Colliding with an enemy can knock you into a wall | H | 7 | In progress |

@@ -23,8 +23,10 @@ class GameManager {
                 player.socket.emit('roomNotReady');
                 return;
             }
-            const initialGameState = this.generateInitialGameState(room, map2);
-            room.gameState = initialGameState;
+            const initialGameState = this.generateInitialGameState(room, room.maps[room.currentMap]);
+            rooms.get(roomId).gameState = initialGameState;
+
+            // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
 
             const payload = {
@@ -136,8 +138,10 @@ class GameManager {
             gemsCollected: 0,
             exit: map.exit,
             gems: [...map.gems],
+            health: room.health,
             enemies: [...map.enemies],
             pressurePlateTraps: [...map.pressurePlateTraps],
+            laserTraps: [...map.laserTraps],
         };
         return gameState;
     }
@@ -208,6 +212,7 @@ class GameManager {
 
         if (room) {
             room.level += 1;
+            room.nextMap();
             // if the choices are the same, apply perk
             if (room.players[0].perkChoice === room.players[1].perkChoice) {
                 console.log(room.players[0].perkChoice);
@@ -215,7 +220,7 @@ class GameManager {
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
                 const payload = {
-                    initialGameState: this.generateInitialGameState(room, map2),
+                    initialGameState: this.generateInitialGameState(room, room.maps[room.currentMap]),
                     stage: room.level,
                     health: room.health,
                     spectatorsCount: room.spectators.length,

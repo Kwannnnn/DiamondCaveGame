@@ -1,39 +1,29 @@
-// A SpikeTrap object will be spawned at every location that there is a 3 in the tileMap
+import Trap from './Trap';
 
-let immunePlayers = []; // array of Player objects
+/**
+ * SpikeTrap class in charge of managing individual spike traps.
+ * 
+ * A spike trap is created for every 3 in the tilemap indexes.
+ */
+export default class SpikeTrap  extends Trap {
+    constructor(id, x, y, socket, sprite) {
+        super(id, x, y, socket);
 
-export default class SpikeTrap {
-    constructor(scene, x, y, lobbyId, trapId, socket) {
-        // constructor variables
-        this.scene = scene;
-        this.x = x;
-        this.y = y;
-        this.lobbyId = lobbyId;
-        this.trapId = trapId;
-        this.socket = socket;
-
-        // initialize logic variables
-        this.spikesOn = true;
-        this.enabled = true;
-
-        // start spikes up&down
+        this.sprite = sprite;
         this.startSpikeCycle();
     }
 
     // handle what happens when a player steps on the trap
     steppedOnSpikeTrap(player, lobbyId) {
         // make sure trap is on and player can even be hit
-        if (this.spikesOn && !immunePlayers.includes(player) && this.enabled) {
-            this.damageCooldown(player);
-
-            const spikeDamage = 10;
+        if (this.active && !this.immunePlayers.includes(player) && this.enabled) {
+            this.makePlayerInvulnerable(player);
 
             // emit so that damage taken is registered in the server
             this.socket.emit('hitByEnemy', {
                 lobbyID: lobbyId,
-                damage: spikeDamage
+                damage: 10,
             });
-            console.log('spike dealt damage to player');
         }
     }
 
@@ -44,24 +34,17 @@ export default class SpikeTrap {
         }
     }
 
-    // call this when getting hit to disable taking damage from this trap for the provided amount of time
-    damageCooldown(player) {
-        this.makePlayerImmune(player);
-
-        // this makes the player vulnerable again after the given time
-        setTimeout(this.removeImmunity, 100, player);
-    }
-
-    getLocation() {
-        return {
-            x: this.x,
-            y: this.y
-        }
-    }
-
-    // invert the spikesOn variable
     swapState() {
-        this.spikesOn = !this.spikesOn;
+        this.active = !this.active;
+        this.updateStatus();
+    }
+
+    updateStatus() {
+        if (this.active) {
+            this.sprite.setTexture('spikeOn');
+        } else {
+            this.sprite.setTexture('spikeOff');
+        }
     }
 
     enableTrap() {
@@ -73,27 +56,7 @@ export default class SpikeTrap {
     disableTrap() {
         clearInterval(this.spikeCycle);
         this.enabled = false;
-        this.spikesOn = false;
-        // update sprite method
-    }
-
-    // add Player object to array of immune players
-    makePlayerImmune(player) {
-        if (!immunePlayers.includes(player)) {
-            immunePlayers.push(player);
-        }
-    }
-
-    // if the given player is in the array of immune players, remove them
-    removeImmunity(player) {
-        // find player if they exist and remove them
-        if (immunePlayers.includes(player)) {
-            for (let i = 0; i < immunePlayers.length; i++) {
-                if (immunePlayers[i] === player) {
-                    immunePlayers.splice(i, 1);
-                    console.log(`player ${player.username} made vulnerable again to spike trap ${this.trapId}`);
-                }
-            }
-        }
+        this.active = false;
+        this.updateStatus();
     }
 }

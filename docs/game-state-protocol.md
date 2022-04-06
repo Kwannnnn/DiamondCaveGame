@@ -209,8 +209,15 @@ roomId;
             },
             active: 0,
         }, ...
-        ],
-    }
+    ], 
+    laserTraps: [
+        {
+            x: 304, // x position
+            y: 112, // y position
+            direction: 3, // Facing direction
+            range: 2, // Laser range
+        }, ...
+    ],
 }
     
 ```
