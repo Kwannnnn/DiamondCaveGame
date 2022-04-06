@@ -46,10 +46,16 @@ class GameManager {
         if (room) {
             // Update the game state of room
             // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
-            player.x = newPosition.x;
-            player.y = newPosition.y;
-            player.orientation = newPosition.orientation;
+            let players = room.gameState.players;
 
+            for (let p of players) {
+                if (p.playerId === player.id) {
+                    p.x = newPosition.x;
+                    p.y = newPosition.y;
+                    p.orientation = newPosition.orientation;
+                }
+            }
+            
             // TODO: send back the whole gamestate instead
             // Notify all teammates about the movement
             room.spectators.forEach(spectator => {
