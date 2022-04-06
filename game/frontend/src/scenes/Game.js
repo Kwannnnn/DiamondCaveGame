@@ -103,7 +103,7 @@ export default class Game extends Phaser.Scene {
         console.log(gems);
         for (let i = 0; i < gems.length; i++) {
             const gem = gems[i];
-            if (gem.id === -1) {
+            if (gem.gemId === -1) {
                 this.collectedDiamonds++;
             }
         }
