@@ -13,7 +13,7 @@ class Room {
         this.gameState = {};
         this.gemsCollected = 0;
         this.time = 0;
-        this.currentMap = 0;
+        this.currentMap = 1;
         this.maps = [map1, map2, map3];
     }
 
