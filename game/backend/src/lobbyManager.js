@@ -171,8 +171,8 @@ class LobbyManager {
             if (!this.validateNames(room, player)) {
                 return;
             }
-            
-            room.spectators.push(player);
+            this.joinRoom(room, player, true);
+
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.username);
 
