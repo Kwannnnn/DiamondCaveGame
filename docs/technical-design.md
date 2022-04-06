@@ -135,3 +135,7 @@ There are several scenes the game goes through to display the previously mention
 
 ### 6.7. Spectate
 ![Spectate](diagrams/spectate.png)
+
+## 7 Deployment diagram
+
+![Deployment](diagrams/deployment.png)
