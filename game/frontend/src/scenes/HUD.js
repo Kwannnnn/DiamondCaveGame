@@ -6,7 +6,6 @@ import ChatScene from './ChatScene';
 
 const MARGIN_X = 32;
 const MARGIN_Y = 16;
-let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
@@ -22,9 +21,12 @@ export default class HUD extends Phaser.Scene {
 
         this.stage = data.stage;
         this.socket = data.socket;
-        this.collectedDiamonds = 0;
+        this.collectedDiamonds = data.gemsCollected;
         this.totalDiamonds = data.totalDiamonds;
+        this.time = data.time;
         this.currentHealth = data.health;
+        this.spectatorsCount = data.spectatorsCount;
+
     }
 
     preload() {
@@ -69,13 +71,15 @@ export default class HUD extends Phaser.Scene {
         }).setOrigin(1, 1);
 
         // Create the numberOfSpectstors and stage text
-        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${numberOfSpectators}`, {
+        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${this.spectatorsCount}`, {
             color: '#FFFFFF',
             fontSize: 20,
         }).setOrigin(1, 1);
 
         this.socket.on('newSpectatorJoined', ()=>{
-            numberOfSpectators += 1; console.log('Success ' + numberOfSpectators); this.updateNumberOfSpectators(numberOfSpectators);
+            this.spectatorsCount++; 
+            console.log('Success ' + this.spectatorsCount); 
+            this.updateNumberOfSpectators(this.spectatorsCount);
         })
 
         // Create the Diamond counter
