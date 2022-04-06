@@ -182,9 +182,69 @@ module.exports = {
         }],
     }],
     'laserTraps': [{
-        'x': 304,
+        'x': 336,
         'y': 112,
         'direction': 3,
-        'range': 2,
+        'range': 3,
+    }, {
+        'x': 336,
+        'y': 176,
+        'direction': 3,
+        'range': 3,
+    }, {
+        'x': 336,
+        'y': 240,
+        'direction': 3,
+        'range': 3,
+    }, {
+        'x': 336,
+        'y': 304,
+        'direction': 3,
+        'range': 3,
+    }, {
+        'x': 336,
+        'y': 368,
+        'direction': 3,
+        'range': 3,
+    }, {
+        'x': 368,
+        'y': 272,
+        'direction': 2,
+        'range': 3,
+    }, {
+        'x': 432,
+        'y': 368,
+        'direction': 0,
+        'range': 3,
+    }, {
+        'x': 496,
+        'y': 272,
+        'direction': 2,
+        'range': 3,
+    }, {
+        'x': 912,
+        'y': 176,
+        'direction': 2,
+        'range': 3,
+    }, {
+        'x': 976,
+        'y': 272,
+        'direction': 0,
+        'range': 3,
+    }, {
+        'x': 1040,
+        'y': 176,
+        'direction': 2,
+        'range': 3,
+    }, {
+        'x': 1104,
+        'y': 272,
+        'direction': 0,
+        'range': 3,
+    }, {
+        'x': 1136,
+        'y': 432,
+        'direction': 0,
+        'range': 3,
     }],
 };
