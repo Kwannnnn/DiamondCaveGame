@@ -19,7 +19,7 @@ export default class Game extends Phaser.Scene {
     preload() {
         this.load.image('gem', 'assets/gem.png');
         // FIXME: Add an actual enemy sprite
-        this.load.image('enemy', 'assets/dirt.png');
+        this.load.image('enemy', 'assets/WispyEnemy.png');
         this.load.image('exit', 'assets/exit.png');
         this.load.spritesheet('player', 'assets/player.png', { frameWidth: 160, frameHeight: 260 });
 
