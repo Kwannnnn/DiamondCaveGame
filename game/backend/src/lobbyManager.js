@@ -142,6 +142,8 @@ class LobbyManager {
             rooms.delete(roomId);
             console.log('All players left. Room ' + roomId + ' has been deleted.')
         }
+
+        room.stopTime();
     }
     
     handlePlayerDisconnected(playerId) {
