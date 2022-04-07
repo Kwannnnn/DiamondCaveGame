@@ -125,7 +125,10 @@ class GameManager {
             'pressurePlateTraps': [...map.pressurePlateTraps],
         };
 
-        room.enemyManager = new EnemyManager([...map.enemies], room, this.io, this);
+        if (room.enemyManager === undefined) room.enemyManager = new EnemyManager([...map.enemies], room, this.io, this);
+        else {
+            room.enemyManager.startTimer();
+        }
 
 
         return gameState;

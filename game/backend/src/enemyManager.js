@@ -8,7 +8,18 @@ class EnemyManager {
         this.enemies = enemies;
         this.io = io;
         this.manager = manager;
-        this.enemyTimer = setInterval(this.updateEnemyPositions.bind(this), updateFrequency);
+        this.timerIsRunning = false;
+        this.startTimer();
+    }
+
+    startTimer() {
+        if (!this.timerIsRunning) {
+            this.timerIsRunning = true;
+            this.enemyTimer = setInterval(() => {
+                console.log('Timer is running: ' + this.timerIsRunning);
+                this.updateEnemyPositions()
+            }, updateFrequency);
+        }
     }
 
     updateEnemyPositions() {
@@ -56,7 +67,11 @@ class EnemyManager {
     }
 
     disableUpdate() {
-        clearInterval(this.enemyTimer); //FIXME: Doesn't work after switching maps, causing a crash on leave
+        if (this.timerIsRunning) {
+            clearInterval(this.enemyTimer);
+            this.timerIsRunning = false;
+        }
+        // clearInterval(this.enemyTimer); //FIXME: Doesn't work after switching maps, causing a crash on leave
     }
 }
 
