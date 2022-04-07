@@ -252,6 +252,21 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
             </ul>
         </td>
     </tr>
+    <tr>
+        <td>Patrolling enemy</td>
+<td align="center">
+
+![Enemy Sprite](/docs/sprites/worlds/enemy.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Patrols in a predetermined trajectory</li>
+                <li>Deals damage to <i>Player</i> when in contact</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
 </table>
 
 ## 5. Wireframes
