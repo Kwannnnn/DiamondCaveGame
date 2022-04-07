@@ -48,7 +48,7 @@ export default class Spectator extends ControlledUnit {
         // Check tile we are attempting to move to
         let tile = this.scene.layer.getTileAtWorldXY(this.x + movementX, this.y + movementY, true);
 
-        if (tile && tile.index !== 2) {
+        if (tile) {
             this.x += movementX;
             this.y += movementY;
         }
