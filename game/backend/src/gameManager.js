@@ -224,8 +224,10 @@ class GameManager {
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
+                room.gameState = this.generateInitialGameState(room, room.maps[room.currentMap]);
+
                 const payload = {
-                    initialGameState: this.generateInitialGameState(room, room.maps[room.currentMap]),
+                    initialGameState: room.gameState,
                     stage: room.level,
                     health: room.health,
                     spectatorsCount: room.spectators.length,
