@@ -456,7 +456,7 @@ export default class Game extends Phaser.Scene {
      * Setup laser traps and laser tiles
      */
     setupLaserTraps() {
-      //  this.laserTrapData = new Map();//map for matching id with data describing the characteristics of the traps
+        //this.laserTrapData = new Map();//map for matching id with data describing the characteristics of the traps
         this.laserTraps = this.physics.add.group(); //lasertraps are the traps themselves
         this.laserTiles = this.physics.add.group();//lasertiles are the tiles that the laser will shoot across
 
