@@ -360,13 +360,15 @@ class GameManager {
     }
 
     handleGameOver(room) {
-        const playerUsernames = room.players.map(p => p.id);
+        const playerUsernames = room.players.map(p => p.username);
         //TODO: create an algorithm for calculating totalScore
-        const totalScore = room.gameState.gemsCollected;
-        const time = 6969;
+        const totalScore = room.gemsCollected;
+        const time = room.time;
 
         const run = new Run(room.id, totalScore, time, playerUsernames);
-        runs.enqueue(run);
+        if (runs.toArray().filter(r => r.id === room.id).length === 0) {
+            runs.enqueue(run);
+        }
 
         // remove room from rooms map since we dont need it anymore
         rooms.get(room.id).stopTime();
