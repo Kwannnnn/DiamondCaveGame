@@ -272,7 +272,6 @@ export default class Game extends Phaser.Scene {
      */
     updateCollectedDiamondsCount() {
         this.collectedDiamonds++;
-        console.log(this.collectedDiamonds);
         DiamondCollectEventHandler.emit('update-count', this.collectedDiamonds);
     }
 
@@ -537,11 +536,9 @@ export default class Game extends Phaser.Scene {
     placeExit(x, y) {
         this.exit = this.physics.add.sprite(x, y, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            console.log('At exit location');
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
-                console.log('exitexitexit');
             }
         });
     }
@@ -551,12 +548,7 @@ export default class Game extends Phaser.Scene {
      * @returns boolean
      */
     canExitScene() {
-        if (this.collectedDiamonds >= this.gameState.gems.length) {
-            return true;
-        } else {
-            console.log('Not all diamonds have been collected!')
-            return false;
-        }
+        return this.collectedDiamonds >= this.gameState.gems.length
     }
 
     /**
@@ -634,7 +626,7 @@ export default class Game extends Phaser.Scene {
         this.socket.on('nextMap', (payload) => {
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
-            this.scene.remove(CST.SCENES.PERKS);
+            this.scene.stop(CST.SCENES.PERKS);
             this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,
