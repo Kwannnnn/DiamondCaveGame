@@ -108,7 +108,11 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 1</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 1 Sprite](/docs/sprites/player/player1.png)
+
+</td>
         <td rowspan="2">
             <ul>
                 <li>Can be controlled by the first player in 4 directions</li>
@@ -120,7 +124,11 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 2</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 1 Sprite](/docs/sprites/player/player2.png)
+
+</td>
     </tr>
     <tr>
         <td>Map Wall</td>
