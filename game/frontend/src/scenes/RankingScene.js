@@ -142,11 +142,11 @@ export default class RankingScene extends Phaser.Scene {
         }
     
         // Feed the container with the actual data
-        cellContainer.getElement('rank').setText(1);
-        cellContainer.getElement('team').setText(item.id);
-        cellContainer.getElement('player1').setText(item.playerUsernames[0]);
-        cellContainer.getElement('player2').setText(item.playerUsernames[1]);
-        cellContainer.getElement('score').setText(item.totalScore);
+        cellContainer.getElement('rank').setText(item.rank);
+        cellContainer.getElement('team').setText(item.run.id);
+        cellContainer.getElement('player1').setText(item.run.playerUsernames[0]);
+        cellContainer.getElement('player2').setText(item.run.playerUsernames[1]);
+        cellContainer.getElement('score').setText(item.run.totalScore);
         return cellContainer;
     }
 

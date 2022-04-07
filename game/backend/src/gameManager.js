@@ -82,7 +82,14 @@ class GameManager {
     }
 
     handleGetRanking(player) {
-        player.socket.emit('rankList', runs.toArray());
+        const ranking = runs.toArray().map((run, index) => {
+            return {
+                rank: index + 1,
+                run: run
+            }
+        });
+
+        player.socket.emit('rankList', ranking);
     }
 
     handleCollectDiamond(player, roomId, gemId) {
