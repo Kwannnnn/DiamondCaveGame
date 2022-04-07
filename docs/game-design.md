@@ -39,19 +39,31 @@ After each finished map, the team is offered a choice between two bonuses that w
         <th>Rarity</th>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Life Rune Sprite](/docs/sprites/ui/perks/Heart.png)
+
+</td>
         <td><b>Life Rune</b></td>
         <td>Team gains an extra life</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Boots of Speed Sprite](/docs/sprites/ui/perks/SpeedBoots.png)
+
+</td>
         <td><b>Boots of Speed</b></td>
         <td>Grants 4% extra movement speed</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Bloodstone Sprite](/docs/sprites/ui/perks/BloodStone.png)
+
+</td>
         <td><b>Bloodstone</b></td>
         <td>Transforms itself in 3 Diamonds</td>
         <td>Common</td>
@@ -126,13 +138,17 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Player 2</td>
 <td align="center">
 
-![Player 1 Sprite](/docs/sprites/player/player2.png)
+![Player 2 Sprite](/docs/sprites/player/player2.png)
 
 </td>
     </tr>
     <tr>
         <td>Map Wall</td>
-        <td>TBD</td>
+<td align="center">
+
+![Map Wall Sprite](/docs/sprites/worlds/border.png)
+
+</td>
         <td>
             <ul>
                 <li>Defines the boundaries of the map</li>
@@ -142,21 +158,22 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Dirt</td>
-        <td>TBD</td>
+<td align="center">
+
+![Dort Sprite](/docs/sprites/worlds/dirt.png)
+
+</td>
         <td>
             <li>Can be cleared by a <i>Player</i> by mining it</li>
         </td>
     </tr>
     <tr>
-        <td>Rock</td>
-        <td>TBD</td>
-        <td>
-            <li>Cannot be cleared by mining</li>
-        </td>
-    </tr>
-    <tr>
         <td>Diamond</td>
-        <td>TBD</td>
+<td align="center">
+
+![Diamond Sprite](/docs/sprites/diamonds/blue.png)
+
+</td>
         <td>
             <ul>
                 <li>Can be collected by a <i>Player</i> by moving into it</li>
@@ -165,21 +182,72 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         </td>
     </tr>
     <tr>
-        <td>Locked Map Exit</td>
-        <td>TBD</td>
+        <td>Map Exit</td>
+<td align="center">
+
+![Map Exit Sprite](/docs/sprites/worlds/exit.png)
+
+</td>
         <td>
             <ul>
-                <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
+                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+        <tr>
+        <td>Spike Trap Active</td>
+<td align="center">
+
+![Spike Trap On Sprite](/docs/sprites/worlds/spikeTrapOn.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals <i>Player</i> damage when stepped on</li>
+                <li>Can be inactivated by stepping on <i>Pressure pad</i></li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
     </tr>
     <tr>
-        <td>Unlocked Map Exit</td>
-        <td>TBD</td>
+        <td>Spike Trap Inactive</td>
+<td align="center">
+
+![Spike Trap Off Sprite](/docs/sprites/worlds/spikeTrapOff.png)
+
+</td>
         <td>
             <ul>
-                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Can be reactivated by releasing a <i>Pressure pad</i></li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap</td>
+<td align="center">
+
+![Laser Trap Sprite](/docs/sprites/worlds/laser_trap.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Emits a deadly laser beam</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap Beam</td>
+<td align="center">
+
+![Laser Trap Sprite](/docs/sprites/worlds/laser_beam.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals damage to <i>Player</i> when in contact</li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
