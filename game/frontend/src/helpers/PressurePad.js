@@ -31,7 +31,7 @@ export function handlePressureDoors(layer, players) {
 
 
 function findSpikeWithId(id) {
-    return spikeTraps.find(st => st.trapId === id);
+    return spikeTraps.find(st => st.id === id);
 }
 
 function resetLinkedElements(layer, players) {
@@ -59,7 +59,6 @@ function resetLinkedElements(layer, players) {
                 const spikeTrap = findSpikeWithId(id);
 
                 if (spikeTrap && !spikeTrap.enabled) {
-                    console.log(`Trap ${spikeTrap.trapId} was disabled and should be activated`);
                     spikeTrap.enableTrap();
                 }                
             }

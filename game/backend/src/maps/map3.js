@@ -471,4 +471,5 @@ module.exports = {
             'y': 912,
         }]
     }],
+    'laserTraps': [],
 }

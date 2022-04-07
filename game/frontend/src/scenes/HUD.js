@@ -1,11 +1,11 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
 import SelectHealingPerk from '../events/HealingPerkEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
 
 const MARGIN_X = 32;
 const MARGIN_Y = 16;
-let numberOfSpectators = 0;
 export default class HUD extends Phaser.Scene {
     constructor() {
         super({
@@ -21,10 +21,12 @@ export default class HUD extends Phaser.Scene {
 
         this.stage = data.stage;
         this.socket = data.socket;
-        this.collectedDiamonds = 0;
+        this.collectedDiamonds = data.gemsCollected;
         this.totalDiamonds = data.totalDiamonds;
-        
-        this.currentHealth = 100;
+        this.time = data.time;
+        this.currentHealth = data.health;
+        this.spectatorsCount = data.spectatorsCount;
+
     }
 
     preload() {
@@ -34,7 +36,6 @@ export default class HUD extends Phaser.Scene {
         this.load.image('health', 'assets/healthOverlay.png');
         this.load.image('gem', 'assets/gem.png');
         this.load.image('timer-bg', 'assets/window_message_box.png');
-        
     }
 
     create() {
@@ -70,13 +71,15 @@ export default class HUD extends Phaser.Scene {
         }).setOrigin(1, 1);
 
         // Create the numberOfSpectstors and stage text
-        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${numberOfSpectators}`, {
+        this.numberOfSpectators = this.add.text(this.game.renderer.width - 1.5 * MARGIN_X, 4.5 * MARGIN_Y, `Spectators: ${this.spectatorsCount}`, {
             color: '#FFFFFF',
             fontSize: 20,
         }).setOrigin(1, 1);
 
         this.socket.on('newSpectatorJoined', ()=>{
-            numberOfSpectators += 1; console.log('Success ' + numberOfSpectators); this.updateNumberOfSpectators(numberOfSpectators);
+            this.spectatorsCount++; 
+            console.log('Success ' + this.spectatorsCount); 
+            this.updateNumberOfSpectators(this.spectatorsCount);
         })
 
         // Create the Diamond counter
@@ -103,6 +106,8 @@ export default class HUD extends Phaser.Scene {
         });
 
         SelectHealingPerk.on('heal', this.setHealthAnimated, this);
+
+        LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }
 
 
@@ -167,17 +172,23 @@ export default class HUD extends Phaser.Scene {
 
     updateDiamondCount(count) {
         this.collectedDiamonds = count;
+        this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
+
 
         if (this.collectedDiamonds === this.totalDiamonds) {
-            this.diamondCounter.setText('Go to next map!');
-        } else {
-            // console.log(this.collectedDiamonds);
-            this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
-        }        
+            this.add.text(this.game.renderer.width / 2 + 140, MARGIN_Y + 100, 'Go to next map!', {
+                color: '#FFFFFF',
+                fontSize: 30,
+            }).setOrigin(1, 1)
+        }     
     }
 
     updateNumberOfSpectators(numberOfSpectators) {
         this.numberOfSpectators.setText(`Spectators: ${numberOfSpectators}`);
+    }
+
+    notifyToWaitForSecondPlayerToLeave() {
+        this.diamondCounter.setText('Wait for the second player!');
     }
 
     setTime(time) {
@@ -189,5 +200,6 @@ export default class HUD extends Phaser.Scene {
         } else {
             this.clock.setText(`${minutes}:${seconds}`);
         }
+
     }
 }

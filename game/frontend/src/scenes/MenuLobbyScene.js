@@ -249,11 +249,15 @@ export default class LobbyScene extends Phaser.Scene {
         this.socket.on('initialGameState', (payload) => {
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,
-                stage: 1,   
+                stage: payload.stage,
                 socket: this.socket,
                 username: this.username,
                 lobbyID: this.lobbyID,
-                initialGameState: payload
+                initialGameState: payload.initialGameState,
+                health: payload.health,
+                spectatorsCount: payload.spectatorsCount,
+                gemsCollected: payload.gemsCollected,
+                time: payload.time
             });
         });
 
