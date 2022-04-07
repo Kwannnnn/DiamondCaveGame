@@ -84,7 +84,6 @@ export default class Game extends Phaser.Scene {
         this.setupLaserTraps();
         this.setupSpikeTraps();
         setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
-        // this.placeExit(200, 300);
         this.setupControlledUnit();
         this.setupCamera();
         this.placeExit(this.gameState.exit.x, this.gameState.exit.y);        
@@ -525,6 +524,7 @@ export default class Game extends Phaser.Scene {
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
+                console.log('exitexitexit');
             }
         });
     }
@@ -605,16 +605,17 @@ export default class Game extends Phaser.Scene {
                 // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
                 gameState: this.gameState
             });
-            this.socket.removeAllListeners();
         });
         this.socket.on('playerChoosePerks', () => {
             this.scene.pause();
             this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
         }) // handle player choosing perks for spectator mode
         this.socket.on('nextMap', (payload) => {
+            console.log('skldnvlsvnlsdnvldsnvksnlsnlkvndslknlskvnksklv');
             console.log(payload);
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
+            this.scene.remove(CST.SCENES.PERKS);
             this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,

@@ -125,7 +125,12 @@ class GameManager {
         const player1 = room.players[0];
         const player2 = room.players[1];
 
-        const playerData = map.players;
+        // clone the data from map
+        const playerData = JSON.parse(JSON.stringify(map.players));
+        const gems = JSON.parse(JSON.stringify(map.gems)); 
+
+        // const player1Data = {...map.players[0]};
+        // const player2Data = {...map.players[1]};
         playerData[0].playerId = player1.id;
         playerData[0].username = player1.username;
         playerData[1].playerId = player2.id;
@@ -137,7 +142,7 @@ class GameManager {
             players: playerData,
             gemsCollected: 0,
             exit: map.exit,
-            gems: [...map.gems],
+            gems: gems,
             health: room.health,
             enemies: [...map.enemies],
             pressurePlateTraps: [...map.pressurePlateTraps],
