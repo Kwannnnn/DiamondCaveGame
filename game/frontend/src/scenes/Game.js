@@ -241,7 +241,12 @@ export default class Game extends Phaser.Scene {
     setupCamera() {
         if (this.controlledUnit) {
             this.cameras.main.startFollow(this.controlledUnit);
-            this.cameras.main.setBounds(-400, -400, 1920, 1440);
+
+            const mapWidth = this.gameState.tileMap[0].length * 32;
+            const mapHeight = this.gameState.tileMap.length * 32;
+
+            // We need to add the additional 800px so that the camera does not end exactly at the edge of the map
+            this.cameras.main.setBounds(-400, -400, mapWidth + 800, mapHeight + 800);
             this.cameras.main.setZoom(2);
         }
     }
@@ -403,7 +408,6 @@ export default class Game extends Phaser.Scene {
             for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
                 // value found?
                 if (this.gameState.tileMap[row][column] == tileNumber) {
-                    console.log(`Found trap at: ${row}, ${column}`);
                     // translate index to coordinates
                     let coordinates = {
                         x: column * 32 + 16,
