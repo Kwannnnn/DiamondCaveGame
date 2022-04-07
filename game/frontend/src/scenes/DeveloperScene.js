@@ -7,6 +7,11 @@ const usernameForm = '<input type="text" name="usernameForm" placeholder="Enter 
 
 const SERVER_URL = 'localhost:3000'; //TODO: Change to VPS URL
 
+/**
+ * We tried implementing a developer room that is faster to load into and can be played alone in order to make testing easier.
+ * Ultimately we failed in this so this code is just leftover. It cannot be used or tested and therefore could simply be removed.
+ * We are leaving it in though to show that we tried.
+ */
 export default class DeveloperScene extends Phaser.Scene {
     constructor() {
         super({
