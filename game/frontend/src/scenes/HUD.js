@@ -1,5 +1,4 @@
 import CollectDiamond from '../events/CollectDiamondEvent';
-import SelectHealingPerk from '../events/HealingPerkEvent';
 import LeaveMapEvent from '../events/LeaveMapEvent';
 import { CST } from '../utils/CST';
 import ChatScene from './ChatScene';
@@ -104,8 +103,6 @@ export default class HUD extends Phaser.Scene {
             console.log('Event listener is disconnected');
             CollectDiamond.off('update-count', this.updateDiamondCount, this);
         });
-
-        SelectHealingPerk.on('heal', this.setHealthAnimated, this);
 
         LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
     }

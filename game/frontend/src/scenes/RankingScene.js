@@ -36,7 +36,7 @@ export default class RankingScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
+        var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Ranking');
         
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
         this.backButton.on('pointerdown', () => this.goBack());

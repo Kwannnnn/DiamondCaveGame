@@ -486,6 +486,19 @@ export default class Game extends Phaser.Scene {
     }
 
     /**
+     * This is called when moving to perks scene
+     * Stops Interval timers for all spike and laser traps
+     */
+    stopAllTraps() {
+        for (const spikeTrap of this.spikeTraps) {
+            spikeTrap.disableTrap();
+        }
+        for (const laserTrap of this.laserTraps) {
+            laserTrap.disableTrap();
+        }
+    }
+
+    /**
      * Handle colliding with an enemy
      */
     collideEnemy(player, enemy) {
@@ -598,6 +611,7 @@ export default class Game extends Phaser.Scene {
         this.socket.on('gemCollected', (gemId) => this.handleDiamondCollected(gemId));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
+            this.stopAllTraps();
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
@@ -615,8 +629,6 @@ export default class Game extends Phaser.Scene {
             this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
         }) // handle player choosing perks for spectator mode
         this.socket.on('nextMap', (payload) => {
-            console.log('skldnvlsvnlsdnvldsnvksnlsnlkvndslknlskvnksklv');
-            console.log(payload);
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
             this.scene.remove(CST.SCENES.PERKS);
@@ -642,8 +654,7 @@ export default class Game extends Phaser.Scene {
         });
 
         this.socket.on('gameOver', () => {
-            //TODO: end the game
-            // console.log('Game over! You are dead!');
+            this.stopAllTraps();
             this.scene.remove(CST.SCENES.HUD);
             this.scene.remove(CST.SCENES.CHAT);
             this.scene.pause();
