@@ -16,7 +16,6 @@ class EnemyManager {
         if (!this.timerIsRunning) {
             this.timerIsRunning = true;
             this.enemyTimer = setInterval(() => {
-                console.log('Timer is running: ' + this.timerIsRunning);
                 this.updateEnemyPositions()
             }, updateFrequency);
         }
@@ -71,7 +70,6 @@ class EnemyManager {
             clearInterval(this.enemyTimer);
             this.timerIsRunning = false;
         }
-        // clearInterval(this.enemyTimer); //FIXME: Doesn't work after switching maps, causing a crash on leave
     }
 }
 
