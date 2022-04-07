@@ -39,19 +39,31 @@ After each finished map, the team is offered a choice between two bonuses that w
         <th>Rarity</th>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Life Rune Sprite](/docs/sprites/ui/perks/Heart.png)
+
+</td>
         <td><b>Life Rune</b></td>
         <td>Team gains an extra life</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Boots of Speed Sprite](/docs/sprites/ui/perks/SpeedBoots.png)
+
+</td>
         <td><b>Boots of Speed</b></td>
         <td>Grants 4% extra movement speed</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Bloodstone Sprite](/docs/sprites/ui/perks/BloodStone.png)
+
+</td>
         <td><b>Bloodstone</b></td>
         <td>Transforms itself in 3 Diamonds</td>
         <td>Common</td>
@@ -108,7 +120,11 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 1</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 1 Sprite](sprites/player/player1.png)
+
+</td>
         <td rowspan="2">
             <ul>
                 <li>Can be controlled by the first player in 4 directions</li>
@@ -120,11 +136,19 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 2</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 2 Sprite](sprites/player/player2.png)
+
+</td>
     </tr>
     <tr>
         <td>Map Wall</td>
-        <td>TBD</td>
+<td align="center">
+
+![Map Wall Sprite](sprites/worlds/border.png)
+
+</td>
         <td>
             <ul>
                 <li>Defines the boundaries of the map</li>
@@ -134,21 +158,22 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Dirt</td>
-        <td>TBD</td>
+<td align="center">
+
+![Dort Sprite](sprites/worlds/dirt.png)
+
+</td>
         <td>
             <li>Can be cleared by a <i>Player</i> by mining it</li>
         </td>
     </tr>
     <tr>
-        <td>Rock</td>
-        <td>TBD</td>
-        <td>
-            <li>Cannot be cleared by mining</li>
-        </td>
-    </tr>
-    <tr>
         <td>Diamond</td>
-        <td>TBD</td>
+<td align="center">
+
+![Diamond Sprite](sprites/diamonds/blue.png)
+
+</td>
         <td>
             <ul>
                 <li>Can be collected by a <i>Player</i> by moving into it</li>
@@ -157,21 +182,87 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         </td>
     </tr>
     <tr>
-        <td>Locked Map Exit</td>
-        <td>TBD</td>
+        <td>Map Exit</td>
+<td align="center">
+
+![Map Exit Sprite](sprites/worlds/exit.png)
+
+</td>
         <td>
             <ul>
-                <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
+                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+        <tr>
+        <td>Spike Trap Active</td>
+<td align="center">
+
+![Spike Trap On Sprite](sprites/worlds/spikeTrapOn.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals <i>Player</i> damage when stepped on</li>
+                <li>Can be inactivated by stepping on <i>Pressure pad</i></li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
     </tr>
     <tr>
-        <td>Unlocked Map Exit</td>
-        <td>TBD</td>
+        <td>Spike Trap Inactive</td>
+<td align="center">
+
+![Spike Trap Off Sprite](sprites/worlds/spikeTrapOff.png)
+
+</td>
         <td>
             <ul>
-                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Can be reactivated by releasing a <i>Pressure pad</i></li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap</td>
+<td align="center">
+
+![Laser Trap Sprite](sprites/worlds/laser_trap.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Emits a deadly laser beam</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap Beam</td>
+<td align="center">
+
+![Laser Trap Sprite](sprites/worlds/laser_beam.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals damage to <i>Player</i> when in contact</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Patrolling enemy</td>
+<td align="center">
+
+![Enemy Sprite](sprites/worlds/enemy.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Patrols in a predetermined trajectory</li>
+                <li>Deals damage to <i>Player</i> when in contact</li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
@@ -233,3 +324,17 @@ If you press the "Quit" button, you get to see your score, and it gives you two 
 ![image](wireframes/game-design/death-screen.png)
 
 If you die, you get to see a quite similar screen to the quit menu screen, but there is a text saying that you died this time.
+
+## 6. Screenshots
+
+### 6.1. Main Menu
+![menu](screenshots/main-menu.png)
+
+### 6.2. Create a new Lobby
+![menu](screenshots/create-lobby.png)
+
+### 6.3. Join a Lobby
+![menu](screenshots/join-lobby.png)
+
+### 6.4. In Game
+![menu](screenshots/in-game.png)
