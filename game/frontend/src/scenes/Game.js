@@ -623,6 +623,9 @@ export default class Game extends Phaser.Scene {
                 // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
                 gameState: this.gameState
             });
+
+            // When the HUD is destroyed, we need to stop forwarding event messages to it.
+            this.socket.off('current-time');
         });
         this.socket.on('playerChoosePerks', () => {
             this.scene.pause();
