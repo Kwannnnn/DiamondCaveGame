@@ -122,7 +122,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Player 1</td>
 <td align="center">
 
-![Player 1 Sprite](/docs/sprites/player/player1.png)
+![Player 1 Sprite](sprites/player/player1.png)
 
 </td>
         <td rowspan="2">
@@ -138,7 +138,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Player 2</td>
 <td align="center">
 
-![Player 2 Sprite](/docs/sprites/player/player2.png)
+![Player 2 Sprite](sprites/player/player2.png)
 
 </td>
     </tr>
@@ -146,7 +146,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Map Wall</td>
 <td align="center">
 
-![Map Wall Sprite](/docs/sprites/worlds/border.png)
+![Map Wall Sprite](sprites/worlds/border.png)
 
 </td>
         <td>
@@ -160,7 +160,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Dirt</td>
 <td align="center">
 
-![Dort Sprite](/docs/sprites/worlds/dirt.png)
+![Dort Sprite](sprites/worlds/dirt.png)
 
 </td>
         <td>
@@ -171,7 +171,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Diamond</td>
 <td align="center">
 
-![Diamond Sprite](/docs/sprites/diamonds/blue.png)
+![Diamond Sprite](sprites/diamonds/blue.png)
 
 </td>
         <td>
@@ -185,7 +185,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Map Exit</td>
 <td align="center">
 
-![Map Exit Sprite](/docs/sprites/worlds/exit.png)
+![Map Exit Sprite](sprites/worlds/exit.png)
 
 </td>
         <td>
@@ -199,7 +199,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Spike Trap Active</td>
 <td align="center">
 
-![Spike Trap On Sprite](/docs/sprites/worlds/spikeTrapOn.png)
+![Spike Trap On Sprite](sprites/worlds/spikeTrapOn.png)
 
 </td>
         <td>
@@ -214,7 +214,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Spike Trap Inactive</td>
 <td align="center">
 
-![Spike Trap Off Sprite](/docs/sprites/worlds/spikeTrapOff.png)
+![Spike Trap Off Sprite](sprites/worlds/spikeTrapOff.png)
 
 </td>
         <td>
@@ -228,7 +228,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Laser Trap</td>
 <td align="center">
 
-![Laser Trap Sprite](/docs/sprites/worlds/laser_trap.png)
+![Laser Trap Sprite](sprites/worlds/laser_trap.png)
 
 </td>
         <td>
@@ -242,7 +242,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Laser Trap Beam</td>
 <td align="center">
 
-![Laser Trap Sprite](/docs/sprites/worlds/laser_beam.png)
+![Laser Trap Sprite](sprites/worlds/laser_beam.png)
 
 </td>
         <td>
@@ -256,7 +256,7 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         <td>Patrolling enemy</td>
 <td align="center">
 
-![Enemy Sprite](/docs/sprites/worlds/enemy.png)
+![Enemy Sprite](sprites/worlds/enemy.png)
 
 </td>
         <td>
@@ -324,3 +324,17 @@ If you press the "Quit" button, you get to see your score, and it gives you two 
 ![image](wireframes/game-design/death-screen.png)
 
 If you die, you get to see a quite similar screen to the quit menu screen, but there is a text saying that you died this time.
+
+## 6. Screenshots
+
+### 6.1. Main Menu
+![menu](screenshots/main-menu.png)
+
+### 6.2. Create a new Lobby
+![menu](screenshots/create-lobby.png)
+
+### 6.3. Join a Lobby
+![menu](screenshots/join-lobby.png)
+
+### 6.4. In Game
+![menu](screenshots/in-game.png)
