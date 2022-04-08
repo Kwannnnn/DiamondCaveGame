@@ -63,6 +63,12 @@ We chose to go with Socket.io to connect the frontend and backend applications. 
 
 To transmit game state data, we defined a set of JSON structures that encode the necessary data for sending via Socket.io. These definitions can be found in the Game State Protocol file within this documentation package.
 
+### 3.4 Server deployment (VPS)
+
+To make the game client and server accessible to players, we created a server configuration that can be used to deploy the game to a server. The deployment server uses `Node.js` and `Ngnix` to build the game client and host it on the web, as well as host the Express game server to be used by the client.
+
+In addition to the deployment configuration, we also created a Continuous Deployment (CD) pipeline to make development builds accessible on a VPS provided to us. This pipeline uses a copy of a specific branch of our GIT repository to execute the deployment script.
+
 ## 4 Dependencies
 
 ### 4.1 Production dependencies
