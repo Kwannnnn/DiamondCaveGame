@@ -76,7 +76,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     initHeader() {
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Choose your username', {
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 4 * 100, 'Choose your username', {
             color: '#FFFFFF',
             fontSize: 88,
             fontFamily: 'Helvetica'
@@ -85,7 +85,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     initUsernameForm() {
-        this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 2 * 90).createFromHTML(usernameForm);
+        this.usernameFormObject = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 2 * 120).createFromHTML(usernameForm);
     }
 
     initActionButton() {
@@ -135,7 +135,7 @@ export default class LobbyScene extends Phaser.Scene {
      * @returns {Phaser.GameObjects.Text} a Text Game Object
      */
     createPlayer(username, index) {
-        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + ((1 + index) * 90), 'Player ' + index + ': ' + username, {
+        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height - ((2 + index) * 100), 'Player ' + index + ': ' + username, {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5);
