@@ -102,6 +102,7 @@ export default class HUD extends Phaser.Scene {
         this.events.on(Phaser.Scenes.Events.DESTROY, () => {
             console.log('Event listener is disconnected');
             CollectDiamond.off('update-count', this.updateDiamondCount, this);
+            LeaveMapEvent.off('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
         });
 
         LeaveMapEvent.on('wait-for-player', this.notifyToWaitForSecondPlayerToLeave, this);
@@ -170,7 +171,6 @@ export default class HUD extends Phaser.Scene {
     updateDiamondCount(count) {
         this.collectedDiamonds = count;
         this.diamondCounter.setText(`${this.collectedDiamonds}/${this.totalDiamonds}`);
-
 
         if (this.collectedDiamonds === this.totalDiamonds) {
             this.add.text(this.game.renderer.width / 2 + 140, MARGIN_Y + 100, 'Go to next map!', {

@@ -18,12 +18,6 @@ export default class PerkMenu extends Phaser.Scene {
         this.username = data.username;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
-
-        // Only for testing
-        this.gameState = data.gameState;
-
-        console.log(this.scene);
-
     }
 
     preload() {
@@ -140,23 +134,5 @@ export default class PerkMenu extends Phaser.Scene {
             fontSize: 50,
             fontStyle:'bold',
         }).setOrigin(0.5);
-
-        // this.countDownTimer = this.time.addEvent({
-        //     callback:()=>{
-        //         if (this.timer > 0) {
-        //             this.timer--;
-        //             this.countDown.setText(this.timer);
-        //             if (this.timer < 1) {
-        //                 console.log('timer hit 0.');
-        //                 // Sends message indicating that the time
-        //                 // this.socket.emit('finishedPerkChoosing', this.lobbyID);
-        //                 this.countDownTimer.remove();
-        //             }
-        //         }
-        //     },
-        //     callbackScope:this,
-        //     delay:1000,
-        //     loop:true
-        // })
     }
 }
