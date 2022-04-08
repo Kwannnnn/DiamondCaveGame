@@ -135,7 +135,7 @@ export default class LobbyScene extends Phaser.Scene {
      * @returns {Phaser.GameObjects.Text} a Text Game Object
      */
     createPlayer(username, index) {
-        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height - ((2 + index) * 100), 'Player ' + index + ': ' + username, {
+        return this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + (index * 100 + 40), 'Player ' + index + ': ' + username, {
             color: '#FFFFFF',
             fontSize: 40
         }).setOrigin(0.5);
