@@ -18,12 +18,6 @@ export default class PerkMenu extends Phaser.Scene {
         this.username = data.username;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
-
-        // Only for testing
-        this.gameState = data.gameState;
-
-        console.log(this.scene);
-
     }
 
     preload() {
@@ -33,6 +27,8 @@ export default class PerkMenu extends Phaser.Scene {
         this.load.image('bloodStoneChosen', 'assets/perk_sprites/BloodStone_Chosen.png');
         this.load.image('heartChosen', 'assets/perk_sprites/Heart_Chosen.png');
         this.load.image('speedBootsChosen', 'assets/perk_sprites/SpeedBoots_Chosen.png');
+        this.load.image('timeReduction', 'assets/perk_sprites/TimeReduction.png');
+        this.load.image('timeReductionChosen', 'assets/perk_sprites/TimeReduction_Chosen.png');
 
         this.load.audio('choosePerk', ['assets/sound_effects/choosing-perk-tik.mp3']);
     }
@@ -84,6 +80,7 @@ export default class PerkMenu extends Phaser.Scene {
         // Wait for final perk to be sent from server (now it only listens to movement perk)
         this.socket.on('perkForNextGame', (args) => {
             this.scene.remove(CST.SCENES.CHAT);
+            this.choosePerkSound.destroy();
             this.socket.removeAllListeners();
             this.scene.start(CST.SCENES.GAME, {
                 world: 1,
@@ -116,7 +113,7 @@ export default class PerkMenu extends Phaser.Scene {
                 return isSelected ? 'speedBootsChosen' : 'speedBoots';
             case 'Health':
                 return isSelected ? 'heartChosen' : 'heart';
-            case 'Add Diamonds':
+            case 'Time Reduction':
                 return isSelected ? 'bloodStoneChosen' : 'bloodStone';
             default:
                 console.error('Unknown perk');
@@ -137,23 +134,5 @@ export default class PerkMenu extends Phaser.Scene {
             fontSize: 50,
             fontStyle:'bold',
         }).setOrigin(0.5);
-
-        // this.countDownTimer = this.time.addEvent({
-        //     callback:()=>{
-        //         if (this.timer > 0) {
-        //             this.timer--;
-        //             this.countDown.setText(this.timer);
-        //             if (this.timer < 1) {
-        //                 console.log('timer hit 0.');
-        //                 // Sends message indicating that the time
-        //                 // this.socket.emit('finishedPerkChoosing', this.lobbyID);
-        //                 this.countDownTimer.remove();
-        //             }
-        //         }
-        //     },
-        //     callbackScope:this,
-        //     delay:1000,
-        //     loop:true
-        // })
     }
 }
