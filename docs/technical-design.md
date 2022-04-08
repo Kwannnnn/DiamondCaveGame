@@ -106,11 +106,11 @@ For information on our conduct when working with the GIT repository, see the **G
 ## 5 Class Diagrams
 ### 5.2 Class diagram (frontend)
 
-![image](diagrams/Frontend-class-diagram.png)
+![image](diagrams/class-diagram/Frontend-class-diagram.png)
 
 ### 5.3 Class diagram (backend)
 
-![image](diagrams/Backend-class-diagram.png)
+![image](diagrams/class-diagram/Backend-class-diagram.png)
 
 ## 6 Game Flow
 #### 6.1 Proccesses
@@ -122,20 +122,60 @@ A lobby has to be created to start playing the game, and a second player has to 
 There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where a player has several options. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
 
 ### 6.3. Create Lobby
-![Create Lobby](diagrams/create-lobby.png)
+![Create Lobby](diagrams/activity-diagram/create-lobby.png)
 
 ### 6.4. Join Lobby
-![Join Lobby](diagrams/join-lobby.png)
+![Join Lobby](diagrams/activity-diagram/join-lobby.png)
 
 ### 6.5. Start Game
-![Start game](diagrams/start-game.png)
+![Start game](diagrams/activity-diagram/start-game.png)
 
 ### 6.6. Show ranking
-![Show ranking](diagrams/scoreboard.png)
+![Show ranking](diagrams/activity-diagram/scoreboard.png)
 
 ### 6.7. Spectate
-![Spectate](diagrams/spectate.png)
+![Spectate](diagrams/activity-diagram/spectate.png)
 
 ## 7 Deployment diagram
 
-![Deployment](diagrams/deployment.png)
+![Deployment](diagrams/deployment-diagram/deployment.png)
+
+## 8 Sequence diagram
+
+### 8.1 Collect gems
+
+![Collect gems](diagrams/sequence-diagram/collect-gems.jpg)
+
+This sequence diagram shows how the system responses to the player's collect gems action. When the player overlaps the gem tile, the _Game_ object emits a 'collectGem' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the room's gem count and responses back to the player with the event 'gemCollected'. After receiving the response, the _Game_ displays the gem count to the player and removes the gem tile from the map.
+
+### 8.2 Collide enemy
+
+![Collide enemy](diagrams/sequence-diagram/collide-enemy.jpg)
+
+This sequence diagram demonstrates the system reaction to the player colliding with an enemy. When the player overlaps the enemy tile, the _Game_ object emits a 'collideEnemy' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player and also causes the player to be pushed back.
+
+### 8.3 Chat room
+
+![Chat room](diagrams/sequence-diagram/chat-system.jpg)
+
+This sequence diagram explains the system response to the player sending a message to the chat room. When the player/spectator sends a message to the chat room, the _ChatScene_ will emit 'chatMessage' event to the server with the message from the client as a payload. Then the server delegates a handler from the _chatManager_ to listen to the emitted event. The handler after receives the message, will broadcast the message to the room with the event 'chatMessage'. Depends on the type of client, the message will displayed to either the player room or the spectator room.
+
+### 8.4 Step on spike trap
+
+![Step on spike trap](diagrams/sequence-diagram/spike-trap.jpg)
+
+This sequence diagram shows the system response to the player stepping on a spike trap. When the player overlaps the spike trap tile, the _Game_ object triggers the function 'steppedOnSpikeTrap' in _SpikeTrap_ instance. The _SpikeTrap_ will emit 'hitByEnemy' event if the _SpikeTrap_ instance is enabled, active and the player is vulnerable. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player.
+
+### 8.5 Step through laser 
+
+![Step through laser](diagrams/sequence-diagram/laser.jpg)
+
+This sequence diagram illustrates the system responses when they player steps through the laser. When the player overlaps the laser beam tile, the _Game_ object triggers the function 'steppedInLaser' in _LaserTrap_ instance. The _LaserTrap_ will emit 'hitByEnemy' event if the _LaserTrap_ instance is enabled, active and the player is vulnerable. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player.
+
+### 8.6 Choose perks
+
+![Choose perks](diagrams/sequence-diagram/choose-perks.jpg)
+
+This sequence diagram explains the system response to the player choosing a perk. When the player collects all the gems the perk tile, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler will emit back the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ in the client side. 
+
+In the choose perk scene, when the player choose a perk, the _PerkScene_ will emit 'chosenPerk' event to the server. The server handles the event and check if both players in the room have chosen a perk. If they have, the server will emit 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the  event and start the next map by passing the new initial game state to _Game_ instance. If there is only 1 player has chosen a perk, the server will response the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the chosen perk of the teammate.
