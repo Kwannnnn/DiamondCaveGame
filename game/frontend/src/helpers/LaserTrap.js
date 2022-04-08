@@ -7,13 +7,17 @@ export function withinBeam(player, laserTrap) {
         withinX = player.x >= startX && player.x <= endX;
     } else if (startX > endX) {
         withinX = player.x >= endX && player.x <= startX;
+    } else {
+        withinX = player.x == startX && player.x == endX;
     }
 
     let withinY;
     if (startY < endY) {
         withinY = player.y >= startY && player.y <= endY;
-    } else if (startX > endX) {
+    } else if (startY > endY) {
         withinY = player.y >= endY && player.y <= startY;
+    } else {
+        withinY = player.y == startY && player.y == endY;
     }
 
     return withinX && withinY;
