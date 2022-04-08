@@ -334,7 +334,7 @@ export default class Game extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         this.gameState.enemies.forEach(e => {
-            let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy');
+            let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy').setScale(0.85);
             sprite.id = e.enemyId;
             this.enemies.add(sprite);
 

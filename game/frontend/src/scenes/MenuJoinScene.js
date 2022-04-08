@@ -31,23 +31,24 @@ export default class JoinScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2, 'Join a room', {
+        this.message = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 4.8 * 100, 'Join a room', {
             color: '#FFFFFF',
             fontSize: 88,
             fontFamily: 'Helvetica'
         }).setOrigin(0.5);
 
-        this.secondMessage = this.add.text(this.game.renderer.width / 2, this.game.renderer.height / 2 + 90, 'Enter the lobby code sent by your friend,\n and choose a username to play with.', {
+        this.secondMessage = this.add.text(this.game.renderer.width / 2, this.game.renderer.height - 3.8 * 100, 'Enter the lobby code sent by your friend,\n and choose a username to play with.', {
             color: '#FFFFFF',
             fontSize: 24,
             fontFamily: 'Helvetica',
         }).setOrigin(0.5);
 
-        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 2.3 * 90).createFromHTML(lobbyCodeForm).setOrigin(0.5);
-        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 3.2 * 90).createFromHTML(usernameForm).setOrigin(0.5);
+        this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 2.9 * 100).createFromHTML(lobbyCodeForm).setOrigin(0.5);
+        this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height - 2 * 100).createFromHTML(usernameForm).setOrigin(0.5);
 
-        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height / 2 + 4.5 * 90, 'join_button')
+        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 100, 'join_button')
             .setInteractive()
+            .setOrigin(0.5, 1)
             .on('pointerdown', () => {
                 this.join();
             })
