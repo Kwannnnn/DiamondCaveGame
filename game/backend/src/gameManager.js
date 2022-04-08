@@ -3,7 +3,7 @@ const map3 = require('./maps/map3.js');
 const map2 = require('./maps/map2.js');
 const map1 = require('./maps/map1.js');
 const rooms = require('./model/rooms.js');
-const perks = ['Movement Speed', 'Health', 'Add Diamonds'];
+const perks = ['Movement Speed', 'Health', 'Time Reduction'];
 const maps = require('./model/maps.js');
 
 const Run = require('./model/run.js');
@@ -25,9 +25,18 @@ class GameManager {
             }
             const initialGameState = this.generateInitialGameState(room, room.maps[room.currentMap]);
             rooms.get(roomId).gameState = initialGameState;
+
             // TODO: make the client wait for this event to be sent and the map generated (perhaps a loading screen)
             room.gameActive = true;
-            this.io.to(roomId).emit('initialGameState', initialGameState);
+
+            const payload = {
+                initialGameState: initialGameState,
+                health: room.health,
+                spectatorsCount: room.spectators.length,
+                gemsCollected: room.gemsCollected,
+                time: room.time
+            }
+            this.io.to(roomId).emit('initialGameState', payload);
             room.startTime(this.onUpdateTime.bind(this));
         } else player.socket.emit('roomNotFound', roomId);
     }
@@ -35,14 +44,20 @@ class GameManager {
     handlePlayerMove(newPosition, player) {
         const roomId = newPosition.roomId;
         const room = rooms.get(roomId);
-        
+
         if (room) {
             // Update the game state of room
             // room.movePlayer(player.id, newPosition.x, newPosition.y, newPosition.orientation);
-            player.x = newPosition.x;
-            player.y = newPosition.y;
-            player.orientation = newPosition.orientation;
+            let players = room.gameState.players;
 
+            for (let p of players) {
+                if (p.playerId === player.id) {
+                    p.x = newPosition.x;
+                    p.y = newPosition.y;
+                    p.orientation = newPosition.orientation;
+                }
+            }
+            
             // TODO: send back the whole gamestate instead
             // Notify all teammates about the movement
             room.spectators.forEach(spectator => {
@@ -67,7 +82,14 @@ class GameManager {
     }
 
     handleGetRanking(player) {
-        player.socket.emit('rankList', runs.toArray());
+        const ranking = runs.toArray().map((run, index) => {
+            return {
+                rank: index + 1,
+                run: run
+            }
+        });
+
+        player.socket.emit('rankList', ranking);
     }
 
     handleCollectDiamond(player, roomId, gemId) {
@@ -76,24 +98,28 @@ class GameManager {
         //     console.log('Diamond ' + diamond.x + ' ' + diamond.y);
         const room = rooms.get(roomId);
         const gems = room.gameState.gems;
+        // Update the game state of the room
+
         if (room) {
-            // Update the game state of the room
-            // TODO: Change the status of the gem, instead of
-            // deleting it completely
-            for (let i = 0; i < gems.length; i++) {
-                if (gems[i].gemId == gemId) {
-                    gems.splice(i, 1);
+
+            for (let gem of gems) {
+                if (gem.gemId === gemId && gemId >= 0) {
+                    // TODO: Change the status of the gem, instead of
+                    // deleting it completely
+                    // gems.splice(index, 1);
+                    gem.gemId = -1;
+                    room.gemsCollected++;
+                    console.log(`[${room.id}] Gems collected: ${room.gemsCollected}`);
+
+                    // Notify both players about collected diamond
+                    this.io.to(room.id).emit('gemCollected', gemId);
+
+                    room.spectators.forEach(spectator => {
+                        spectator.socket.emit('gemCollected', gemId);
+                    });
+                    break;
                 }
             }
-
-            room.gemsCollected++;
-            console.log('Gems collected: ' + room.gemsCollected);
-            // Notify teammate about collected diamond
-            player.socket.to(roomId).emit('gemCollected', gemId);
-
-            room.spectators.forEach(spectator => {
-                spectator.socket.emit('gemCollected', gemId);
-            });
         } else {
             player.socket.emit('roomNotFound', roomId);
         }
@@ -106,30 +132,35 @@ class GameManager {
         const player1 = room.players[0];
         const player2 = room.players[1];
 
-        const playerData = map.players;
+        // clone the data from map
+        const playerData = JSON.parse(JSON.stringify(map.players));
+        const gems = JSON.parse(JSON.stringify(map.gems)); 
+
+        // const player1Data = {...map.players[0]};
+        // const player2Data = {...map.players[1]};
         playerData[0].playerId = player1.id;
         playerData[0].username = player1.username;
         playerData[1].playerId = player2.id;
         playerData[1].username = player2.username;
 
         let gameState = {
-            'level': room.level,
-            'tileMap': map.tileMap,
-            'players': playerData,
-            'gemsCollected' : 0,
-            'health': room.health,
-            'exit': map.exit,
-            'gems': [...map.gems],
-            'enemies': [...map.enemies],
-            'pressurePlateTraps': [...map.pressurePlateTraps],
-            'laserTraps': [...map.laserTraps],
+            level: room.level,
+            tileMap: map.tileMap,
+            players: playerData,
+            gemsCollected: 0,
+            exit: map.exit,
+            gems: gems,
+            health: room.health,
+            enemies: [...map.enemies],
+            pressurePlateTraps: [...map.pressurePlateTraps],
+            laserTraps: [...map.laserTraps],
         };
         return gameState;
     }
 
     handleReachingMapEnd(player, roomID) {
         const room = rooms.get(roomID);
-    
+
         if (room) {
 
             // Check if two players reached the end, or only one
@@ -143,7 +174,7 @@ class GameManager {
 
                 room.playersReachedEnd = 0;
             }
-            
+
         } else {
             console.log(rooms);
             console.log('Room id for exit has not been found');
@@ -161,11 +192,11 @@ class GameManager {
                 // If it is the player, assign the chosen perk to the object
                 if (player.username !== chosenPerk.username) {
                     console.log(chosenPerk.username + ' chose ' + perks[chosenPerk.perkId]);
-                    
+
                     // TODO Should be added to the protocol
                     player.socket.emit('teammatePerkChoice', { teammatePerk: perks[chosenPerk.perkId] });
                 } else if (!player.perkChoice || player.perkChoice !== perks[chosenPerk.perkId]) {
-                    
+
                     // To keep track of the choices players make, new property of the object is created
                     player.perkChoice = perks[chosenPerk.perkId];
                 }
@@ -200,12 +231,34 @@ class GameManager {
                 const perkNameWithoutSpace = room.players[0].perkChoice.replace(/\s/g, '');
                 console.log('Perk name without spaces: ' + perkNameWithoutSpace);
 
+                switch (perkNameWithoutSpace) {
+                    case 'Health':
+                        room.health += 20;
+                        break;
+
+                    case 'TimeReduction':
+                        room.time -= 30;
+                        break;
+                }
+
+                room.gameState = this.generateInitialGameState(room, room.maps[room.currentMap]);
+
+                const payload = {
+                    initialGameState: room.gameState,
+                    stage: room.level,
+                    health: room.health,
+                    spectatorsCount: room.spectators.length,
+                    gemsCollected: room.gemsCollected,
+                    time: room.time,
+                    perk: perkNameWithoutSpace,
+                }
+
                 room.players.forEach(player => {
-                    player.socket.emit('perkForNextGame', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, room.maps[room.currentMap]) });
+                    player.socket.emit('nextMap', payload);
                 }); // player mode
 
                 room.spectators.forEach(spectator => {
-                    spectator.socket.emit('nextMap', { perk: perkNameWithoutSpace, gameState: this.generateInitialGameState(room, room.maps[room.currentMap]) });
+                    spectator.socket.emit('nextMap', payload);
                 }); // spectator mode
             }
         }
@@ -225,6 +278,10 @@ class GameManager {
             // Message is sent to all players in room to indicate health loss
             this.io.to(room.id).emit('reduceHealth', damage);
 
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('reduceHealth', damage);
+            });
+
             if (room.health <= 0) {
                 this.io.to(room.id).emit('gameOver');
                 this.handleGameOver(room);
@@ -241,7 +298,7 @@ class GameManager {
             rooms.set('dev', room)
         }
         room.players.push(player);
-        
+
         if (room.players.length > 1) {
             room.players.forEach(developer => {
                 let gameState = {
@@ -257,9 +314,9 @@ class GameManager {
                         'y': 64 + 16, // player 2 spawn y position
                         'orientation': 0
                     }],
-            
-                    'gemsCollected' : 0,
-            
+
+                    'gemsCollected': 0,
+
                     'gems': [{
                         'gemId': 1,
                         'x': 112, // gem spawn x position
@@ -316,17 +373,19 @@ class GameManager {
                 });
             })
         }
-            
+
     }
 
     handleGameOver(room) {
-        const playerUsernames = room.players.map(p => p.id);
+        const playerUsernames = room.players.map(p => p.username);
         //TODO: create an algorithm for calculating totalScore
-        const totalScore = room.gameState.gemsCollected;
-        const time = 6969;
+        const totalScore = room.gemsCollected;
+        const time = room.time;
 
         const run = new Run(room.id, totalScore, time, playerUsernames);
-        runs.enqueue(run);
+        if (runs.toArray().filter(r => r.id === room.id).length === 0) {
+            runs.enqueue(run);
+        }
 
         // remove room from rooms map since we dont need it anymore
         rooms.get(room.id).stopTime();
@@ -337,8 +396,17 @@ class GameManager {
     }
 
     onUpdateTime(roomId, newTime) {
-        this.io.to(roomId).emit('current-time', newTime);
-        console.log('Room ' + roomId + ': ' + newTime);
+        const room = rooms.get(roomId);
+        if (room) {
+            this.io.to(roomId).emit('current-time', newTime);
+
+            room.spectators.forEach(spectator => {
+                spectator.socket.emit('current-time', newTime);
+            });
+
+            console.log('Room ' + roomId + ': ' + newTime);
+        }
+
     }
 }
 

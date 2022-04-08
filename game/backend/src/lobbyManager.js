@@ -142,6 +142,8 @@ class LobbyManager {
             rooms.delete(roomId);
             console.log('All players left. Room ' + roomId + ' has been deleted.')
         }
+
+        room.stopTime();
     }
     
     handlePlayerDisconnected(playerId) {
@@ -175,7 +177,16 @@ class LobbyManager {
             room.spectators.push(player);
             // TODO: handle on client
             player.socket.to(room.id).emit('newSpectatorJoined', player.username);
-            player.socket.emit('runGameScene', roomId, room.gameState)
+
+            const payload = {
+                initialGameState: room.gameState,
+                stage: room.level,
+                health: room.health,
+                spectatorsCount: room.spectators.length,
+                gemsCollected: room.gemsCollected,
+                time: room.time
+            }
+            player.socket.emit('runGameScene', roomId, payload)
             console.log('Spectator ' + player.id + ' joined room ' + roomId);
             player.roomId = room.id;
         } else {

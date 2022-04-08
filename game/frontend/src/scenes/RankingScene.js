@@ -10,27 +10,7 @@ export default class RankingScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.dataToDisplay = [];
-        // this.dataToDisplay = [{
-        //     rank: 1,
-        //     team: 'A1B2C3',
-        //     player1: 'test1',
-        //     player2: 'test2',
-        //     score: '32767',
-        // }, {
-        //     rank: 2,
-        //     team: '373737',
-        //     player1: 'aaa',
-        //     player2: 'bbb',
-        //     score: '37',
-        // }, {
-        //     rank: 3,
-        //     team: '000000',
-        //     player1: 'Aaaaaaaaaaaaaaaaaaaa',
-        //     player2: 'a',
-        //     score: '1',
-        // }];
-        // this.dataToDisplay = data.ranklist;
+        this.rankList = data.rankList;
         this.socket = data.socket;
     }
 
@@ -56,7 +36,7 @@ export default class RankingScene extends Phaser.Scene {
             this.backButton.clearTint();
         });
 
-        var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Top 10 runs');
+        var header = new Header(this, this.game.renderer.width / 2, this.game.renderer.height / 2, 'Ranking');
         
         this.backButton = this.add.sprite(50, 50, 'back').setDepth(1).setScale(2).setInteractive();
         this.backButton.on('pointerdown', () => this.goBack());
@@ -81,7 +61,7 @@ export default class RankingScene extends Phaser.Scene {
 
             // A callback function that renders each table cell
             createCellContainerCallback: (cell, cellContainer) => this.populateCellContainer(cell, cellContainer),
-            items: this.dataToDisplay // the array of data objects
+            items: this.rankList // the array of data objects
         })
             .layout()
 
@@ -163,10 +143,10 @@ export default class RankingScene extends Phaser.Scene {
     
         // Feed the container with the actual data
         cellContainer.getElement('rank').setText(item.rank);
-        cellContainer.getElement('team').setText(item.team);
-        cellContainer.getElement('player1').setText(item.player1);
-        cellContainer.getElement('player2').setText(item.player2);
-        cellContainer.getElement('score').setText(item.score);
+        cellContainer.getElement('team').setText(item.run.id);
+        cellContainer.getElement('player1').setText(item.run.playerUsernames[0]);
+        cellContainer.getElement('player2').setText(item.run.playerUsernames[1]);
+        cellContainer.getElement('score').setText(item.run.totalScore);
         return cellContainer;
     }
 
