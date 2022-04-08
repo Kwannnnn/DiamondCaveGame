@@ -46,8 +46,9 @@ export default class JoinScene extends Phaser.Scene {
         this.lobbyCodeInput = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 2.3 * 90).createFromHTML(lobbyCodeForm).setOrigin(0.5);
         this.usernameForm = this.add.dom(this.game.renderer.width / 2, this.game.renderer.height / 2 + 3.2 * 90).createFromHTML(usernameForm).setOrigin(0.5);
 
-        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height / 2 + 4.5 * 90, 'join_button')
+        this.joinButton = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 100, 'join_button')
             .setInteractive()
+            .setOrigin(0.5, 1)
             .on('pointerdown', () => {
                 this.join();
             })
