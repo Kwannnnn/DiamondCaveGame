@@ -60,3 +60,32 @@ individuals that do not show up to a meeting.
 - Generate all backlogs in the beginning of the sprint
 - Contact the publisher more often regarding updates, e.g. sick people, product
 status, etc.
+
+
+## Sprint 3
+
+### What went well
+
+- The review system helped everyone understand the project more and helped prevent many issues from being merged.
+- Teamwork was improved. There was always someone ready to help out.
+- We frequently assigned bug-fixing issues. This meant bugs were resolved quickly and not left for a long time.
+- Overall communication improved. Important issues were discussed in collectively in person.
+- We managed to finalize almost all major functionality. This made playing and testing enjoyable.
+- There were always tasks to assign, and they were uploaded to GitLab faster.
+- Morale improved across the whole team.
+
+### What slowed us down
+
+- Documentation was often out-of-date.
+- Some members had trouble using git effectively. We need to create more tutorials for this.
+- Laser trap implementation took too long and delayed other tasks. The task should've been reassigned.
+- People often didn't ask for help or asked when it was too late.
+- Issues weren't defined clearly enough. Definition of done was often unclear.
+- Team meetings were not well organized and all over the place
+- Merge requests took a long time to be reviewed and approved.
+- Communication between the sub-teams was lacking sometimes.
+- Tasks were often too dependent on one another
+
+### What can be improved
+
+- Stand-up times decreased from last sprint but this can still be improved
