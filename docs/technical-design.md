@@ -24,11 +24,11 @@ According to the README.md file on PixiJS's [GitHub repository](https://github.c
 
 After researching those options, we come up with the advantages and disadvantages of each option in the table below:
 
-| | Advantages | Disadvantages |
-|-|------------|---------------|
-| KiwiJS | - Easy to learn <br> - On boarding process is straightforward => grasp understanding about game development principles | - Project is abandoned (latest commit on 15 November 2015) <br> - Community is not active, probably less support. |
-| PixiJS | - Great to create interactive graphics and animations <br> - Many resources available => better learning experience <br> - Hundreds of global brands are using PixiJS | - Hard to know how to modularize as a beginner who never used PixiJS before <br> - Not very compatible with ReactJS <br> - The available documentation is good for implementing functionality but not ideal for setting up and identifying bugs <br> - Boilerplate is outdated |
-| Phaser | - Well suited to create 2D games that can be played right in the browser <br> - Simple to learn and utilize to build a game <br> - Relatively easy to learn how to modularize <br> - Documentation is helpful | - Not ideal for creating interactive graphics and animations <br> - Need to have 2D sprites (recommend 32x32 for canvas and 64x64 for pixels) |
+|        | Advantages                                                                                                                                                                                                    | Disadvantages                                                                                                                                                                                                                                                                  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| KiwiJS | - Easy to learn <br> - On boarding process is straightforward => grasp understanding about game development principles                                                                                        | - Project is abandoned (latest commit on 15 November 2015) <br> - Community is not active, probably less support.                                                                                                                                                              |
+| PixiJS | - Great to create interactive graphics and animations <br> - Many resources available => better learning experience <br> - Hundreds of global brands are using PixiJS                                         | - Hard to know how to modularize as a beginner who never used PixiJS before <br> - Not very compatible with ReactJS <br> - The available documentation is good for implementing functionality but not ideal for setting up and identifying bugs <br> - Boilerplate is outdated |
+| Phaser | - Well suited to create 2D games that can be played right in the browser <br> - Simple to learn and utilize to build a game <br> - Relatively easy to learn how to modularize <br> - Documentation is helpful | - Not ideal for creating interactive graphics and animations <br> - Need to have 2D sprites (recommend 32x32 for canvas and 64x64 for pixels)                                                                                                                                  |
 
 ## 2 Game Engine Chosen
 
@@ -104,6 +104,7 @@ For managing our workflow, we are going to use git lab. The reason is that GitLa
 For information on our conduct when working with the GIT repository, see the **GIT conduct** chapter in the **Code of conduct** document.
 
 ## 5 Class Diagrams
+
 ### 5.2 Class diagram (frontend)
 
 ![image](diagrams/class-diagram/Frontend-class-diagram.png)
@@ -113,6 +114,7 @@ For information on our conduct when working with the GIT repository, see the **G
 ![image](diagrams/class-diagram/Backend-class-diagram.png)
 
 ## 6 Game Flow
+
 #### 6.1 Proccesses
 
 A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room designed by a friend before, he must create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
@@ -122,18 +124,23 @@ A lobby has to be created to start playing the game, and a second player has to 
 There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where a player has several options. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
 
 ### 6.3. Create Lobby
+
 ![Create Lobby](diagrams/activity-diagram/create-lobby.png)
 
 ### 6.4. Join Lobby
+
 ![Join Lobby](diagrams/activity-diagram/join-lobby.png)
 
 ### 6.5. Start Game
+
 ![Start game](diagrams/activity-diagram/start-game.png)
 
 ### 6.6. Show ranking
+
 ![Show ranking](diagrams/activity-diagram/scoreboard.png)
 
 ### 6.7. Spectate
+
 ![Spectate](diagrams/activity-diagram/spectate.png)
 
 ## 7 Deployment diagram
@@ -166,7 +173,7 @@ This sequence diagram explains the system response to the player sending a messa
 
 This sequence diagram shows the system response to the player stepping on a spike trap. When the player overlaps the spike trap tile, the _Game_ object triggers the function 'steppedOnSpikeTrap' in _SpikeTrap_ instance. The _SpikeTrap_ will emit 'hitByEnemy' event if the _SpikeTrap_ instance is enabled, active and the player is vulnerable. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player.
 
-### 8.5 Step through laser 
+### 8.5 Step through laser
 
 ![Step through laser](diagrams/sequence-diagram/laser.jpg)
 
@@ -176,6 +183,15 @@ This sequence diagram illustrates the system responses when they player steps th
 
 ![Choose perks](diagrams/sequence-diagram/choose-perks.jpg)
 
-This sequence diagram explains the system response to the player choosing a perk. When the player collects all the gems the perk tile, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler will emit back the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ in the client side. 
+This sequence diagram explains the system response to the player choosing a perk. When the player collects all the gems the perk tile, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler will emit back the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ in the client side.
 
-In the choose perk scene, when the player choose a perk, the _PerkScene_ will emit 'chosenPerk' event to the server. The server handles the event and check if both players in the room have chosen a perk. If they have, the server will emit 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the  event and start the next map by passing the new initial game state to _Game_ instance. If there is only 1 player has chosen a perk, the server will response the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the chosen perk of the teammate.
+In the choose perk scene, when the player choose a perk, the _PerkScene_ will emit 'chosenPerk' event to the server. The server handles the event and check if both players in the room have chosen a perk. If they have, the server will emit 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the event and start the next map by passing the new initial game state to _Game_ instance. If there is only 1 player has chosen a perk, the server will response the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the chosen perk of the teammate.
+
+## 9 Known Bugs
+
+1. Enemy collision can put a player sprite into a wall
+2. Timer text for Perk Scene is not removed
+3. Time Reduction perk picture is not added to the Perk Scene
+4. Timer sound does not stop playing after goind to the next map
+5. Enemies are not synchronized on the server
+6. Players' sprite is not sized properly for movements
