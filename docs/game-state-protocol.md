@@ -8,6 +8,8 @@ The protocol described below contains a list of events clients should be able
 to intercept (server events) and emit (client events) to communicate
 the logic of the game in a correct manner.
 
+For a sequence diagram overview of some game functionality, please consult the [Technical Design](./technical-design.md#8-sequence-diagram) document.
+
 ## Server Events
 
 <table>
@@ -78,7 +80,6 @@ roomId;
         </td>
     </tr>
 
-
 <tr>
         <td>newPlayerJoined</td>
 <td>
@@ -112,7 +113,7 @@ roomId;
         <td>gameNotReadyToStart</td>
         <td></td>
         <td>
-            Indicates that the room does not have the required amount of players to begin
+            This indicates that the room does not have the required number of players to begin
             the game.
         </td>
     </tr>
@@ -120,7 +121,6 @@ roomId;
 <tr>
         <td>initialGameState</td>
 <td>
-
 
 <p>
 
@@ -419,7 +419,7 @@ gemId;
 <p>
 
 ```javascript
-// a list of perks as array
+// a list of perks as an array
 perks:;
 ```
 
@@ -585,7 +585,6 @@ teammatePerk:;
         </td>
     </tr>
 
-
 <tr>
         <td>chatMessage</td>
 <td>
@@ -593,7 +592,7 @@ teammatePerk:;
 
 ```javascript
 {
-    // the username of message's sender as a string
+    // the username of the message's sender as a string
     sender: ...,
     // the message body as a string
     message: ...,
@@ -603,7 +602,7 @@ teammatePerk:;
 </p>
 
 <td>
-    With this event the server forwards a message sent by another player
+    With this event, the server forwards a message sent by another player
 </td>
 
 <tr>
@@ -614,14 +613,14 @@ teammatePerk:;
 <td>
 
 ```javascript
-// the username of spectator as a string
+// the username of the spectator as a string
 playerId: ...,
 ```
 
 </td>
 
 <td>
-    With this event the server informs all participants in a game room that
+    With this event, the server informs all participants in a game room that
     a new spectator has joined.
 </td>
 
@@ -716,7 +715,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends the client the list of all available perks from the server. Client has it's implementation
+    Sends the client the list of all available perks from the server.
 </td>
 
 </tr>
@@ -741,7 +740,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends a client the name of the perk that another player has chosen. 
+    Sends a client the name of the perk that another player has chosen.
 </td>
 
 </tr>
@@ -766,7 +765,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends both players the name of the perk that will be used next game. 
+    Sends both players the name of the perk that will be used next game.
 </td>
 
 </tr>
@@ -782,7 +781,7 @@ playerId: ...,
 ```javascript
 [
     {
-        // Game state object with tilemap, players location and gems
+        // Game state object with tilemap, players location, and gems
         ititialGameState: ...
     }
 ]
@@ -791,7 +790,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends the game state of the map a developer has chosen 
+    Sends the game state of the map a developer has chosen
 </td>
 
 </tr>
@@ -888,13 +887,10 @@ gemId;
 </td>
         <td>
             A previous message tried to modify the state of a player (position,
-            orientation) in an illegal state, e.g. outside of the map
-            boundires, and/or orientation facing south-west.
+            orientation) in an illegal state, e.g., outside of the map
+            boundaries, or orientation facing south-west.
         </td>
     </tr>
-
-
-
 
 <tr>
     <td>nameAlreadyExistForAPlayer</td>
@@ -902,14 +898,11 @@ gemId;
     <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
 </tr>
 
-
 <tr>
     <td>nameAlreadyExistForASpectator</td>
     <td>-</td>
     <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
 </tr>
-
-
 
 </table>
 
@@ -959,17 +952,17 @@ roomId;
 </p>
 </td>
         <td>
-            Sent whenever a client tries to join a game room. Payload contains
+            Sent whenever a client tries to join a game room. The payload contains
             a string representing the id of the room.
         </td>
     </tr>
 
 <!-- this is one row -->
 <tr>
-        <td>checkGameReady</td>    
+        <td>checkGameReady</td>
         <td>
             <p>
-                
+
 ```javascript
 // The room id of the room to check
 roomId;
@@ -1017,7 +1010,7 @@ roomId:;
 </td>
 
 <td>
-    Sent whenever there is a spectator wanting to join a room.
+    Sent whenever a spectator wants to join a room.
 </td>
 
 </tr>
@@ -1170,11 +1163,10 @@ message:
 <td>-</td>
 
 <td>
-    With this event the client requests a list of active game rooms
+    With this event, the client requests a list of active game rooms
 </td>
 
 </tr>
-
 
 <tr>
 
@@ -1196,7 +1188,7 @@ message:
 </td>
 
 <td>
-    Indicates that one of the players has reached the end of the map 
+    This indicates that one of the players has reached the end of the map
 </td>
 
 </tr>
@@ -1221,7 +1213,7 @@ message:
 </td>
 
 <td>
-    Sends the perk choice of the player to the server. Every time player chooses a perk from the list, this even is triggered, and message is sent  
+    This sends the perk choice of the player to the server. Every time player chooses a perk from the list, this event is triggered, and a message is sent  
 </td>
 
 </tr>
@@ -1274,7 +1266,7 @@ message:
 </td>
 
 <td>
-    Indicates that player hit the enemy and sends all information to reduce health of the team 
+    Indicates that the player hit the enemy and sends all information to reduce the health of the team
 </td>
 
 </tr>
@@ -1300,7 +1292,7 @@ message:
 </td>
 
 <td>
-    Sends the chosen id of the map developer wants to spawn on 
+    Sends the chosen id of the map developer wants to spawn on
 </td>
 
 </tr>

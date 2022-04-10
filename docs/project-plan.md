@@ -78,8 +78,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### US 01
 
 | Backlog item | Definition                                      | Priority | Weight | Depends on |
-| ------------ | ----------------------------------------------- | -------- | ------ | ---------- |
-| BI-01        | Find/Create sprites for the players             | M        | 2      | -          |
+| ------------ |-------------------------------------------------| -------- | ------ | ---------- |
+| BI-01        |  Find/Create sprites for the players            | M        | 2      | -          |
 | BI-02        | Find/Create sprites for the different map tiles | M        | 4      | -          |
 | BI-03        | Find/Create sprites for diamonds                | M        | 2      | -          |
 | BI-04        | Find/Create sprites for the rocks               | M        | 2      | -          |
@@ -294,22 +294,34 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-07 | The client uses a hard-coded tilemap, instead of the server one. Caused by a merge error | H | 3 | Done |
 | PB-08 | Health has to be on the server side | H | - | Done |
 | PB-09 | Spectators not seeing game state updates | H | - | Done |
-| PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | In progress |
+| PB-10 | The server must validate player and spectator nicknames in games to prevent duplicate names | H | 4 | Done |
 | PB-11 | Chat does not work for spectators at all | H | 5 | Done |
-| PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H | 4 | In progress |
-| PB-13 | When user joins a lobby and goes back, he is still part of the lobby. Same counts for creating room and going back | H | 5 | In progress |
-| PB-14 | Diamond collection does not sync the collected diamonds between players | N | 5 | In progress |
-| PB-15 | Spectators count is not in sync for the players in the map | N | - | In progress |
+| PB-12 | Running games do not get cleaned up upon ending (game over / disconnection) | H | 4 | Done |
+| PB-13 | When user joins a lobby and goes back, he is still part of the lobby. Same counts for creating room and going back | H | 5 | Done |
+| PB-14 | Diamond collection does not sync the collected diamonds between players | N | 5 | Done |
+| PB-15 | Spectators count is not in sync for the players in the map | N | - | Done |
 | PB-16 | When spectator joins a room where a game has not started yet, they see a black screen | H | 4 | Done |
-| PB-17 | Make it necessary for both players to be on the exit for the team to move on | H | - | In progress |
-| PB-18 | Establish a socket connection when the client is loaded, instead of in every separate scene | H | 6 | In progress |
-| PB-19 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | In progress |
-| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | In progress |
-| PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | In progress |
-| PB-23 | After the players choose a perk, the spectator does not see the map change | H | 5 | In progress |
-| PB-24 | Spectator does not get the current game state, but an initial game state on joining a room | H | 5 | In progress |
+| PB-17 | Make it necessary for both players to be on the exit for the team to move on | H | - | Done |
+| PB-18 | Establish a socket connection when the client is loaded, instead of in every separate scene | H | 6 | Done |
+| PB-19 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | Done |
+| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not done |
+| PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | Done |
+| PB-23 | After the players choose a perk, the spectator does not see the map change | H | 5 | Done |
+| PB-24 | Spectator does not get the current game state, but an initial game state on joining a room | H | 5 | Done |
 | PB-25 | The game never ends | H | 6 | Done |
 | PB-26 | After perks scene health is reset to 100 | H | 5 | Done |
-| PB-27 | Timer sounds doesn't go away after perks scene | H | 3 | In progress |
-| PB-28 | Colliding with an enemy can knock you into a wall | H | 7 | In progress |
-| PB-29 | Spectator can not move freely through the map | H | 3 | Done
+| PB-27 | Timer sound doesn't go away after perks scene | H | 3 | Not done |
+| PB-28 | Colliding with an enemy can knock you into a wall | H | 7 | Not done |
+| PB-29 | Spectator can not move freely through the map | H | 3 | Done |
+
+## Future development
+
+For future development of the game, there is still room for deepening the functionality of the current system.
+Those things that we think will create an impact on the game are:
+
+- Development Space (admin dashboard)
+- Ranking formula (more comprehensive)
+- Collision system
+- Enemies synchronization on server-side
+
+Moreover, we also think that UI and UX design can be improved to enhance the players' gaming experience. The current movement system is grid-based, making the positioning system absolute. The publisher wants the movement to be velocity-based. Therefore, we are heading towards it for the upcoming plan.
