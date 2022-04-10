@@ -5,7 +5,7 @@ git repository workflow for the team.
 
 ## 1. Naming conventions
 
-This section contains the list of conventions that the team has aggreed uppon
+This section contains the list of conventions that the team has agreed upon
 to follow during the course of this project.
 
 ### 1.1. Backlog items
@@ -19,7 +19,7 @@ US37-BI01: This is an example backlog item
 
 #### 1.1.2. Problem Backlogs
 
-Problem backlogs represent known issues/bugs with the existing code base. The
+Problem backlogs represent known issues/bugs with the existing codebase. The
 format for those backlogs is:
 
 ```text
@@ -54,7 +54,7 @@ fix: user unable to submit form
 ## 2. Branches
 
 This section describes the official branches involved in the project management
-and and their access level.
+and their access level.
 
 <table>
 <tr>
@@ -99,7 +99,7 @@ to be tested by a tester.
 #### 3.3. 🟧 Known issues
 
 A category for backlog items (a.k.a. Problem backlogs) that represent known
-issues/bugs in the existing code base.
+issues/bugs in the existing codebase.
 
 ### 3.2. Backlog item Labels
 
@@ -172,10 +172,10 @@ issues/bugs in the existing code base.
 4. Add the Reviewer label for the person who will test the chosen task.
 5. Create a *Draft* merge request using the **Create merge request** button,
 select **Create merge request and branch** from the drop menu, and adjust the
-target branch to be the **week** branch for that work week.
-6. Add yourself as an *Assignee* in the merge request page.
-7. Assign the reviewer of your task as a *Reviewer* in the merge request page.
+target branch to be the **week** branch for that workweek.
+6. Add yourself as an *Assignee* on the merge request page.
+7. Assign the reviewer of your task as a *Reviewer* on the merge request page.
 8. Adjust the Milestone for the merge request to match the Sprint number.
 9. *(Preferably)* Select 'Delete source branch when merge request is accepted.'
 checkbox in the **Merge options** section.
-10. Click **Create merge request** button.
+10. Click the **Create merge request** button.
