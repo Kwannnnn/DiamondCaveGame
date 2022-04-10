@@ -39,9 +39,9 @@ The game engine chosen for this project is **Phaser**, used to create 2D games f
 - 2D game support
 - Should run in the browser.
 
-**Phaser** is the best choice for our needs. It is free and open-source with support for 2D games. There are thousands of games made with it, and there are many learning resources for us to turn our design into a reality. The documentation is extensive and detailed. There are a lot of features supported by the engine which will speed up development, like animations, physics, particles, and sound effects.
+**Phaser** is the best choice for our needs. It is free and open-source with support for 2D games. There are thousands of games made with it, and there are many learning resources for us to turn our design into a reality. The documentation is extensive and detailed. There are many features supported by the engine which will speed up development, like animations, physics, particles, and sound effects.
 
-Phaser is a JavaScript framework that can be imported and provides valuable tools for making browser games. There is no built-in multiplayer support, but it can be added by using the socket.io library. We plan to use node.js on the backend to create the server to which the players will connect. All communication will go through the node server.
+Phaser is a JavaScript framework that can be imported and provides valuable tools for making browser games. There is no built-in multiplayer support, but it can be added by using the socket.io library. We plan to use node.js on the backend to create the server to which players will connect. All communication will go through the node server.
 
 It uses HTML5 and Canvas or WebGL to render the game in the browser. This allows excellent performance across all platforms, and it is also possible to port a game for mobile devices.
 
@@ -49,23 +49,23 @@ It uses HTML5 and Canvas or WebGL to render the game in the browser. This allows
 
 ### 3.1 Backend
 
-Node.js was decided to be used for the development of the backend. We came to this decision for several reasons. Firstly, using JavaScript for server-side application development has become increasingly popular nowadays. Therefore, it becomes increasingly easy to receive support from the development community for our development process. Secondly, we are developing a web-based game, and we will use a JavaScript engine. Therefore, it increases compatibility and reduces the problems that might occur by developing a server-side application in JavaScript using Node.js. In addition, all team members agreed that Node.js is the tool that we are currently most familiar and comfortable with, and we had enough experience to use it for the development of the backend confidently.
+Node.js was decided to be used for the development of the backend. We came to this decision for several reasons. Firstly, using JavaScript for server-side application development has become increasingly popular nowadays. Therefore, it becomes increasingly easy to receive support from the development community for our development process. Secondly, we are developing a web-based game, and we will use a JavaScript engine. Therefore, it increases compatibility and reduces the problems that might occur by developing a server-side application in JavaScript using Node.js. In addition, all team members agreed that Node.js is the tool that we are currently most familiar and comfortable with. We had enough experience to use it to develop the backend confidently.
 
 ### 3.2 Database
 
-PostgreSQL was chosen for persisting data. A discussion on whether we should use relational or non-relational databases during our meeting eventually led us to conclude that using relational databases can benefit us. All team members are well trained for relational databases during one of the courses we had previously; therefore, the team decided that it is the most comfortable to work with a relational database. It was also pointed out that relational databases can easily help us avoid the problems caused by data duplication.
+PostgreSQL was chosen for persisting data. During our meeting, a discussion on whether we should use relational or non-relational databases eventually led us to conclude that using relational databases can benefit us. All team members were well trained in relational databases during one of the courses we had previously; therefore, the team decided that it is the most comfortable to work with a relational database. It was also pointed out that relational databases can easily help us avoid the problems caused by data duplication.
 
 Having decided that relational databases will be used for persisting data, the team concluded that PostgreSQL would be the database management system that we use for the project. PostgreSQL is the one most team members are experienced in and comfortable with. It was decided that using tools that the team is experienced in can significantly speed up the development progress and help avoid problems.
 
 ### 3.3 Communication (frontend-backend)
 
-We chose to go with Socket.io to connect the frontend and backend applications. This socket library was selected for its simple API to establish a connection and signal events between two systems using it. Additionally, it was chosen for its ease of implementation in browser Javascript. Socket.io can download the library binary from either a server using Socket.io or the official developers' host when running in a browser, which saves time working out a way to distribute the library or create our own. Finally, the library choice was informed by our prior experience with sockets in another project.
+We chose to go with Socket.io to connect the frontend and backend applications. This socket library was selected for its simple API to establish a connection and signal events between two systems. Additionally, it was chosen for its ease of implementation in browser Javascript. Socket.io can download the library binary from either a server using Socket.io or the official developers' host when running in a browser, which saves time working out a way to distribute the library or create our own. Finally, the library choice was informed by our prior experience with sockets in another project.
 
 To transmit game state data, we defined a set of JSON structures that encode the necessary data for sending via Socket.io. These definitions can be found in the Game State Protocol file within this documentation package.
 
 ### 3.4 Server deployment (VPS)
 
-To make the game client and server accessible to players, we created a server configuration that can be used to deploy the game to a server. The deployment server uses `Node.js` and `Ngnix` to build the game client and host it on the web, as well as host the Express game server to be used by the client.
+To make the game client and server accessible to players, we created a server configuration that can be used to deploy the game to a server. The deployment server uses `Node.js` and `Ngnix` to build the game client and host it on the web, and the Express game server to be used by the client.
 
 In addition to the deployment configuration, we also created a Continuous Deployment (CD) pipeline to make development builds accessible on a VPS provided to us. This pipeline uses a copy of a specific branch of our GIT repository to execute the deployment script.
 
@@ -159,39 +159,39 @@ There are several scenes the game goes through to display the previously mention
 
 ![Collect gems](diagrams/sequence-diagram/collect-gems.jpg)
 
-This sequence diagram shows how the system responses to the player's collect gems action. When the player overlaps the gem tile, the _Game_ object emits a 'collectGem' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the room's gem count and responses back to the player with the event 'gemCollected'. After receiving the response, the _Game_ displays the gem count to the player and removes the gem tile from the map.
+This sequence diagram shows how the system responds to the player's collect gems action. When the player overlaps the gem tile, the _Game_ object emits a 'collectGem' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the room's gem count and responds to the player with the 'gemCollected' event. After receiving the response, the _Game_ displays the gem count to the player and removes the gem tile from the map.
 
 ### 8.2 Collide enemy
 
 ![Collide enemy](diagrams/sequence-diagram/collide-enemy.jpg)
 
-This sequence diagram demonstrates the system reaction to the player colliding with an enemy. When the player overlaps the enemy tile, the _Game_ object emits a 'collideEnemy' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player and also causes the player to be pushed back.
+This sequence diagram demonstrates the system reaction to the player colliding with an enemy. When the player overlaps the enemy tile, the _Game_ object emits a 'collideEnemy' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed, and the server responds to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and respond with the 'reduce health' event. Finally, the _Game_ displays the health reduction to the player and causes the player to be pushed back.
 
 ### 8.3 Chat room
 
 ![Chat room](diagrams/sequence-diagram/chat-system.jpg)
 
-This sequence diagram explains the system response to the player sending a message to the chat room. When the player/spectator sends a message to the chat room, the _ChatScene_ will emit 'chatMessage' event to the server with the message from the client as a payload. Then the server delegates a handler from the _chatManager_ to listen to the emitted event. The handler after receives the message, will broadcast the message to the room with the event 'chatMessage'. Depends on the type of client, the message will displayed to either the player room or the spectator room.
+This sequence diagram explains the system response to the player sending a message to the chat room. When the player/spectator sends a message to the chat room, the _ChatScene_ will emit a 'chatMessage' event to the server with the message from the client as a payload. Then the server delegates a handler from the _chatManager_ to listen to the emitted event. Finally, after receiving the message, the handler will broadcast the message to the room with the event 'chatMessage'. Depending on the type of client, the message will be displayed in either the player or spectator room.
 
-### 8.4 Step on spike trap
+### 8.4 Step on a spike trap
 
 ![Step on spike trap](diagrams/sequence-diagram/spike-trap.jpg)
 
-This sequence diagram shows the system response to the player stepping on a spike trap. When the player overlaps the spike trap tile, the _Game_ object triggers the function 'steppedOnSpikeTrap' in _SpikeTrap_ instance. The _SpikeTrap_ will emit 'hitByEnemy' event if the _SpikeTrap_ instance is enabled, active and the player is vulnerable. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player.
+This sequence diagram shows the system response to the player stepping on a spike trap. When the player overlaps the spike trap tile, the _Game_ object triggers the function 'steppedOnSpikeTrap' in the _SpikeTrap_ instance. The _SpikeTrap_ will emit the 'hitByEnemy' event if the _SpikeTrap_ instance is enabled, active, and the player is vulnerable. From here, the behavior is similar to that in the case of "Collide with enemy."
 
 ### 8.5 Step through laser
 
 ![Step through laser](diagrams/sequence-diagram/laser.jpg)
 
-This sequence diagram illustrates the system responses when they player steps through the laser. When the player overlaps the laser beam tile, the _Game_ object triggers the function 'steppedInLaser' in _LaserTrap_ instance. The _LaserTrap_ will emit 'hitByEnemy' event if the _LaserTrap_ instance is enabled, active and the player is vulnerable. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed and the server responses back to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and response with the 'reduce health' event. Finally the _Game_ displays the health reduction to the player.
+This sequence diagram illustrates the system responses when the player steps through the laser. When the player overlaps the laser beam tile, the _Game_ object triggers the function 'steppedInLaser' in the _LaserTrap_ instance. The _LaserTrap_ will emit a 'hitByEnemy' event if the _LaserTrap_ instance is enabled, active, and the player is vulnerable. From here, the behavior is similar to that in the case of "Collide with enemy."
 
 ### 8.6 Choose perks
 
 ![Choose perks](diagrams/sequence-diagram/choose-perks.jpg)
 
-This sequence diagram explains the system response to the player choosing a perk. When the player collects all the gems the perk tile, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler will emit back the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ in the client side.
+This sequence diagram explains the system response to the player choosing a perk. When the players collect all the gems and step on the exit time, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. Finally, the handler will emit the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ on the client-side.
 
-In the choose perk scene, when the player choose a perk, the _PerkScene_ will emit 'chosenPerk' event to the server. The server handles the event and check if both players in the room have chosen a perk. If they have, the server will emit 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the event and start the next map by passing the new initial game state to _Game_ instance. If there is only 1 player has chosen a perk, the server will response the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the chosen perk of the teammate.
+In the choose perk scene, when the player chooses a perk, the _PerkScene_ will emit the 'chosenPerk' event to the server. The server handles the event and checks if both players in the room have chosen a perk. If they have, the server will emit the 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the event and starts the following map by passing the new initial game state to the _Game_ instance. If only one player has chosen a perk, the server will respond with the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the desired perk of the teammate.
 
 ## 9 Testing plan
 
@@ -201,9 +201,9 @@ As mentioned in our [Code of conduct](./code-of-conduct.md#git-conduct), the tes
 
 1. Enemy collision can put a player sprite into a wall
 2. Timer text for Perk Scene is not removed
-3. Timer sound does not stop playing after going to the next map
+3. Timer sound does not stop playing after going to the following map
 4. Enemies are not synchronized on the server
-5. Players' sprite is not sized properly for movements
+5. Players' sprite is not sized correctly for movements
 6. There is no game over scene for spectator
 
 ## 11 Cancelled backlogs and user stories
