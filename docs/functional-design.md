@@ -7,9 +7,9 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ## Introduction
 
 This project is about creating a multi-player online game based on the game released in 1987 called Emerald Mine.
-In our game players form two-man teams and connect to their own room where they can play on different maps collaborating with each other to complete an objective.
+In our game, players form two-person teams and connect to their room where they can play on different maps collaborating to complete an objective.
 The idea of the game is to collect all diamonds on the map and avoid losing all their health.
-During the game certain perks, traps and cooperative puzzles are present, the descriptions of which can be found in the Game Design document.
+Certain perks, traps, and cooperative puzzles are present during the game, the descriptions of which can be found in the [Game Design](./game-design.md) document.
 
 ## Non-Functional Requirements
 
