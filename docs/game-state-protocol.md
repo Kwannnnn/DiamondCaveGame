@@ -8,6 +8,8 @@ The protocol described below contains a list of events clients should be able
 to intercept (server events) and emit (client events) to communicate
 the logic of the game in a correct manner.
 
+For a sequence diagram overview of some of the game functionality, please consult the [Technical Design](./technical-design.md#8-sequence-diagram) document.
+
 ## Server Events
 
 <table>
