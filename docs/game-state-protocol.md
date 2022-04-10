@@ -80,7 +80,6 @@ roomId;
         </td>
     </tr>
 
-
 <tr>
         <td>newPlayerJoined</td>
 <td>
@@ -122,7 +121,6 @@ roomId;
 <tr>
         <td>initialGameState</td>
 <td>
-
 
 <p>
 
@@ -587,7 +585,6 @@ teammatePerk:;
         </td>
     </tr>
 
-
 <tr>
         <td>chatMessage</td>
 <td>
@@ -743,7 +740,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends a client the name of the perk that another player has chosen. 
+    Sends a client the name of the perk that another player has chosen.
 </td>
 
 </tr>
@@ -768,7 +765,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends both players the name of the perk that will be used next game. 
+    Sends both players the name of the perk that will be used next game.
 </td>
 
 </tr>
@@ -793,7 +790,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends the game state of the map a developer has chosen 
+    Sends the game state of the map a developer has chosen
 </td>
 
 </tr>
@@ -895,23 +892,17 @@ gemId;
         </td>
     </tr>
 
-
-
-
 <tr>
     <td>nameAlreadyExistForAPlayer</td>
     <td>-</td>
     <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
 </tr>
 
-
 <tr>
     <td>nameAlreadyExistForASpectator</td>
     <td>-</td>
     <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
 </tr>
-
-
 
 </table>
 
@@ -968,10 +959,10 @@ roomId;
 
 <!-- this is one row -->
 <tr>
-        <td>checkGameReady</td>    
+        <td>checkGameReady</td>
         <td>
             <p>
-                
+
 ```javascript
 // The room id of the room to check
 roomId;
@@ -1177,7 +1168,6 @@ message:
 
 </tr>
 
-
 <tr>
 
 <td>
@@ -1198,7 +1188,7 @@ message:
 </td>
 
 <td>
-    Indicates that one of the players has reached the end of the map 
+    Indicates that one of the players has reached the end of the map
 </td>
 
 </tr>
@@ -1276,7 +1266,7 @@ message:
 </td>
 
 <td>
-    Indicates that player hit the enemy and sends all information to reduce health of the team 
+    Indicates that player hit the enemy and sends all information to reduce health of the team
 </td>
 
 </tr>
@@ -1302,7 +1292,7 @@ message:
 </td>
 
 <td>
-    Sends the chosen id of the map developer wants to spawn on 
+    Sends the chosen id of the map developer wants to spawn on
 </td>
 
 </tr>

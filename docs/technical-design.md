@@ -121,11 +121,11 @@ For information on our conduct when working with the GIT repository, see the **G
 
 ## 6 Game Flow
 
-#### 6.1 Proccesses
+### 6.1 Proccesses
 
 A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room designed by a friend before, he must create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
 
-#### 6.2 Scenes
+### 6.2 Scenes
 
 There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where a player has several options. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
 

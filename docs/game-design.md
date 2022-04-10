@@ -91,20 +91,19 @@ Each team has a shared life pool. Once the team loses its last life, the game en
 Teams are ranked based on the run time, the diamonds collected, and the remaining lives. Each world has its rank list, and there is a global ranking for teams that have completed the whole run. The formula for determining the final score is:
 > TBD
 
-## 3. Game worlds 
+## 3. Game worlds
 
 ### 3.1. World 1 Nature theme
 
 ![image](sprites/worlds/nature.png)
 
-
 ### 3.2. World 2 Ice theme
+
 ![image](sprites/worlds/ice.png)
 
 ### 3.3. World 3 Fire theme
 
 ![image](sprites/worlds/fire.png)
-
 
 ### 3.4. World 4 Dungeon theme
 
@@ -328,13 +327,17 @@ If you die, you get to see a quite similar screen to the quit menu screen, but t
 ## 6. Screenshots
 
 ### 6.1. Main Menu
+
 ![menu](screenshots/main-menu.png)
 
 ### 6.2. Create a new Lobby
+
 ![menu](screenshots/create-lobby.png)
 
 ### 6.3. Join a Lobby
+
 ![menu](screenshots/join-lobby.png)
 
 ### 6.4. In Game
+
 ![menu](screenshots/in-game.png)

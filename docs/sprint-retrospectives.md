@@ -23,7 +23,6 @@
 - Backlog descriptions should be made more specifically
 - Agree on a team-wide linting style
 
-
 ## Sprint 2
 
 ### What went well
@@ -60,7 +59,6 @@ individuals that do not show up to a meeting.
 - Generate all backlogs in the beginning of the sprint
 - Contact the publisher more often regarding updates, e.g. sick people, product
 status, etc.
-
 
 ## Sprint 3
 
