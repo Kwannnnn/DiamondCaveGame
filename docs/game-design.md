@@ -69,7 +69,11 @@ After each finished map, the team is offered a choice between two bonuses that w
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Continuum Orb](/docs/sprites/ui/perks/TimeReduction.png)
+
+</td>
         <td><b>Continuum Orb<b></td>
         <td>Reduces total run time with 25 seconds</td>
         <td>Rare</td>
