@@ -1,8 +1,9 @@
 # DHI2V.So1 Group 1
 
-VPS Link: http://vps1056.directvps.nl
+VPS Link: <http://vps1056.directvps.nl>
 
 ## 1. Team plan
+
 [1.1. Timesheet](https://saxion-my.sharepoint.com/:f:/g/personal/491270_student_saxion_nl/EnFVT9blIbJOvj55ODvOkEIBSNvSJg4CJN2HHhxTNvUkDQ?e=B7u19m)
 
 [1.2. Code of Conduct](docs/code-of-conduct.md)
@@ -24,6 +25,7 @@ VPS Link: http://vps1056.directvps.nl
 ## 2. Game Design
 
 [2.1. Game Design Document](docs/game-design.md)
+
 ## 3. System documentation
 
 [3.1. Technical design](docs/technical-design.md)
@@ -45,9 +47,11 @@ npm i
 ```
 
 Once the installation completes, run the following command in your terminal:
-```
+
+```cmd
 npm start
 ```
+
 The server will be listening for connections on your local machine under port `3000` by default. You can modify the corresponding value in the `game/backend/.env` file to change the port.
 
 ### 4.2. Client (development)
@@ -59,8 +63,11 @@ _Note: These steps apply to the development version of the game client and may b
 ```cmd
 npm i
 ```
+
 2. Once the installation completes, run the following command in your terminal:
-```
+
+```cmd
 npm start
 ```
-The client will be accessible on your local machine under port `8080` by default. 
+
+The client will be accessible on your local machine under port `8080` by default.
