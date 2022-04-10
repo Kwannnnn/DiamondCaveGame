@@ -12,19 +12,19 @@ Attracted by the fame and glory, two amateur archeologists, Bob and Eve, set foo
 
 ## 2. Gameplay
 
-The game is playable exclusively in the duo co-op mode of two people. A run can only begin once both players have connected and formed a team.
+The game is playable exclusively in the duo co-op mode with two people. A run can only begin once both players have connected and formed a team.
 
 ### 2.1. Worlds
 
-The game has three worlds, each with a different theme and difficulty. A world contains a set of levels that a duo must complete to continue to the next world. The difficulty of the worlds increase incrementally, where world 1 is the easiest, and world 3 is the most difficult.
+The game has three worlds, each with a different theme and difficulty. A world contains a set of levels that a duo must complete to continue to the next world. The difficulty of the worlds increases incrementally, where world 1 is the easiest, and world 3 is the most difficult.
 
 ### 2.2. Maps
 
-Maps are categorized based on their world and therefore adopt the same theme and difficulty level. They are further divided into different objectives that the players have to achieve to progress onto the following map. The objectives include collecting all the gems present on the map, solving puzzles, or staying alive while avoiding traps.
+Maps are categorized based on their world and adopt the same theme and difficulty level. They are further divided into different objectives that the players have to achieve to progress onto the following map. The objectives include collecting all the gems present on the map, solving puzzles, or staying alive while avoiding traps.
 
 ### 2.3. Level Progression
 
-The two players progress through the game by completing the objective of the current map. Every time a new world is reached, the team gets a checkpoint, allowing to restart from the said world in the unfortunate case of death.
+The two players progress through the game by completing the objective of the current map. Every time a new world is reached, the team gets a checkpoint, allowing it to restart from the said world in the unfortunate case of death.
 While the worlds are fixed and predetermined, a set number of maps are randomly selected from a larger pool for each run to make the game more interesting and replayable.
 
 ### 2.4. Buffs
@@ -39,32 +39,46 @@ After each finished map, the team is offered a choice between two bonuses that w
         <th>Rarity</th>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Life Rune Sprite](/docs/sprites/ui/perks/Heart.png)
+
+</td>
         <td><b>Life Rune</b></td>
         <td>Team gains an extra life</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Boots of Speed Sprite](/docs/sprites/ui/perks/SpeedBoots.png)
+
+</td>
         <td><b>Boots of Speed</b></td>
         <td>Grants 4% extra movement speed</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Bloodstone Sprite](/docs/sprites/ui/perks/BloodStone.png)
+
+</td>
         <td><b>Bloodstone</b></td>
         <td>Transforms itself in 3 Diamonds</td>
         <td>Common</td>
     </tr>
     <tr>
-        <td>TBD</td>
+<td align="center">
+
+![Continuum Orb](/docs/sprites/ui/perks/TimeReduction.png)
+
+</td>
         <td><b>Continuum Orb<b></td>
         <td>Reduces total run time with 25 seconds</td>
         <td>Rare</td>
     </tr>
 </table>
-
-___Note:_ The buffs are subject to change. More buffs may be added, or existing buffs may be removed to maintain the game's balance.__
 
 ### 2.5. Goals
 
@@ -77,22 +91,21 @@ Each team has a shared life pool. Once the team loses its last life, the game en
 ### 2.7. Ranking System
 
 Teams are ranked based on the run time, the diamonds collected, and the remaining lives. Each world has its rank list, and there is a global ranking for teams that have completed the whole run. The formula for determining the final score is:
-> TBD
+> TBD in future development
 
-## 3. Game worlds 
+## 3. Game worlds
 
 ### 3.1. World 1 Nature theme
 
 ![image](sprites/worlds/nature.png)
 
-
 ### 3.2. World 2 Ice theme
+
 ![image](sprites/worlds/ice.png)
 
 ### 3.3. World 3 Fire theme
 
 ![image](sprites/worlds/fire.png)
-
 
 ### 3.4. World 4 Dungeon theme
 
@@ -108,7 +121,11 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 1</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 1 Sprite](sprites/player/player1.png)
+
+</td>
         <td rowspan="2">
             <ul>
                 <li>Can be controlled by the first player in 4 directions</li>
@@ -120,11 +137,19 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Player 2</td>
-        <td>TBD</td>
+<td align="center">
+
+![Player 2 Sprite](sprites/player/player2.png)
+
+</td>
     </tr>
     <tr>
         <td>Map Wall</td>
-        <td>TBD</td>
+<td align="center">
+
+![Map Wall Sprite](sprites/worlds/border.png)
+
+</td>
         <td>
             <ul>
                 <li>Defines the boundaries of the map</li>
@@ -134,21 +159,22 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
     </tr>
     <tr>
         <td>Dirt</td>
-        <td>TBD</td>
+<td align="center">
+
+![Dort Sprite](sprites/worlds/dirt.png)
+
+</td>
         <td>
             <li>Can be cleared by a <i>Player</i> by mining it</li>
         </td>
     </tr>
     <tr>
-        <td>Rock</td>
-        <td>TBD</td>
-        <td>
-            <li>Cannot be cleared by mining</li>
-        </td>
-    </tr>
-    <tr>
         <td>Diamond</td>
-        <td>TBD</td>
+<td align="center">
+
+![Diamond Sprite](sprites/diamonds/blue.png)
+
+</td>
         <td>
             <ul>
                 <li>Can be collected by a <i>Player</i> by moving into it</li>
@@ -157,21 +183,87 @@ Teams are ranked based on the run time, the diamonds collected, and the remainin
         </td>
     </tr>
     <tr>
-        <td>Locked Map Exit</td>
-        <td>TBD</td>
+        <td>Map Exit</td>
+<td align="center">
+
+![Map Exit Sprite](sprites/worlds/exit.png)
+
+</td>
         <td>
             <ul>
-                <li>Can be unlocked when a <i>Player</i> collects enough diamonds to complete a level</li>
+                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+        <tr>
+        <td>Spike Trap Active</td>
+<td align="center">
+
+![Spike Trap On Sprite](sprites/worlds/spikeTrapOn.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals <i>Player</i> damage when stepped on</li>
+                <li>Can be inactivated by stepping on <i>Pressure pad</i></li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
     </tr>
     <tr>
-        <td>Unlocked Map Exit</td>
-        <td>TBD</td>
+        <td>Spike Trap Inactive</td>
+<td align="center">
+
+![Spike Trap Off Sprite](sprites/worlds/spikeTrapOff.png)
+
+</td>
         <td>
             <ul>
-                <li>Allows a <i>Player</i> to proceed to next level by moving into it</li>
+                <li>Can be reactivated by releasing a <i>Pressure pad</i></li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap</td>
+<td align="center">
+
+![Laser Trap Sprite](sprites/worlds/laser_trap.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Emits a deadly laser beam</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Laser Trap Beam</td>
+<td align="center">
+
+![Laser Trap Sprite](sprites/worlds/laser_beam.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Deals damage to <i>Player</i> when in contact</li>
+                <li>Cannot be destroyed</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Patrolling enemy</td>
+<td align="center">
+
+![Enemy Sprite](sprites/worlds/enemy.png)
+
+</td>
+        <td>
+            <ul>
+                <li>Patrols in a predetermined trajectory</li>
+                <li>Deals damage to <i>Player</i> when in contact</li>
                 <li>Cannot be destroyed</li>
             </ul>
         </td>
@@ -194,7 +286,7 @@ This wireframe shows the main menu. Here, you have the option to go to "Play Gam
 
 ![image](wireframes/game-design/leaderboard.png)
 
-This wireframe shows the leaderboard. You will see your (and others) name and what score they achieved.
+This wireframe shows the leaderboard. You will see your (and others) names and what score they achieved.
 
 ### 5.1.3. Play Game menu
 
@@ -206,13 +298,13 @@ This wireframe Shows the menu after you press "Play Game." You have the choice t
 
 ![image](wireframes/game-design/create-team-menu.png)
 
-This wireframe shows what you see if you press "Create Team." On the top, you see the randomly generated Teamcode, which is needed for others to join. Under that, you can see how many players are in your team currently. And you have the option to press start game which will lead to the actual game. And there is an option to go back to the previous window.
+This wireframe shows what you see if you press "Create Team." On the top, you see the randomly generated Teamcode, which is needed for others to join. Under that, you can see how many players are on your team currently. And you have the option to press start game which will lead to the actual game. And there is an option to go back to the previous window.
 
 ### 5.1.5. Join Team menu
 
 ![image](wireframes/game-design/join-team-menu.png)
 
-This wireframe shows the menu after you press "Join a Team." You can enter the team code from the team you want to join on the top. Then if you press Join a team, you will get led to the window of Create Team.
+This wireframe shows the menu after you press "Join a Team." First, you can enter the team code from the team you want to join on the top. Then if you click Join a team, you will get led to the window of Create Team.
 
 ## 5.2. Gameplay
 
@@ -220,16 +312,34 @@ This wireframe shows the menu after you press "Join a Team." You can enter the t
 
 ![image](wireframes/game-design/map-1.png)
 
-After creating your team, you will go to the first level of the first world. This simple wireframe shows a few assets of the game to give you an idea. A level has brown dirt blocks that the player can mine. The grey stones are one of the Objects that the player cannot mine. The diamonds need to be collected by the player, but the rocks can fall if you tunnel under them. You can see which level and world you're in on the top of the screen. And on the top right, you see the quit button, which will bring you back to the main menu.
+After creating your team, you will go to the first level of the first world. This simple wireframe shows a few game assets to give you an idea. A level has brown dirt blocks that the player can mine. The grey stones are one of the Objects that the player cannot mine. The diamonds need to be collected by the player, but the rocks can fall if you tunnel under them. You can see which level and world you're in on the top of the screen. And on the top right, you see the quit button, which will bring you back to the main menu.
 
 ### 5.2.2. In-game Quit menu
 
 ![image](wireframes/game-design/quit-menu.png)
 
-If you press the "Quit" button, you get to see your score, and it gives you two options. You can either play again or go back to the main menu.
+If you press the "Quit" button, you get to see your score, giving you two options. You can either play again or go back to the main menu.
 
 ### 5.2.3. Game over
 
 ![image](wireframes/game-design/death-screen.png)
 
-If you die, you get to see a quite similar screen to the quit menu screen, but there is a text saying that you died this time.
+If you die, you get to see a pretty similar screen to the quit menu screen, but a text says that you died this time.
+
+## 6. Screenshots
+
+### 6.1. Main Menu
+
+![menu](screenshots/main-menu.png)
+
+### 6.2. Create a new Lobby
+
+![menu](screenshots/create-lobby.png)
+
+### 6.3. Join a Lobby
+
+![menu](screenshots/join-lobby.png)
+
+### 6.4. In-Game
+
+![menu](screenshots/in-game.png)

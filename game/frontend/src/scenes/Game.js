@@ -3,8 +3,13 @@ import { CST } from '../utils/CST';
 
 import { determineVelocity, isAtOrPastTarget } from '../helpers/Enemy';
 import DiamondCollectEventHandler from '../events/CollectDiamondEvent';
+import LeaveMapEvent from '../events/LeaveMapEvent';
 import { Player, Spectator } from '../model';
 import HUD from './HUD';
+import ChatScene from './ChatScene';
+import { handlePressureDoors, setTraps } from '../helpers/PressurePad';
+import SpikeTrap from '../model/SpikeTrap';
+import LaserTrap from '../model/LaserTrap';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -16,26 +21,46 @@ export default class Game extends Phaser.Scene {
     preload() {
         this.load.image('gem', 'assets/gem.png');
         // FIXME: Add an actual enemy sprite
-        this.load.image('enemy', 'assets/dirt.png');
-        // this.load.image("exit", "assets/exit.png")
-        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 154, frameHeight: 276 });
+        this.load.image('enemy', 'assets/WispyEnemy.png');
+        this.load.image('exit', 'assets/exit.png');
+        this.load.spritesheet('player', 'assets/player.png', { frameWidth: 160, frameHeight: 260 });
 
         // These are all the tiles that can be mapped toa number in the tilemap CSV file
         this.load.image('tiles', 'assets/tiles.png');
         // CSV representation of the map
         // this.load.tilemapCSV('map', 'assets/tileMap.csv');
+
+        this.load.image('laser', 'assets/laser_trap.PNG');
+        this.load.image('beam', 'assets/laser_beam.png');
+
+        this.load.image('spikeOn',  'assets/spikeTrapOn.png');
+        this.load.image('spikeOff', 'assets/spikeTrapOff.png');
+        // Load sprites for particles (player movement)
+        this.load.spritesheet('moveParticles', 'assets/Player moved.png', { frameWidth: 48, frameHeight: 32 });
+
+        this.load.image('spawnParticle', 'assets/visual_effects/—Pngtree—cute white clouds smoke clouds_6492845.png');
+
+        // Sounds effects
+        this.load.audio('gameEnter', ['assets/sound_effects/entering_the_game.mp3']);
+        this.load.audio('diamondCollect', ['assets/sound_effects/diamond-collected.mp3']);
+        this.load.audio('stepTrap', ['assets/sound_effects/step-on-trap.mp3']);
     }
 
     init(data) {
-        this.collectedDiamonds = 0;
+        this.world = data.world;
+        this.stage = data.stage;
         this.socket = data.socket;
         this.lobbyID = data.lobbyID;
         this.username = data.username;
         this.gameState = data.initialGameState;
         this.perk = data.perk;
+        this.health = data.health;
+        this.spectatorsCount = data.spectatorsCount,
+        this.collectedDiamonds = 0;
+        this.currentTime = data.time
+        this.totalDiamonds = this.gameState.gems.length;
 
         console.log(this.gameState);
-        console.log(data.socket);
     }
 
     create() {
@@ -46,43 +71,111 @@ export default class Game extends Phaser.Scene {
         // Draw the tiles on the screen
         this.layer = map.createLayer(0, tileSet);
 
-        this.setupHUD();
+        // this.setupAnimations();
+        this.createParticles();
+
+        this.setupAudio();
+        this.setupChat();
         this.setupPlayers();
         this.setupPerks();
         this.setupDiamondLocations();
+        this.getCollectedDiamondsCurrentMap(this.gameState.gems)
         this.setupEnemies();
-        // this.placeExit(200, 300);
+        this.setupLaserTraps();
+        this.setupSpikeTraps();
+        setTraps(this.gameState.pressurePlateTraps, this.spikeTraps);
         this.setupControlledUnit();
         this.setupCamera();
-        this.placeExit(200, 200);
+        this.placeExit(this.gameState.exit.x, this.gameState.exit.y);        
+        this.setupHUD();
 
         this.handleSocketEvents();
 
+        this.pressureCheckEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.checkPressurePlates,
+            callbackScope: this,
+            loop: true,
+        });
+
+        this.gameEnterSound.play();
+    }
+
+    getCollectedDiamondsCurrentMap(gems) {
+        console.log(gems);
+        for (let i = 0; i < gems.length; i++) {
+            const gem = gems[i];
+            if (gem.gemId === -1) {
+                this.collectedDiamonds++;
+            }
+        }
+    }
+
+    checkPressurePlates() {
+        handlePressureDoors(this.layer, this.players);
     }
 
     update() {
-        if (this.scene.isActive(CST.SCENES.CHAT)) {
-            this.input.keyboard.enabled = false;
-           
-        } else {
-            this.input.keyboard.enabled = true;
-            this.controlledUnit.update();
-        }
-    
+        this.controlledUnit.update();
+
+        this.hasSteppedOnSpikeTrap();
+        this.hasSteppedInLaserBeam();
     }
+
+    /**
+     * Setup audio
+     */
+    setupAudio() {
+        this.collectDiamondSound = this.sound.add('diamondCollect');
+        this.gameEnterSound = this.sound.add('gameEnter');
+        this.stepTrap = this.sound.add('stepTrap');
+    }
+
+    createParticles() {
+        this.diamondParticles = this.add.particles('gem');
+        this.diamondEmitter = this.diamondParticles.createEmitter({
+            speed: 200,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.3, end: 0 },
+            on: false
+        });
+
+        this.spawnParticles = this.add.particles('spawnParticle');
+        this.spawnEmitter = this.spawnParticles.createEmitter({
+            speed: 400,
+            lifespan: 200,
+            blendMode: 'ADD',
+            scale: { start: 0.2, end: 0 },
+            on: false
+        })
+    }
+
 
     /**
      * Adds the HUD to the GameScene
      */
     setupHUD() {
-        this.scene.add('hud', HUD, true, {
-            world: 1,
-            stage: 1,
-            totalDiamonds: this.gameState.gems.length,
+        this.hud = this.scene.add('hud', HUD, true, {
+            stage: this.gameState.level,
+            totalDiamonds: this.totalDiamonds,
+            health: this.health,
+            spectatorsCount: this.spectatorsCount,
+            gemsCollected: this.collectedDiamonds,
+            time: this.currentTime,
             socket: this.socket
         });
     }
 
+    /**
+     * Adds the chat room to the GameScene
+     */
+
+    setupChat() {
+        this.scene.add(CST.SCENES.CHAT, ChatScene, true, {
+            socket: this.socket
+        });
+    }
     /**
      * Creates all player objects and adds them to the players Map property
      * of the GameScene. 
@@ -92,24 +185,25 @@ export default class Game extends Phaser.Scene {
         // Having the player added to the game
         this.gameState.players.forEach(p => {
             console.log('PERK TO BE ADDED TO PLAYERS: ' + this.perk)
-            const player = new Player(this, p.x, p.y, p.playerId, this.perk);
+            const player = new Player(this, p.x, p.y, p.playerId, p.username, this.perk);
             this.players.set(p.playerId, player);
+            this.spawnParticles.emitParticleAt(p.x, p.y, 20);
         });
     }
 
     setupPerks() {
         switch (this.perk) {
-        case 'Health':
-            this.changeHealth(10);
-            break;
+            case 'Health':
+                this.changeHealth(10);
+                break;
 
-        case 'AddDiamonds':
-            this.diamondPerk();
-            console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
-            break;
+            case 'AddDiamonds':
+                this.diamondPerk();
+                console.log('Collected diamonds after perk: ' + this.collectedDiamonds);
+                break;
 
-        default:
-            console.log('No team perks!');
+            default:
+                console.log('No team perks!');
         }
     }
 
@@ -119,8 +213,9 @@ export default class Game extends Phaser.Scene {
      */
     setupControlledUnit() {
         // Check if the username is in the list of players
-        if (this.gameState.players.find(p => p.playerId === this.username)) {
-            this.controlledUnit = this.players.get(this.username);
+        const player = this.gameState.players.find(p => p.playerId === this.socket.id);
+        if (player !== undefined) {
+            this.controlledUnit = this.players.get(this.socket.id);
             // Adding overalap between player and diamonds (collecting diamonds)
             this.physics.add.overlap(this.controlledUnit, this.diamonds, this.collectDiamond, null, this);
             // Adding overalap between player and enemies (enemy collision)
@@ -146,7 +241,13 @@ export default class Game extends Phaser.Scene {
     setupCamera() {
         if (this.controlledUnit) {
             this.cameras.main.startFollow(this.controlledUnit);
-            this.cameras.main.setBounds(-400, -400, 1880, 1320);
+
+            const mapWidth = this.gameState.tileMap[0].length * 32;
+            const mapHeight = this.gameState.tileMap.length * 32;
+
+            // We need to add the additional 800px so that the camera does not end exactly at the edge of the map
+            this.cameras.main.setBounds(-400, -400, mapWidth + 800, mapHeight + 800);
+            this.cameras.main.setZoom(2);
         }
     }
 
@@ -182,13 +283,9 @@ export default class Game extends Phaser.Scene {
      */
     collectDiamond(player, diamond) {
         this.destroyDiamondSprite(diamond);
-        this.updateCollectedDiamondsCount();
+        this.diamondParticles.emitParticleAt(diamond.x, diamond.y, 50);
 
-        //this is a small test for the speed increase 
-        /* this.increaseSpeed();
-        console.log('current delay:'+this.delay); */
-
-        this.socket.emit('gemCollected', {
+        this.socket.emit('collectGem', {
             roomId: this.lobbyID,
             gemId: diamond.id
         });
@@ -199,12 +296,14 @@ export default class Game extends Phaser.Scene {
      * event on the web socket.
      * @param diamond the diamond that has been collected
      */
-    handleDiamondCollected(diamond) {
+    handleDiamondCollected(gemId) {
         // Iterate through diamond physics group to remove matching diamond
         this.diamonds.children.each((child) => {
-            if (child.id === diamond) {
+            if (child.id === gemId) {
                 this.destroyDiamondSprite(child);
+                this.collectDiamondSound.play()
                 this.updateCollectedDiamondsCount();
+                this.diamondParticles.emitParticleAt(child.x, child.y, 20);
             }
         });
 
@@ -218,16 +317,12 @@ export default class Game extends Phaser.Scene {
         this.diamonds = this.physics.add.group();
 
         this.gameState.gems.forEach(g => {
-            let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
-            this.diamonds.add(sprite);
-        });
-
-        let id = 1;
-        // Scope each diamond
-        this.diamonds.children.iterate(function (child) {
-            child.setScale(0.2);
-            child.id = id;
-            id++;
+            if (g.gemId > -1) {
+                let sprite = this.physics.add.sprite(g.x, g.y, 'gem').setScale(0.2);
+                sprite.setScale(0.2);
+                sprite.id = g.gemId;
+                this.diamonds.add(sprite);
+            }
         });
     }
 
@@ -239,7 +334,7 @@ export default class Game extends Phaser.Scene {
         this.enemies = this.physics.add.group();
 
         this.gameState.enemies.forEach(e => {
-            let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy');
+            let sprite = this.physics.add.sprite(e.start.x, e.start.y, 'enemy').setScale(0.85);
             sprite.id = e.enemyId;
             this.enemies.add(sprite);
 
@@ -256,6 +351,90 @@ export default class Game extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    }
+
+    /**
+     * Setup the laser traps
+     */
+    setupLaserTraps() {
+        this.laserTraps = [];
+
+        for (const [id, laserDetails] of this.gameState.laserTraps.entries()) {
+            const { x, y, direction, range } = laserDetails;
+
+            const laserTrap = new LaserTrap(id, x, y, direction, range, this.socket);
+            laserTrap.generateBeamSprites(this);
+            this.laserTraps.push(laserTrap);
+        }
+    }
+
+    /**
+     * Check if the player has stepped into a laserbeam
+     */
+    hasSteppedInLaserBeam() {
+        for (const laserTrap of this.laserTraps) {
+            laserTrap.steppedInLaser(this.controlledUnit, this.lobbyID);
+        }
+    }
+
+    /**
+     * Place SpikeTrap objects where 4s appear on the tilemap
+     */
+    setupSpikeTraps() {
+        // get all spike trap coordinates
+        this.spikeLocations = this.getCoordinatesFromTileMap(4); // array of coordinate objects
+        this.spikeTraps = []; // array of SpikeTrap objects
+
+        // create SpikeTrap and sprite objects at the correct coordinates
+        for (const [id, spikeLocation] of this.spikeLocations.entries()) {
+            const { x, y } = spikeLocation;
+            const trapSprite = this.physics.add.sprite(x, y, 'spikeOn');
+            const trap = new SpikeTrap(id, x, y, this.socket, trapSprite);
+
+            // add both to arrays so that they can be found later
+            this.spikeTraps.push(trap);
+        }
+    }
+
+    /**
+     * Finds the coordinates for each location that the given number appears
+     */
+    getCoordinatesFromTileMap(tileNumber) {
+        let locations = [];
+
+        // itirate through the gameState tileMap to find coordinates of the provided number
+        for (let row = 0; row < this.gameState.tileMap.length; row++) {
+            for (let column = 0; column < this.gameState.tileMap[row].length; column++) {
+                // value found?
+                if (this.gameState.tileMap[row][column] == tileNumber) {
+                    // translate index to coordinates
+                    let coordinates = {
+                        x: column * 32 + 16,
+                        y: row * 32 + 16
+                    };
+                    // register these coordinates
+                    locations.push(coordinates);
+                }
+            }
+        }
+        return locations;
+    }
+
+    /**
+     * Check whether player has stepped on a spike trap
+     */
+    hasSteppedOnSpikeTrap() {
+        for (const spikeTrap of this.spikeTraps) {
+            const spikePos = {
+                x: spikeTrap.x,
+                y: spikeTrap.y,
+            };
+
+            // Check if player overlaps spikeTrap
+            if (this.controlledUnit.x === spikePos.x && this.controlledUnit.y === spikePos.y) {
+                spikeTrap.steppedOnSpikeTrap(this.controlledUnit, this.lobbyID);
+            }
+        }
     }
 
     /**
@@ -295,7 +474,27 @@ export default class Game extends Phaser.Scene {
     // Restore health to the player
     // This could be any sort of healing, just pass the health change in percentage
     changeHealth(healthChange) {
-        HUD.changeHealth(healthChange);
+        this.hud.changeHealth(healthChange);
+    }
+
+    /**
+     * damage caused to health when coliding with laser trap
+     */
+    dealLaserDamage() {
+        this.changeHealth(-15);
+    }
+
+    /**
+     * This is called when moving to perks scene
+     * Stops Interval timers for all spike and laser traps
+     */
+    stopAllTraps() {
+        for (const spikeTrap of this.spikeTraps) {
+            spikeTrap.disableTrap();
+        }
+        for (const laserTrap of this.laserTraps) {
+            laserTrap.disableTrap();
+        }
     }
 
     /**
@@ -319,7 +518,8 @@ export default class Game extends Phaser.Scene {
         this.controlledUnit.x -= 32;
         this.controlledUnit.y -= 32;
 
-        const damage = 10;
+        const damage = 30;
+
         // Send message to the server
         this.socket.emit('hitByEnemy', {
             lobbyID: this.lobbyID,
@@ -334,9 +534,8 @@ export default class Game extends Phaser.Scene {
      * @param {coordinate y for exit to be place} y 
      */
     placeExit(x, y) {
-        this.exit = this.physics.add.sprite(x, y, 'exit');
+        this.exit = this.physics.add.sprite(x, y, 'exit').setScale(0.5);
         this.physics.add.overlap(this.controlledUnit, this.exit, () => {
-            console.log('collided');
             if (this.canExitScene()) {
                 this.exitScene();
                 this.exit.disableBody(false, false);
@@ -349,12 +548,7 @@ export default class Game extends Phaser.Scene {
      * @returns boolean
      */
     canExitScene() {
-        if (this.collectedDiamonds >= this.gameState.gems.length) {
-            return true;
-        } else {
-            console.log('Not all diamonds have been collected!')
-            return false;
-        }
+        return this.collectedDiamonds >= this.gameState.gems.length
     }
 
     /**
@@ -393,12 +587,27 @@ export default class Game extends Phaser.Scene {
         p.move(args.x, args.y, args.orientation);
     }
 
+    handleCheatDetected(cheaterId) {
+        console.log('Player with id ' + cheaterId + ' has cheated!');
+    }
+
+    /**
+     * Should be triggered when player tries to leave the map alone
+     */
+    handleSingleMapLeaving() {
+        LeaveMapEvent.emit('wait-for-player');
+        console.log('You cannot leave the map alone');
+    }
+
     handleSocketEvents() {
-        this.socket.on('gemCollected', (diamond) => this.handleDiamondCollected(diamond));
+        this.socket.on('gemCollected', (gemId) => this.handleDiamondCollected(gemId));
         this.socket.on('teammateMoved', (args) => this.handlePlayerMoved(args));
         this.socket.on('choosePerks', (perks) => {
-            this.scene.remove('hud');
-            this.scene.start(CST.SCENES.PERKS, {
+            this.stopAllTraps();
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.scene.pause();
+            this.scene.launch(CST.SCENES.PERKS, {
                 perksNames: perks,
                 username: this.username,
                 socket: this.socket,
@@ -406,13 +615,51 @@ export default class Game extends Phaser.Scene {
                 // Only for testing (server needs to send new gameState to PerkScene to start Game scene)
                 gameState: this.gameState
             });
-            this.socket.removeAllListeners();
+
+            // When the HUD is destroyed, we need to stop forwarding event messages to it.
+            this.socket.off('current-time');
         });
+        this.socket.on('playerChoosePerks', () => {
+            this.scene.pause();
+            this.add.text(this.game.renderer.width / 4 - 100, this.game.renderer.height / 4, 'Waiting for the players to choose their perks...', { fontSize: '32px', fill: '#fff' });
+        }) // handle player choosing perks for spectator mode
+        this.socket.on('nextMap', (payload) => {
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.scene.stop(CST.SCENES.PERKS);
+            this.socket.removeAllListeners();
+            this.scene.start(CST.SCENES.GAME, {
+                world: 1,
+                stage: payload.stage,  
+                socket: this.socket,
+                username: this.username,
+                lobbyID: this.lobbyID,
+                initialGameState: payload.initialGameState,
+                health: payload.health,
+                spectatorsCount: payload.spectatorsCount,
+                gemsCollected: payload.gemsCollected,
+                time: payload.time
+            });
+        }) // changing scene for spectator mode
         this.socket.on('reduceHealth', (damage) => {
             // Change the health on hud
-            // HUD.changeHealth(damage);
+            this.changeHealth(-damage);
 
-            console.log('Team got damage ' + damage.damage + ' health points');
-        })
+            console.log('Team got damage ' + damage + ' health points');
+        });
+
+        this.socket.on('gameOver', () => {
+            this.stopAllTraps();
+            this.scene.remove(CST.SCENES.HUD);
+            this.scene.remove(CST.SCENES.CHAT);
+            this.scene.pause();
+            this.scene.start(CST.SCENES.GAMEOVER);
+        });
+        this.socket.on('cheatDetected', (cheaterId) => this.handleCheatDetected(cheaterId));
+
+        this.socket.on('waitForTeammate', () => this.handleSingleMapLeaving());
+
+        this.socket.on('current-time', (time) => this.hud.setTime(time));
+
     }
 }

@@ -6,14 +6,19 @@ export const CST = {
         JOIN: 'JOIN',
         GAME: 'GAME',
         PERKS: 'PERKS',
-        ACTIVEGAMES: 'ACTIVEGAMES',
-        SPECTATORJOIN: 'SPECTATORJOIN',
+        SPECTATE: 'SPECTATE',
         RANKING: 'RANKING',
-        CHAT: 'CHAT'
+        CHAT: 'CHAT',
+        DEV: 'DEV',
+        HUD: 'HUD',
+        GAMEOVER: 'GAMEOVER'
     },
     COLORS: {
         RANKLIST_PRIMARY: 0x4e342e,
         RANKLIST_SECONDARY: 0x260e04,
-        RANKLIST_TERNARY: 0x7b5e57
+        RANKLIST_TERNARY: 0x7b5e57,
+        ACTIVEGAMES_LIST_PRIMARY: 0x4e1894,
+        ACTIVEGAMES_LIST_SECONDARY: 0x6932a8,
+        ACTIVEGAMES_LIST_TERNARY: 0x3246a8,
     }
 }

@@ -8,13 +8,15 @@ The protocol described below contains a list of events clients should be able
 to intercept (server events) and emit (client events) to communicate
 the logic of the game in a correct manner.
 
+For a sequence diagram overview of some game functionality, please consult the [Technical Design](./technical-design.md#8-sequence-diagram) document.
+
 ## Server Events
 
 <table>
     <tr>
         <th>Event</th>
         <th>Payload</th>
-        <th>Descriotion</th>
+        <th>Description</th>
     </tr>
     <tr>
         <td>roomCreated</td>
@@ -25,8 +27,15 @@ the logic of the game in a correct manner.
 {
     // The id of the created room as a string
     roomId: ...,
-    // An array of connected player usernames as strings
-    playerIDs: [...]
+    // An array of connected players for that room
+    players: [
+        {
+            // the unique id of the player
+            id: ..., 
+            // the username of the player
+            username: ... 
+        }
+    ]
 }
 ```
 
@@ -48,14 +57,41 @@ roomId;
 </td>
         <td>Sent whenever a user has been successfully joined a room.</td>
     </tr>
-    <tr>
+
+<tr>
+        <td>playerLeft</td>
+<td>
+<p>
+
+```javascript
+{
+    // The unique name of the player that left the room
+    id: ...,
+    // The username of the player that left the room
+    username: ...
+}
+```
+
+</p>
+</td>
+        <td>
+            Notifies all players in the lobby that a new player has left
+            the game room.
+        </td>
+    </tr>
+
+<tr>
         <td>newPlayerJoined</td>
 <td>
 <p>
 
 ```javascript
-// The username of the player that joined the room
-playerId;
+{
+    // The unique name of the player that joined the room
+    id: ...,
+    // The username of the player that joined the room
+    username: ...
+}
 ```
 
 </p>
@@ -67,77 +103,123 @@ playerId;
     </tr>
     <tr>
         <td>gameReadyToStart</td>
-        <td>-</td>
+        <td></td>
         <td>
             Indicates that the room has the required amount of players to begin
             the game.
         </td>
     </tr>
     <tr>
+        <td>gameNotReadyToStart</td>
+        <td></td>
+        <td>
+            This indicates that the room does not have the required number of players to begin
+            the game.
+        </td>
+    </tr>
+
+<tr>
         <td>initialGameState</td>
 <td>
+
 <p>
 
 ```javascript
 {
-    tileMap: [
-        [2,2,2,2],
-        [2,1,1,2],
-        [2,1,1,2],
-        [2,2,2,2]
-    ],
-    players: [
-        {
-            // the username of the player
-            playerId: ...,
+    // the health of the team
+    health: ...,
 
-            // player spawn x position
-            x: ...,
+    // the number of spectators
+    spectatorsCount: ...,
 
-            // player spawn y position
-            y: ...,
+    // the total number of gems collected so far
+    gemsCollected: ...,
 
-            // The direction the player is facing
-            // 0 - right, 180 - left
-            // 90 - up, 270 - down
-            orientation: ...
-        }, ...
-    ],
-    
-    gemsCollected:...,
+    // current running time of the room
+    time: ...,
 
-    gems: [
-        {
-            // a unique identifier for a gem
-            gemId: ...,
+    // The current level of the team in the game
+    initialGameState: {
+        level: ..., 
+        tileMap: [
+            [2,2,2,2],
+            [2,1,1,2],
+            [2,1,1,2],
+            [2,2,2,2]
+        ],
+        players: [
+            {
+                // the username of the player
+                playerId: ...,
 
-            // gem spawn x position
-            x: ...,
+                // player spawn x position
+                x: ...,
 
-            // gem spawn y position
-            y: ...
-        }, ...
-    ],
-    enemies: [
-        {
-            // a unique identifier for an enemy
-            enemyId: ...,
+                // player spawn y position
+                y: ...,
 
-            // Enemy starting position
+                // The direction the player is facing
+                // 0 - right, 180 - left
+                // 90 - up, 270 - down
+                orientation: ...
+            }, ...
+        ],
+        
+        gemsCollected:...,
+
+        gems: [
+            {
+                // a unique identifier for a gem
+                gemId: ...,
+
+                // gem spawn x position
+                x: ...,
+
+                // gem spawn y position
+                y: ...
+            }, ...
+        ],
+        enemies: [
+            {
+                // a unique identifier for an enemy
+                enemyId: ...,
+
+                // Enemy starting position
+                start: {
+                    x: 336,
+                    y: 336,
+                },
+                
+                // The path the enemy will travel
+                // path: {
+                //     x: 496,
+                //     y: 336,
+                // }
+                path: [] 
+            }, ...
+        ], 
+        laserTraps: 
+        [{
+            //identifier for the trap
+            trapId: 4,
+            //spawn location for the trap
             start: {
-                x: 336,
-                y: 336,
+                x: 200,
+                y: 200,
             },
-            
-            // The path the enemy will travel
-            // path: {
-            //     x: 496,
-            //     y: 336,
-            // }
-            path: [] 
+            active: 0,
         }, ...
-    ]
+    ], 
+    laserTraps: [
+        {
+            x: 304, // x position
+            y: 112, // y position
+            direction: 3, // Facing direction
+            range: 2, // Laser range
+        }, ...
+    ],
 }
+    
 ```
 
 </p>
@@ -163,10 +245,96 @@ playerId;
 
 ```javascript
 {
-    // the id of the room the client is joining
+    // the id of the room to spectate
     roomId: ...,
-    // the current game state as an object (for structure see "initialGameState")
-    gameState: ...,
+
+    payload: {
+        // the health of the team
+        health: ...,
+
+        // the number of spectators
+        spectatorsCount: ...,
+
+        // the total number of gems collected so far
+        gemsCollected: ...,
+
+        // current running time of the room
+        time: ...,
+
+        // The current level of the team in the game
+        initialGameState: {
+            level: ..., 
+            tileMap: [
+                [2,2,2,2],
+                [2,1,1,2],
+                [2,1,1,2],
+                [2,2,2,2]
+            ],
+            players: [
+                {
+                    // the username of the player
+                    playerId: ...,
+
+                    // player spawn x position
+                    x: ...,
+
+                    // player spawn y position
+                    y: ...,
+
+                    // The direction the player is facing
+                    // 0 - right, 180 - left
+                    // 90 - up, 270 - down
+                    orientation: ...
+                }, ...
+            ],
+            
+            gemsCollected:...,
+
+            gems: [
+                {
+                    // a unique identifier for a gem
+                    gemId: ...,
+
+                    // gem spawn x position
+                    x: ...,
+
+                    // gem spawn y position
+                    y: ...
+                }, ...
+            ],
+            enemies: [
+                {
+                    // a unique identifier for an enemy
+                    enemyId: ...,
+
+                    // Enemy starting position
+                    start: {
+                        x: 336,
+                        y: 336,
+                    },
+                    
+                    // The path the enemy will travel
+                    // path: {
+                    //     x: 496,
+                    //     y: 336,
+                    // }
+                    path: [] 
+                }, ...
+            ], 
+            laserTraps: 
+            [{
+                //identifier for the trap
+                trapId: 4,
+                //spawn location for the trap
+                start: {
+                    x: 200,
+                    y: 200,
+                },
+                active: 0,
+            }, ...
+            ],
+        }
+    }
 }
 ```
 
@@ -251,7 +419,7 @@ gemId;
 <p>
 
 ```javascript
-// a list of perks as array
+// a list of perks as an array
 perks:;
 ```
 
@@ -259,6 +427,17 @@ perks:;
 </td>
         <td>
             With this event the server transmits a list of available perks to all clients in the room.
+        </td>
+    </tr>
+    <tr>
+        <td>playerChoosePerks</td>
+<td>
+<p>
+
+</p>
+</td>
+        <td>
+            With this event the server emit an event to all spectators that the players are now choosing their perks.
         </td>
     </tr>
     <tr>
@@ -284,8 +463,12 @@ teammatePerk:;
 <p>
 
 ```javascript
-// the name of the chosen perk as a string
-perk:;
+{
+    // the chosen perk as a string
+    perk: ...,
+    // the game state of the next map
+    gameState: ...,
+}
 ```
 
 </p>
@@ -295,14 +478,121 @@ perk:;
             the perk chosen for the next game.
         </td>
     </tr>
-    <tr>
+
+<tr>
+        <td>nextMap</td>
+<td>
+<p>
+
+```javascript
+{
+    // the health of the team
+    health: ...,
+
+    // the number of spectators
+    spectatorsCount: ...,
+
+    // the total number of gems collected so far
+    gemsCollected: ...,
+
+    // current running time of the room
+    time: ...,
+
+    // the chosen perk as a string
+    perk: ...,
+    
+    // The current level of the team in the game
+    initialGameState: {
+        level: ..., 
+        tileMap: [
+            [2,2,2,2],
+            [2,1,1,2],
+            [2,1,1,2],
+            [2,2,2,2]
+        ],
+        players: [
+            {
+                // the username of the player
+                playerId: ...,
+
+                // player spawn x position
+                x: ...,
+
+                // player spawn y position
+                y: ...,
+
+                // The direction the player is facing
+                // 0 - right, 180 - left
+                // 90 - up, 270 - down
+                orientation: ...
+            }, ...
+        ],
+        
+        gemsCollected:...,
+
+        gems: [
+            {
+                // a unique identifier for a gem
+                gemId: ...,
+
+                // gem spawn x position
+                x: ...,
+
+                // gem spawn y position
+                y: ...
+            }, ...
+        ],
+        enemies: [
+            {
+                // a unique identifier for an enemy
+                enemyId: ...,
+
+                // Enemy starting position
+                start: {
+                    x: 336,
+                    y: 336,
+                },
+                
+                // The path the enemy will travel
+                // path: {
+                //     x: 496,
+                //     y: 336,
+                // }
+                path: [] 
+            }, ...
+        ], 
+        laserTraps: 
+        [{
+            //identifier for the trap
+            trapId: 4,
+            //spawn location for the trap
+            start: {
+                x: 200,
+                y: 200,
+            },
+            active: 0,
+        }, ...
+        ],
+    }
+}
+```
+
+</p>
+</td>
+        <td>
+            With this event the server informs all clients in a game room about
+            the perk chosen for the next game.
+        </td>
+    </tr>
+
+<tr>
         <td>chatMessage</td>
 <td>
 <p>
 
 ```javascript
 {
-    // the username of message's sender as a string
+    // the username of the message's sender as a string
     sender: ...,
     // the message body as a string
     message: ...,
@@ -312,7 +602,7 @@ perk:;
 </p>
 
 <td>
-    With this event the server forwards a message sent by another player
+    With this event, the server forwards a message sent by another player
 </td>
 
 <tr>
@@ -323,14 +613,14 @@ perk:;
 <td>
 
 ```javascript
-// the username of spectator as a string
+// the username of the spectator as a string
 playerId: ...,
 ```
 
 </td>
 
 <td>
-    With this event the server informs all participants in a game room that
+    With this event, the server informs all participants in a game room that
     a new spectator has joined.
 </td>
 
@@ -425,7 +715,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends the client the list of all available perks from the server. Client has it's implementation
+    Sends the client the list of all available perks from the server.
 </td>
 
 </tr>
@@ -450,7 +740,7 @@ playerId: ...,
 </td>
 
 <td>
-    Sends a client the name of the perk that another player has chosen. 
+    Sends a client the name of the perk that another player has chosen.
 </td>
 
 </tr>
@@ -475,7 +765,32 @@ playerId: ...,
 </td>
 
 <td>
-    Sends both players the name of the perk that will be used next game. 
+    Sends both players the name of the perk that will be used next game.
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    DeveloperGamestate
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // Game state object with tilemap, players location, and gems
+        ititialGameState: ...
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the game state of the map a developer has chosen
 </td>
 
 </tr>
@@ -572,10 +887,23 @@ gemId;
 </td>
         <td>
             A previous message tried to modify the state of a player (position,
-            orientation) in an illegal state, e.g. outside of the map
-            boundires, and/or orientation facing south-west.
+            orientation) in an illegal state, e.g., outside of the map
+            boundaries, or orientation facing south-west.
         </td>
     </tr>
+
+<tr>
+    <td>nameAlreadyExistForAPlayer</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by another user </td>
+</tr>
+
+<tr>
+    <td>nameAlreadyExistForASpectator</td>
+    <td>-</td>
+    <td>The name that the player is trying to use for joining the lobby is already in use by a spectator </td>
+</tr>
+
 </table>
 
 ## Client Events
@@ -587,12 +915,30 @@ gemId;
         <th>Description</th>
     </tr>
     <tr>
+        <td>setUsername</td>
+        <td>
+<p>
+
+```javascript
+// The username of the player as a string
+username;
+```
+
+</p>
+</td>
+        <td>
+            A message sent whenever a client chooses their username whenever
+            creating a room/joining a room/is going to spectate.
+        </td>
+    </tr>
+    <tr>
         <td>createRoom</td>
         <td>-</td>
         <td>
             A message sent whenever a client wants to create a new game room.
         </td>
     </tr>
+<!-- this is one row -->
     <tr>
         <td>joinRoom</td>
 <td>
@@ -606,8 +952,45 @@ roomId;
 </p>
 </td>
         <td>
-            Sent whenever a client tries to join a game room. Payload contains
+            Sent whenever a client tries to join a game room. The payload contains
             a string representing the id of the room.
+        </td>
+    </tr>
+
+<!-- this is one row -->
+<tr>
+        <td>checkGameReady</td>
+        <td>
+            <p>
+
+```javascript
+// The room id of the room to check
+roomId;
+```
+
+</p>
+        </td>
+
+<td>
+    Sent to check if the game is ready to start.
+</td>
+
+</tr>
+<!-- this is one row -->
+<tr>
+        <td>leaveRoom</td>
+<td>
+<p>
+
+```javascript
+// The id of the room as a string
+roomId;
+```
+
+</p>
+</td>
+        <td>
+            Sent when a client leaves a game room.
         </td>
     </tr>
 
@@ -627,7 +1010,7 @@ roomId:;
 </td>
 
 <td>
-    Sent whenever there is a spectator wanting to join a room.
+    Sent whenever a spectator wants to join a room.
 </td>
 
 </tr>
@@ -680,7 +1063,7 @@ roomId;
         </td>
     </tr>
     <tr>
-        <td>collectDiamond</td>
+        <td>collectGem</td>
 <td>
 <p>
 
@@ -780,32 +1163,10 @@ message:
 <td>-</td>
 
 <td>
-    With this event the client requests a list of active game rooms
+    With this event, the client requests a list of active game rooms
 </td>
 
 </tr>
-<!-- this is one row -->
-
-<tr>
-    <td>
-        gameOver
-    </td>
-
-<td>
-
-```javascript
-// the id of the room as a string
-roomId:...
-```
-
-</td>
-
-<td>
-    This event indicates that the run has ended.
-</td>
-
-</tr>
-<!-- this is one row -->
 
 <tr>
 
@@ -827,7 +1188,7 @@ roomId:...
 </td>
 
 <td>
-    Indicates that one of the players has reached the end of the map 
+    This indicates that one of the players has reached the end of the map
 </td>
 
 </tr>
@@ -852,7 +1213,7 @@ roomId:...
 </td>
 
 <td>
-    Sends the perk choice of the player to the server. Every time player chooses a perk from the list, this even is triggered, and message is sent  
+    This sends the perk choice of the player to the server. Every time player chooses a perk from the list, this event is triggered, and a message is sent  
 </td>
 
 </tr>
@@ -905,7 +1266,33 @@ roomId:...
 </td>
 
 <td>
-    Indicates that player hit the enemy and sends all information to reduce health of the team 
+    Indicates that the player hit the enemy and sends all information to reduce the health of the team
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+    developerSpawn
+</td>
+
+<td>
+
+```javascript
+[
+    {
+        // map id developer wants to spawn
+        mapID: ...,
+
+    }
+]
+```
+
+</td>
+
+<td>
+    Sends the chosen id of the map developer wants to spawn on
 </td>
 
 </tr>

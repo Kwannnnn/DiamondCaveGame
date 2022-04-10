@@ -1,0 +1,15 @@
+/* ONE */
+.custom-field.one input {
+    background: none;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 20px;
+    transition: border-color 0.3s ease;
+    font-size: 32px;
+    color:white;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #b3b3b3;
+    opacity: 1; /* Firefox */
+}
+

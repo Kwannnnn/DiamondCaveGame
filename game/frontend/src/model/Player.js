@@ -1,17 +1,20 @@
+import { isLaserTrapTile } from '../helpers/LaserTrap';
 import ControlledUnit from './ControlledUnit';
 
 export default class Player extends ControlledUnit {
-    constructor(scene, x, y, username, perk) {
+    constructor(scene, x, y, id, username, perk) {
         super(scene, x, y, 'player');
         this.setScale(0.14);
 
         this.scene = scene;
+        this.id = id;
         this.username = username;
         this.setupPlayerMovement();
         this.setupAnimations();
         this.nameLabel = this.scene.add.text(x - 5, y - 10, this.username).setDepth(1);
         this.setNamePosition();
-
+        
+        
         // the ideal delay for the normal speed to begin with is 200
         this.delay = 200;
 
@@ -20,12 +23,12 @@ export default class Player extends ControlledUnit {
             console.log(perk + ' IS USED')
             // Check which perk is applied
             switch (perk) {
-            case 'MovementSpeed':
-                this.increaseSpeed();
-                break;
+                case 'MovementSpeed':
+                    this.increaseSpeed();
+                    break;
 
-            default:
-                console.log('no perks for player ' + username);
+                default:
+                    console.log('no perks for player ' + username);
 
             }
         }
@@ -53,8 +56,6 @@ export default class Player extends ControlledUnit {
     setupAnimations() {
         const animationKeys = ['up', 'down', 'right', 'left'];
         for (const [index, key] of animationKeys.entries()) {
-            console.log('index: ' + index);
-            console.log('key: ' + key);
             this.scene.anims.create({
                 key: key,
                 frames: [ { key: 'player', frame: index } ],
@@ -75,18 +76,18 @@ export default class Player extends ControlledUnit {
         this.setNamePosition();
 
         switch (this.orientation) {
-        case 0: 
-            this.anims.play('right', true);
-            break;
-        case 90:
-            this.anims.play('up', true);
-            break;
-        case 180:
-            this.anims.play('left', true);
-            break;
-        default:
-            this.anims.play('down', true);
-            break;
+            case 0: 
+                this.anims.play('right', true);
+                break;
+            case 90:
+                this.anims.play('up', true);
+                break;
+            case 180:
+                this.anims.play('left', true);
+                break;
+            default:
+                this.anims.play('down', true);
+                break;
         }
     }
 
@@ -97,20 +98,31 @@ export default class Player extends ControlledUnit {
     handlePlayerMovement() {
         let movementX = 0;
         let movementY = 0;
-
-        if (this.scene.input.keyboard.checkDown(this.keys.left, this.delay)) {     
+        var left = this.scene.input.keyboard.checkDown(this.keys.left, this.delay); 
+        var right = this.scene.input.keyboard.checkDown(this.keys.right, this.delay);
+        var up = this.scene.input.keyboard.checkDown(this.keys.up, this.delay);
+        var down = this.scene.input.keyboard.checkDown(this.keys.down, this.delay)  
+        
+        if (this.keys.left.isDown && this.keys.right.isDown) {
+            return;
+        }
+        if (this.keys.up.isDown && this.keys.down.isDown) {
+            return;
+        }
+        
+        if (left) {     
             this.anims.play('left', true);
             movementX = -32;
             this.orientation = 180;
-        } else if (this.scene.input.keyboard.checkDown(this.keys.right, this.delay)) {
+        } else if (right) {
             this.anims.play('right', true);
             movementX = 32;
             this.orientation = 0;
-        } else if (this.scene.input.keyboard.checkDown(this.keys.down, this.delay)) {
+        } else if (down) {
             this.anims.play('down', true);
             movementY = 32;
             this.orientation = 270;
-        } else if (this.scene.input.keyboard.checkDown(this.keys.up, this.delay)) {
+        } else if (up) {
             this.anims.play('up', true);
             movementY = -32;
             this.orientation = 90;
@@ -119,23 +131,11 @@ export default class Player extends ControlledUnit {
         // Check tile we are attempting to move to
         let tile = this.scene.layer.getTileAtWorldXY(this.x + movementX, this.y + movementY, true);
 
-        if (tile && tile.index !== 2) {
+        if (tile && tile.index !== 2 && !isLaserTrapTile(tile.index)) {
             this.x += movementX;
             this.y += movementY;
             this.setNamePosition();
         }
-
-        if (tile && tile.index == 3) {
-            // Call damage player method
-            // Or call trap object
-            console.log('You walked on a trap');
-        }
-
-        if (tile && tile.index == 4) {
-            // Do smth else
-            console.log('You walked on tile with index 4');
-        }
-
 
         if (movementX !== 0 || movementY !== 0) {
             this.handlePlayerMoved();

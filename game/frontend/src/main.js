@@ -7,17 +7,25 @@ import {
     JoinScene,
     MenuScene,
     PerksScene,
-    ActiveGamesScene,
+    //ActiveGamesScene,
     SpectatorJoinScene,
     RankingScene,
-    ChatScene
+    ChatScene,
+    DeveloperScene,
+    HUD,
+    GameOverScene
 } from './scenes';
 
+let WIDTH = window.screen.availWidth;
+let HEIGHT = window.screen.availHeight;
+
 const config = {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1280,
-    height: 720,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: WIDTH,
+        height: HEIGHT
+    },
     scene: [
         LoadScene,
         MenuScene,
@@ -25,10 +33,11 @@ const config = {
         PerksScene,
         LobbyScene,
         JoinScene,
-        ActiveGamesScene,
+        //ActiveGamesScene,
         SpectatorJoinScene,
         RankingScene,
-        ChatScene
+        DeveloperScene,
+        GameOverScene
     ],
     parent: 'game',
     type: Phaser.AUTO,
@@ -44,4 +53,3 @@ const config = {
 }
 
 const game = new Phaser.Game(config);
-

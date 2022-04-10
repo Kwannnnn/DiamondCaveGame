@@ -24,11 +24,11 @@ According to the README.md file on PixiJS's [GitHub repository](https://github.c
 
 After researching those options, we come up with the advantages and disadvantages of each option in the table below:
 
-| | Advantages | Disadvantages |
-|-|------------|---------------|
-| KiwiJS | - Easy to learn <br> - On boarding process is straightforward => grasp understanding about game development principles | - Project is abandoned (latest commit on 15 November 2015) <br> - Community is not active, probably less support. |
-| PixiJS | - Great to create interactive graphics and animations <br> - Many resources available => better learning experience <br> - Hundreds of global brands are using PixiJS | - Hard to know how to modularize as a beginner who never used PixiJS before <br> - Not very compatible with ReactJS <br> - The available documentation is good for implementing functionality but not ideal for setting up and identifying bugs <br> - Boilerplate is outdated |
-| Phaser | - Well suited to create 2D games that can be played right in the browser <br> - Simple to learn and utilize to build a game <br> - Relatively easy to learn how to modularize <br> - Documentation is helpful | - Not ideal for creating interactive graphics and animations <br> - Need to have 2D sprites (recommend 32x32 for canvas and 64x64 for pixels) |
+|        | Advantages                                                                                                                                                                                                    | Disadvantages                                                                                                                                                                                                                                                                  |
+| ------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| KiwiJS |   - Easy to learn <br> - On boarding process is straightforward => grasp understanding about game development principles                                                                                      | - Project is abandoned (latest commit on 15 November 2015) <br> - Community is not active, probably less support.                                                                                                                                                              |
+| PixiJS | - Great to create interactive graphics and animations <br> - Many resources available => better learning experience <br> - Hundreds of global brands are using PixiJS                                         | - Hard to know how to modularize as a beginner who never used PixiJS before <br> - Not very compatible with ReactJS <br> - The available documentation is good for implementing functionality but not ideal for setting up and identifying bugs <br> - Boilerplate is outdated |
+| Phaser | - Well suited to create 2D games that can be played right in the browser <br> - Simple to learn and utilize to build a game <br> - Relatively easy to learn how to modularize <br> - Documentation is helpful | - Not ideal for creating interactive graphics and animations <br> - Need to have 2D sprites (recommend 32x32 for canvas and 64x64 for pixels)                                                                                                                                  |
 
 ## 2 Game Engine Chosen
 
@@ -39,9 +39,9 @@ The game engine chosen for this project is **Phaser**, used to create 2D games f
 - 2D game support
 - Should run in the browser.
 
-**Phaser** is the best choice for our needs. It is free and open-source with support for 2D games. There are thousands of games made with it, and there are many learning resources for us to turn our design into a reality. The documentation is extensive and detailed. There are a lot of features supported by the engine which will speed up development, like animations, physics, particles, and sound effects.
+**Phaser** is the best choice for our needs. It is free and open-source with support for 2D games. There are thousands of games made with it, and there are many learning resources for us to turn our design into a reality. The documentation is extensive and detailed. There are many features supported by the engine which will speed up development, like animations, physics, particles, and sound effects.
 
-Phaser is a JavaScript framework that can be imported and provides valuable tools for making browser games. There is no built-in multiplayer support, but it can be added by using the socket.io library. We plan to use node.js on the backend to create the server to which the players will connect. All communication will go through the node server.
+Phaser is a JavaScript framework that can be imported and provides valuable tools for making browser games. There is no built-in multiplayer support, but it can be added by using the socket.io library. We plan to use node.js on the backend to create the server to which players will connect. All communication will go through the node server.
 
 It uses HTML5 and Canvas or WebGL to render the game in the browser. This allows excellent performance across all platforms, and it is also possible to port a game for mobile devices.
 
@@ -49,19 +49,25 @@ It uses HTML5 and Canvas or WebGL to render the game in the browser. This allows
 
 ### 3.1 Backend
 
-Node.js was decided to be used for the development of the backend. We came to this decision for several reasons. Firstly, using JavaScript for server-side application development has become increasingly popular nowadays. Therefore, it becomes increasingly easy to receive support from the development community for our development process. Secondly, we are developing a web-based game, and we will use a JavaScript engine. Therefore, it increases compatibility and reduces the problems that might occur by developing a server-side application in JavaScript using Node.js. In addition, all team members agreed that Node.js is the tool that we are currently most familiar and comfortable with, and we had enough experience to use it for the development of the backend confidently.
+Node.js was decided to be used for the development of the backend. We came to this decision for several reasons. Firstly, using JavaScript for server-side application development has become increasingly popular nowadays. Therefore, it becomes increasingly easy to receive support from the development community for our development process. Secondly, we are developing a web-based game, and we will use a JavaScript engine. Therefore, it increases compatibility and reduces the problems that might occur by developing a server-side application in JavaScript using Node.js. In addition, all team members agreed that Node.js is the tool that we are currently most familiar and comfortable with. We had enough experience to use it to develop the backend confidently.
 
 ### 3.2 Database
 
-PostgreSQL was chosen for persisting data. A discussion on whether we should use relational or non-relational databases during our meeting eventually led us to conclude that using relational databases can benefit us. All team members are well trained for relational databases during one of the courses we had previously; therefore, the team decided that it is the most comfortable to work with a relational database. It was also pointed out that relational databases can easily help us avoid the problems caused by data duplication.
+PostgreSQL was chosen for persisting data. During our meeting, a discussion on whether we should use relational or non-relational databases eventually led us to conclude that using relational databases can benefit us. All team members were well trained in relational databases during one of the courses we had previously; therefore, the team decided that it is the most comfortable to work with a relational database. It was also pointed out that relational databases can easily help us avoid the problems caused by data duplication.
 
 Having decided that relational databases will be used for persisting data, the team concluded that PostgreSQL would be the database management system that we use for the project. PostgreSQL is the one most team members are experienced in and comfortable with. It was decided that using tools that the team is experienced in can significantly speed up the development progress and help avoid problems.
 
 ### 3.3 Communication (frontend-backend)
 
-We chose to go with Socket.io to connect the frontend and backend applications. This socket library was selected for its simple API to establish a connection and signal events between two systems using it. Additionally, it was chosen for its ease of implementation in browser Javascript. Socket.io can download the library binary from either a server using Socket.io or the official developers' host when running in a browser, which saves time working out a way to distribute the library or create our own. Finally, the library choice was informed by our prior experience with sockets in another project.
+We chose to go with Socket.io to connect the frontend and backend applications. This socket library was selected for its simple API to establish a connection and signal events between two systems. Additionally, it was chosen for its ease of implementation in browser Javascript. Socket.io can download the library binary from either a server using Socket.io or the official developers' host when running in a browser, which saves time working out a way to distribute the library or create our own. Finally, the library choice was informed by our prior experience with sockets in another project.
 
 To transmit game state data, we defined a set of JSON structures that encode the necessary data for sending via Socket.io. These definitions can be found in the Game State Protocol file within this documentation package.
+
+### 3.4 Server deployment (VPS)
+
+To make the game client and server accessible to players, we created a server configuration that can be used to deploy the game to a server. The deployment server uses `Node.js` and `Ngnix` to build the game client and host it on the web, and the Express game server to be used by the client.
+
+In addition to the deployment configuration, we also created a Continuous Deployment (CD) pipeline to make development builds accessible on a VPS provided to us. This pipeline uses a copy of a specific branch of our GIT repository to execute the deployment script.
 
 ## 4 Dependencies
 
@@ -103,24 +109,107 @@ For managing our workflow, we are going to use git lab. The reason is that GitLa
 
 For information on our conduct when working with the GIT repository, see the **GIT conduct** chapter in the **Code of conduct** document.
 
-## 5 Diagrams
-
-### 5.1 Flowchart
-
-![image](diagrams/flowchart.png)
-
-#### 5.1.1 Proccesses
-
-A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room designed by a friend before, he must create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
-
-#### 5.1.2 Scenes
-
-There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where a player has several options. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
+## 5 Class Diagrams
 
 ### 5.2 Class diagram (frontend)
 
-![image](diagrams/Frontend-class-diagram.png)
+![image](diagrams/class-diagram/Frontend-class-diagram.png)
 
 ### 5.3 Class diagram (backend)
 
-![image](diagrams/serverClassDiagram.png)
+![image](diagrams/class-diagram/Backend-class-diagram.png)
+
+## 6 Game Flow
+
+### 6.1 Proccesses
+
+A lobby has to be created to start playing the game, and a second player has to join afterward. If a player does not have a room designed by a friend before, he must create a new lobby. Then, the generated room code will be displayed to the player, to which the second player must connect. Next, the second participant must receive this code using an external communication method. Afterward, they can choose the "Join room" option to enter the room code and a username. After all of these are completed, the second player gets in the room with the one who created it. The only left step is to start a game by pressing a corresponding button.
+
+### 6.2 Scenes
+
+There are several scenes the game goes through to display the previously mentioned menus. The first scene is LoadScene, and a player sees it only for a few seconds while the game is loading. The next scene is MenuScene, where a player has several options. When creating a lobby, the player is directed to the MenuLobbyScene. For joining a lobby, the player is sent to the MenuJoinScene, and after entering the required info, the MenuLobbyScene.
+
+### 6.3. Create Lobby
+
+![Create Lobby](diagrams/activity-diagram/create-lobby.png)
+
+### 6.4. Join Lobby
+
+![Join Lobby](diagrams/activity-diagram/join-lobby.png)
+
+### 6.5. Start Game
+
+![Start game](diagrams/activity-diagram/start-game.png)
+
+### 6.6. Show ranking
+
+![Show ranking](diagrams/activity-diagram/scoreboard.png)
+
+### 6.7. Spectate
+
+![Spectate](diagrams/activity-diagram/spectate.png)
+
+## 7 Deployment diagram
+
+![Deployment](diagrams/deployment-diagram/deployment.png)
+
+## 8 Sequence diagram
+
+### 8.1 Collect gems
+
+![Collect gems](diagrams/sequence-diagram/collect-gems.jpg)
+
+This sequence diagram shows how the system responds to the player's collect gems action. When the player overlaps the gem tile, the _Game_ object emits a 'collectGem' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the room's gem count and responds to the player with the 'gemCollected' event. After receiving the response, the _Game_ displays the gem count to the player and removes the gem tile from the map.
+
+### 8.2 Collide enemy
+
+![Collide enemy](diagrams/sequence-diagram/collide-enemy.jpg)
+
+This sequence diagram demonstrates the system reaction to the player colliding with an enemy. When the player overlaps the enemy tile, the _Game_ object emits a 'collideEnemy' event to the server. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. The handler updates the health bar of the room. If the health bar reaches 0, the room is destroyed, and the server responds to the player with the event 'gameOver'. The _Game_ handles the event and sends the player to the game over scene. In contradiction, if the health bar is not 0, _gameManager_ will reduce the health bar and respond with the 'reduce health' event. Finally, the _Game_ displays the health reduction to the player and causes the player to be pushed back.
+
+### 8.3 Chat room
+
+![Chat room](diagrams/sequence-diagram/chat-system.jpg)
+
+This sequence diagram explains the system response to the player sending a message to the chat room. When the player/spectator sends a message to the chat room, the _ChatScene_ will emit a 'chatMessage' event to the server with the message from the client as a payload. Then the server delegates a handler from the _chatManager_ to listen to the emitted event. Finally, after receiving the message, the handler will broadcast the message to the room with the event 'chatMessage'. Depending on the type of client, the message will be displayed in either the player or spectator room.
+
+### 8.4 Step on a spike trap
+
+![Step on spike trap](diagrams/sequence-diagram/spike-trap.jpg)
+
+This sequence diagram shows the system response to the player stepping on a spike trap. When the player overlaps the spike trap tile, the _Game_ object triggers the function 'steppedOnSpikeTrap' in the _SpikeTrap_ instance. The _SpikeTrap_ will emit the 'hitByEnemy' event if the _SpikeTrap_ instance is enabled, active, and the player is vulnerable. From here, the behavior is similar to that in the case of "Collide with enemy."
+
+### 8.5 Step through laser
+
+![Step through laser](diagrams/sequence-diagram/laser.jpg)
+
+This sequence diagram illustrates the system responses when the player steps through the laser. When the player overlaps the laser beam tile, the _Game_ object triggers the function 'steppedInLaser' in the _LaserTrap_ instance. The _LaserTrap_ will emit a 'hitByEnemy' event if the _LaserTrap_ instance is enabled, active, and the player is vulnerable. From here, the behavior is similar to that in the case of "Collide with enemy."
+
+### 8.6 Choose perks
+
+![Choose perks](diagrams/sequence-diagram/choose-perks.jpg)
+
+This sequence diagram explains the system response to the player choosing a perk. When the players collect all the gems and step on the exit time, the _Game_ object will emit the event 'reachedEnd' to the _server_. Then the server delegates a handler from the _gameManager_ to listen to the emitted event. Finally, the handler will emit the 'choosePerks' event to the _Game_ instance. The _Game_ after receiving the event will stop the current scene and start the _PerkScene_ on the client-side.
+
+In the choose perk scene, when the player chooses a perk, the _PerkScene_ will emit the 'chosenPerk' event to the server. The server handles the event and checks if both players in the room have chosen a perk. If they have, the server will emit the 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the event and starts the following map by passing the new initial game state to the _Game_ instance. If only one player has chosen a perk, the server will respond with the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the desired perk of the teammate.
+
+## 9 Testing plan
+
+As mentioned in our [Code of conduct](./code-of-conduct.md#git-conduct), the testing for the project is conducted at the last meeting of the week. During that time, all team members are requested to join into pairs to playtest the game, validating that all existing and new functionality works as intended. We also actively encourage our team members to test the code thoroughly they wrote before creating a merge request and require that another member of our team reviews and validates their submission before merging.
+
+## 10 Known Bugs
+
+1. Enemy collision can put a player sprite into a wall
+2. Timer text for Perk Scene is not removed
+3. Timer sound does not stop playing after going to the following map
+4. Enemies are not synchronized on the server
+5. Players' sprite is not sized correctly for movements
+6. There is no game over scene for spectator
+
+## 11 Cancelled backlogs and user stories
+
+1. US08 - As a player I want to be in the same map as everyone in the lobby
+2. US18 - As an admin I want to be able to influence the game
+3. US19 - As a developer I want to have developer console (you can skip some)
+4. PB27 - Timer sound doesn't go away after perks scene
+5. PB28 - Colliding with an enemy can knock you into a wall
