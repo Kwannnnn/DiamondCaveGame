@@ -78,8 +78,8 @@ _Group 1 : GameChangers – DHI2V.So_ - Project Server and Client
 ### US 01
 
 | Backlog item | Definition                                      | Priority | Weight | Depends on |
-| ------------ | ----------------------------------------------- | -------- | ------ | ---------- |
-| BI-01        | Find/Create sprites for the players             | M        | 2      | -          |
+| ------------ |-------------------------------------------------| -------- | ------ | ---------- |
+| BI-01        |  Find/Create sprites for the players            | M        | 2      | -          |
 | BI-02        | Find/Create sprites for the different map tiles | M        | 4      | -          |
 | BI-03        | Find/Create sprites for diamonds                | M        | 2      | -          |
 | BI-04        | Find/Create sprites for the rocks               | M        | 2      | -          |
