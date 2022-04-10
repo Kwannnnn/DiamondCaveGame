@@ -193,7 +193,11 @@ This sequence diagram explains the system response to the player choosing a perk
 
 In the choose perk scene, when the player choose a perk, the _PerkScene_ will emit 'chosenPerk' event to the server. The server handles the event and check if both players in the room have chosen a perk. If they have, the server will emit 'perkForNextGame' event to the _PerkScene_ instance. The _PerkScene_ listens to the event and start the next map by passing the new initial game state to _Game_ instance. If there is only 1 player has chosen a perk, the server will response the 'teammatePerkChoice' event. The _PerkScene_ listens to the event and displays the chosen perk of the teammate.
 
-## 9 Known Bugs
+## 9 Testing plan
+
+As mentioned in our [Code of conduct](./code-of-conduct.md#git-conduct), the testing for the project is conducted at the last meeting of the week. During that time, all team members are requested to join into pairs to playtest the game, validating that all existing and new functionality works as intended. We also actively encourage our team members to test the code thoroughly they wrote before creating a merge request and require that another member of our team reviews and validates their submission before merging.
+
+## 10 Known Bugs
 
 1. Enemy collision can put a player sprite into a wall
 2. Timer text for Perk Scene is not removed
@@ -202,7 +206,7 @@ In the choose perk scene, when the player choose a perk, the _PerkScene_ will em
 5. Players' sprite is not sized properly for movements
 6. There is no game over scene for spectator
 
-## 10 Cancelled backlogs and user stories
+## 11 Cancelled backlogs and user stories
 
 1. US08 - As a player I want to be in the same map as everyone in the lobby
 2. US18 - As an admin I want to be able to influence the game
