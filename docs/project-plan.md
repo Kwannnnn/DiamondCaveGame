@@ -304,7 +304,7 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-17 | Make it necessary for both players to be on the exit for the team to move on | H | - | Done |
 | PB-18 | Establish a socket connection when the client is loaded, instead of in every separate scene | H | 6 | Done |
 | PB-19 | The server must validate player movement to prevent speed hacking or teleporting | H | 7 | Done |
-| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Done |
+| PB-20 | The server must validate enemy collisions to prevent invulnerability hacking | H | 7 | Not done |
 | PB-21 | Pressing opposing directions causes the player to jitter in place | N | - | Done |
 | PB-23 | After the players choose a perk, the spectator does not see the map change | H | 5 | Done |
 | PB-24 | Spectator does not get the current game state, but an initial game state on joining a room | H | 5 | Done |
@@ -313,3 +313,15 @@ Problem ID | Description | Priority (High/Normal) | Weight | Status |
 | PB-27 | Timer sound doesn't go away after perks scene | H | 3 | Not done |
 | PB-28 | Colliding with an enemy can knock you into a wall | H | 7 | Not done |
 | PB-29 | Spectator can not move freely through the map | H | 3 | Done |
+
+## Future development
+
+For future development of the game, there is still room for deepening the functionality of the current system.
+Those things that we think will create an impact on the game are:
+
+- Development Space (admin dashboard)
+- Ranking formula (more comprehensive)
+- Collision system
+- Enemies synchronization on server-side
+
+Moreover, we also think that UI and UX design can be improved to enhance the players' gaming experience. The current movement system is grid-based, making the positioning system absolute. The publisher wants the movement to be velocity-based. Therefore, we are heading towards it for the upcoming plan.
