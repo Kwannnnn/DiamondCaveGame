@@ -197,11 +197,10 @@ In the choose perk scene, when the player choose a perk, the _PerkScene_ will em
 
 1. Enemy collision can put a player sprite into a wall
 2. Timer text for Perk Scene is not removed
-3. Time Reduction perk picture is not added to the Perk Scene
-4. Timer sound does not stop playing after going to the next map
-5. Enemies are not synchronized on the server
-6. Players' sprite is not sized properly for movements
-7. There is no game over scene for spectator
+3. Timer sound does not stop playing after going to the next map
+4. Enemies are not synchronized on the server
+5. Players' sprite is not sized properly for movements
+6. There is no game over scene for spectator
 
 ## 10 Cancelled backlogs and user stories
 
